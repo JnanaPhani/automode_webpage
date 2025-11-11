@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Zenith Tek Sensor Help</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Aldrich&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: 'Aldrich', sans-serif;
+        --brand-primary: #085f63;
+        --brand-secondary: #0a7a80;
+        --background: #f4f8f9;
+        --card-background: #ffffff;
+        --accent: #e0f5f4;
+        --text: #1f2937;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--background);
+        color: var(--text);
+        display: flex;
+        flex-direction: column;
+      }
+
+      header {
+        background: var(--card-background);
+        border-bottom: 1px solid rgba(8, 95, 99, 0.15);
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+        padding: 1.5rem 1rem;
+      }
+
+      .container {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 0 1rem;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .brand h1 {
+        margin: 0;
+        font-size: 1.5rem;
+        color: var(--brand-primary);
+      }
+
+      .brand p {
+        margin: 0.25rem 0 0;
+        font-size: 0.9rem;
+        color: #475569;
+      }
+
+      main {
+        flex: 1;
+        padding: 2rem 0 3rem;
+      }
+
+      section {
+        background: var(--card-background);
+        border-radius: 0.75rem;
+        border: 1px solid rgba(8, 95, 99, 0.12);
+        box-shadow: 0 6px 24px rgba(15, 23, 42, 0.08);
+        padding: 1.75rem;
+        margin-bottom: 1.75rem;
+      }
+
+      h2 {
+        margin-top: 0;
+        color: var(--brand-primary);
+        font-size: 1.25rem;
+      }
+
+      h3 {
+        color: var(--brand-secondary);
+        margin-bottom: 0.5rem;
+        margin-top: 1.5rem;
+        font-size: 1.05rem;
+      }
+
+      ul {
+        padding-left: 1.25rem;
+        margin: 0.4rem 0 1rem;
+      }
+
+      li {
+        margin-bottom: 0.35rem;
+        line-height: 1.4;
+      }
+
+      .contact-card {
+        background: var(--accent);
+        border: 1px solid rgba(8, 95, 99, 0.25);
+        border-radius: 0.75rem;
+        padding: 1.25rem;
+        margin-top: 1.5rem;
+      }
+
+      a {
+        color: var(--brand-secondary);
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      footer {
+        padding: 1.5rem 1rem;
+        text-align: center;
+        font-size: 0.85rem;
+        color: #475569;
+      }
+
+      .back-link {
+        display: inline-block;
+        margin-top: 1.25rem;
+        padding: 0.6rem 1.2rem;
+        border-radius: 999px;
+        background: var(--brand-primary);
+        color: #ffffff;
+      }
+
+      .back-link:hover {
+        background: var(--brand-secondary);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div class="brand">
+          <div>
+            <h1>Zenith Tek Sensor Help Desk</h1>
+            <p>Guidance for configuring Epson vibration and IMU sensors in Auto Start mode</p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="container">
+        <section>
+          <h2>Common Troubleshooting</h2>
+
+          <h3>Browser can’t find the device</h3>
+          <ul>
+            <li>Unplug the USB cable, wait 5 seconds, and reconnect it firmly.</li>
+            <li>Click “Select Sensor” again and choose the device from the Chrome/Edge picker.</li>
+            <li>On Windows, confirm no other application (e.g., serial terminal) is using the port.</li>
+            <li>On Linux, ensure your user is in the <code>dialout</code> group and reconnect the cable.</li>
+          </ul>
+
+          <h3>Configuration stops with an error</h3>
+          <ul>
+            <li>Power-cycle the sensor and try the configuration again.</li>
+            <li>Confirm you selected the correct sensor profile before starting.</li>
+            <li>Try a lower baud rate (230400) if the connection is unstable.</li>
+          </ul>
+
+          <h3>Choosing an IMU sampling rate</h3>
+          <ul>
+            <li>
+              Faster rates (2000 / 1000 sps) require higher UART bandwidth—stick to 921600 or 460800
+              baud respectively.
+            </li>
+            <li>
+              The portal auto-sets the baud rate to 921600 when you pick those high rates. If you
+              override it, heed the warning banner before proceeding.
+            </li>
+            <li>
+              Slower rates (250 sps and below) apply more averaging; expect smoother but slower data.
+            </li>
+            <li>
+              The portal programs the recommended moving-average filter taps automatically—no manual
+              filter entry is needed.
+            </li>
+          </ul>
+
+          <h3>Still seeing red status banner?</h3>
+          <ul>
+            <li>Restart the sensor and repeat the configuration steps.</li>
+            <li>Close other browser tabs that might be talking to the same device.</li>
+            <li>Reach out to Zenith Tek support with the log output for deeper analysis.</li>
+          </ul>
+
+          <div class="contact-card">
+            <h3>Need assistance?</h3>
+            <p>Email: <a href="mailto:contactus@zenithtek.in">contactus@zenithtek.in</a></p>
+            <p>Phone: <a href="tel:+918500807481">+91 85008 07481</a></p>
+            <p>
+              Operating hours: Monday – Friday, 9:00 AM – 6:00 PM IST (after-hours support available on
+              request).
+            </p>
+          </div>
+
+          <a class="back-link" href="/">← Back to Sensor Portal</a>
+        </section>
+      </div>
+    </main>
+
+    <footer>
+      &copy; <span id="year"></span> Zenith Tek • Empowering sensor automation
+    </footer>
+
+    <script>
+      document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>
+
