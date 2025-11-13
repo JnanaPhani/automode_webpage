@@ -101,10 +101,6 @@ export function ConfigurationPanel() {
     setDetectedInfo(null);
 
     try {
-      if (webSerialService.isConnected()) {
-        await webSerialService.disconnect();
-      }
-
       const selectedPort = await webSerialService.requestPort();
       await webSerialService.preparePort({
         port: selectedPort,

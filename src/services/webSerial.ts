@@ -869,14 +869,20 @@ async function ensureSession(
       // ignore close errors
     }
 
-    await port.open({
-      baudRate,
-      dataBits: 8,
-      stopBits: 1,
-      parity: 'none',
-      flowControl: 'none',
-      bufferSize: 8192,
-    });
+    try {
+      await port.open({
+        baudRate,
+        dataBits: 8,
+        stopBits: 1,
+        parity: 'none',
+        flowControl: 'none',
+        bufferSize: 8192,
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to open port';
+      log(`Failed to open serial port: ${message}`, 'stderr');
+      throw error instanceof Error ? error : new Error(message);
+    }
   }
 
   session.baudRate = baudRate;
@@ -909,25 +915,31 @@ function startDrain(session: SerialSession, log?: ReturnType<typeof createLog>):
     return;
   }
 
-  const stream = session.port.readable;
-  if (!stream) {
-    return;
-  }
-
   const abort = new AbortController();
   session.drainAbort = abort;
 
   const run = async () => {
-    const reader = stream.getReader();
+    let reader: ReadableStreamDefaultReader<Uint8Array> | null = null;
     try {
+      const stream = session.port.readable;
+      if (!stream) {
+        return;
+      }
+
+      reader = stream.getReader();
       while (!abort.signal.aborted) {
         const { done } = await reader.read();
         if (done) {
           break;
         }
-        // discard bytes
       }
     } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        return;
+      }
+      if (error instanceof DOMException && error.name === 'NotAllowedError') {
+        return;
+      }
       if (!(error instanceof DOMException && error.name === 'AbortError')) {
         log?.(
           `Background drain loop stopped: ${
@@ -937,7 +949,13 @@ function startDrain(session: SerialSession, log?: ReturnType<typeof createLog>):
         );
       }
     } finally {
-      reader.releaseLock();
+      if (reader) {
+        try {
+          reader.releaseLock();
+        } catch {
+          // ignore lock release errors
+        }
+      }
     }
   };
 
@@ -974,6 +992,14 @@ async function withSessionIO<T>(
 
   if (!session.port.readable || !session.port.writable) {
     try {
+      if (session.port.readable || session.port.writable) {
+        try {
+          await session.port.close();
+        } catch {
+          // ignore
+        }
+      }
+
       await session.port.open({
         baudRate: session.baudRate,
         dataBits: 8,
@@ -987,13 +1013,13 @@ async function withSessionIO<T>(
         error instanceof Error
           ? error.message
           : 'Failed to open serial port for command sequence.';
-      log(message, 'stderr');
+      log(`Port reconnection failed: ${message}`, 'stderr');
       throw error instanceof Error ? error : new Error(message);
     }
   }
 
   if (!session.port.readable || !session.port.writable) {
-    throw new Error('Serial port is not open');
+    throw new Error('Serial port is not open or readable/writable streams unavailable');
   }
 
   const writer = session.port.writable!.getWriter();
@@ -1002,8 +1028,16 @@ async function withSessionIO<T>(
   try {
     return await handler(writer, reader);
   } finally {
-    writer.releaseLock();
-    reader.releaseLock();
+    try {
+      writer.releaseLock();
+    } catch {
+      // ignore lock release errors
+    }
+    try {
+      reader.releaseLock();
+    } catch {
+      // ignore lock release errors
+    }
     startDrain(session, log);
   }
 }
