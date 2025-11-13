@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Play, Plug, Loader2, CheckCircle, XCircle, Power } from 'lucide-react';
+import { Play, Plug, Loader2, CheckCircle, XCircle, Power, AlertTriangle, Search } from 'lucide-react';
 import {
   webSerialService,
   SENSOR_PROFILES,
@@ -9,21 +9,25 @@ import {
 import { LogEntry } from '../types';
 import { LogViewer } from './LogViewer';
 
-const DEFAULT_IMU_SAMPLING_ID =
-  IMU_SAMPLING_OPTIONS.find((option) => option.rate === 125)?.id || IMU_SAMPLING_OPTIONS[0].id;
-
 export function ConfigurationPanel() {
   const webSerialSupported = webSerialService.isSupported();
   const [port, setPort] = useState<SerialPort | null>(null);
   const [portLabel, setPortLabel] = useState<string>('No device selected');
   const [sensorType, setSensorType] = useState<SensorType>('vibration');
   const [baudRate, setBaudRate] = useState<number>(SENSOR_PROFILES.vibration.defaultBaudRate);
-  const [imuSamplingId, setImuSamplingId] = useState<string>(DEFAULT_IMU_SAMPLING_ID);
+  const [imuSamplingId, setImuSamplingId] = useState<string>(IMU_SAMPLING_OPTIONS[0].id);
   const [loading, setLoading] = useState(false);
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState<string>('');
   const [uiNotice, setUiNotice] = useState<string>('');
+  const [requiresRestart, setRequiresRestart] = useState<boolean>(false);
+  const [detecting, setDetecting] = useState<boolean>(false);
+  const [sessionActive, setSessionActive] = useState<boolean>(false);
+  const [detectedInfo, setDetectedInfo] = useState<{
+    productId: string;
+    serialNumber: string;
+  } | null>(null);
 
   const selectedProfile = useMemo(() => SENSOR_PROFILES[sensorType], [sensorType]);
   const baudRateOptions = selectedProfile.baudRates;
@@ -61,21 +65,10 @@ export function ConfigurationPanel() {
 
   useEffect(() => {
     setBaudRate(selectedProfile.defaultBaudRate);
-    if (sensorType === 'imu') {
-      if (!IMU_SAMPLING_OPTIONS.some((option) => option.id === imuSamplingId)) {
-        setImuSamplingId(DEFAULT_IMU_SAMPLING_ID);
-      }
-    }
-    if (sensorType === 'vibration') {
-      setUiNotice('');
+    if (sensorType === 'imu' && !IMU_SAMPLING_OPTIONS.some((option) => option.id === imuSamplingId)) {
+      setImuSamplingId(IMU_SAMPLING_OPTIONS[0].id);
     }
   }, [selectedProfile, sensorType, imuSamplingId]);
-
-  useEffect(() => {
-    if (sensorType === 'imu') {
-      setImuSamplingId(DEFAULT_IMU_SAMPLING_ID);
-    }
-  }, [sensorType]);
 
   useEffect(() => {
     if (sensorType !== 'imu') {
@@ -104,9 +97,21 @@ export function ConfigurationPanel() {
     setLogs([]);
     setStatus('idle');
     setMessage('');
+    setRequiresRestart(false);
+    setDetectedInfo(null);
 
     try {
+      if (webSerialService.isConnected()) {
+        await webSerialService.disconnect();
+      }
+
       const selectedPort = await webSerialService.requestPort();
+      await webSerialService.preparePort({
+        port: selectedPort,
+        baudRate,
+        onLog: appendLog,
+      });
+
       setPort(selectedPort);
       const label = webSerialService.describePort(selectedPort);
       setPortLabel(label);
@@ -136,11 +141,45 @@ export function ConfigurationPanel() {
       }
       setStatus('success');
       setMessage('Serial device selected. Ready to configure.');
+      setSessionActive(true);
     } catch (error) {
       setStatus('error');
       setMessage(
         error instanceof Error ? error.message : 'Serial port selection was cancelled or failed',
       );
+      setSessionActive(webSerialService.isConnected());
+    } finally {
+      setSessionActive(webSerialService.isConnected());
+      setLoading(false);
+    }
+  };
+
+  const handleDisconnect = async () => {
+    if (!port && !webSerialService.isConnected()) {
+      return;
+    }
+
+    setLoading(true);
+    setStatus('idle');
+    setMessage('');
+
+    try {
+      await webSerialService.disconnect();
+      setPort(null);
+      setPortLabel('No device selected');
+      setSessionActive(false);
+      setDetectedInfo(null);
+      setRequiresRestart(false);
+      appendLog({
+        type: 'stdout',
+        message: 'Serial device disconnected.',
+        timestamp: new Date().toISOString(),
+      });
+      setStatus('success');
+      setMessage('Serial device disconnected.');
+    } catch (error) {
+      setStatus('error');
+      setMessage(error instanceof Error ? error.message : 'Failed to disconnect serial device');
     } finally {
       setLoading(false);
     }
@@ -157,6 +196,8 @@ export function ConfigurationPanel() {
     setLogs([]);
     setStatus('idle');
     setMessage('');
+    setRequiresRestart(false);
+    setDetectedInfo(null);
 
     try {
       appendLog({
@@ -193,10 +234,17 @@ export function ConfigurationPanel() {
       });
       setStatus(result.success ? 'success' : 'error');
       setMessage(result.message);
+      setRequiresRestart(result.success && !!result.requiresRestart);
+      if (!result.success) {
+        setDetectedInfo(null);
+      }
     } catch (error) {
       setStatus('error');
       setMessage(error instanceof Error ? error.message : 'Configuration failed');
+      setRequiresRestart(false);
+      setDetectedInfo(null);
     } finally {
+      setSessionActive(webSerialService.isConnected());
       setLoading(false);
     }
   };
@@ -215,12 +263,15 @@ export function ConfigurationPanel() {
     setLogs([]);
     setStatus('idle');
     setMessage('');
+    setRequiresRestart(false);
+    setDetectedInfo(null);
 
     try {
       const result = await webSerialService.exitAutoMode({
         port,
         sensor: sensorType,
         baudRate,
+        persistDisableAuto: true,
         onLog: appendLog,
       });
       setStatus(result.success ? 'success' : 'error');
@@ -229,6 +280,7 @@ export function ConfigurationPanel() {
       setStatus('error');
       setMessage(error instanceof Error ? error.message : 'Failed to disable auto mode');
     } finally {
+      setSessionActive(webSerialService.isConnected());
       setLoading(false);
     }
   };
@@ -251,11 +303,14 @@ export function ConfigurationPanel() {
     setLogs([]);
     setStatus('idle');
     setMessage('');
+    setRequiresRestart(false);
+    setDetectedInfo(null);
 
     try {
       const result = await webSerialService.factoryReset({
         port,
         sensor: sensorType,
+        baudRate,
         onLog: appendLog,
       });
       setStatus(result.success ? 'success' : 'error');
@@ -264,9 +319,69 @@ export function ConfigurationPanel() {
       setStatus('error');
       setMessage(error instanceof Error ? error.message : 'Factory reset failed');
     } finally {
+      setSessionActive(webSerialService.isConnected());
       setLoading(false);
     }
   };
+
+  const handleDetectSensor = async () => {
+    if (!port) {
+      setStatus('error');
+      setMessage('Please select a serial device first');
+      return;
+    }
+
+    setLoading(true);
+    setDetecting(true);
+    setStatus('idle');
+    setMessage('');
+    setRequiresRestart(false);
+
+    try {
+      appendLog({
+        type: 'stdout',
+        message: 'Requesting sensor identification...',
+        timestamp: new Date().toISOString(),
+      });
+
+      const result = await webSerialService.detectSensor({
+        port,
+        sensor: sensorType,
+        baudRate,
+        onLog: appendLog,
+      });
+
+      setStatus(result.success ? 'success' : 'error');
+      setMessage(result.message);
+
+      setDetectedInfo(
+        result.success
+          ? {
+              productId: result.productId ?? 'Unknown',
+              serialNumber: result.serialNumber ?? 'Unknown',
+            }
+          : null,
+      );
+    } catch (error) {
+      setStatus('error');
+      setMessage(error instanceof Error ? error.message : 'Sensor detection failed');
+      setDetectedInfo(null);
+    } finally {
+      setSessionActive(webSerialService.isConnected());
+      setLoading(false);
+      setDetecting(false);
+    }
+  };
+
+  useEffect(() => {
+    setDetectedInfo(null);
+  }, [sensorType, imuSamplingId, baudRate]);
+
+  useEffect(() => {
+    return () => {
+      void webSerialService.disconnect();
+    };
+  }, []);
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
@@ -280,18 +395,34 @@ export function ConfigurationPanel() {
       )}
 
       <div className="space-y-4">
-        <div>
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
           <button
             onClick={handleRequestPort}
             disabled={loading || !webSerialSupported}
-            className="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-[#085f63] text-white rounded-md hover:bg-[#0a7a80] disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+            className="flex items-center justify-center space-x-2 px-4 py-2 bg-[#085f63] text-white rounded-md hover:bg-[#0a7a80] disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
           >
-            {loading ? (
+            {loading && !detecting ? (
               <Loader2 className="h-5 w-5 animate-spin" />
             ) : (
               <Plug className="h-5 w-5" />
             )}
             <span>Select Sensor</span>
+          </button>
+          <button
+            onClick={handleDetectSensor}
+            disabled={loading || detecting || !port || !webSerialSupported}
+            className="flex items-center justify-center space-x-2 px-4 py-2 rounded-md border border-[#085f63] text-[#085f63] hover:bg-[#e0f5f4] disabled:border-gray-300 disabled:text-gray-400 transition-colors"
+          >
+            {detecting ? <Loader2 className="h-5 w-5 animate-spin" /> : <Search className="h-5 w-5" />}
+            <span>Detect Sensor</span>
+          </button>
+          <button
+            onClick={handleDisconnect}
+            disabled={loading || !sessionActive || !webSerialSupported}
+            className="flex items-center justify-center space-x-2 px-4 py-2 rounded-md border border-red-300 text-red-600 hover:bg-red-50 disabled:border-gray-300 disabled:text-gray-400 transition-colors"
+          >
+            <Power className="h-5 w-5" />
+            <span>Disconnect</span>
           </button>
         </div>
 
@@ -301,6 +432,19 @@ export function ConfigurationPanel() {
             {port ? portLabel : 'No device selected'}
           </div>
         </div>
+
+        {detectedInfo && (
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="rounded-md border border-gray-200 bg-gray-50 p-3">
+              <p className="text-xs uppercase tracking-wide text-gray-500">Product ID</p>
+              <p className="text-sm font-semibold text-gray-900 break-words">{detectedInfo.productId}</p>
+            </div>
+            <div className="rounded-md border border-gray-200 bg-gray-50 p-3">
+              <p className="text-xs uppercase tracking-wide text-gray-500">Serial Number</p>
+              <p className="text-sm font-semibold text-gray-900 break-words">{detectedInfo.serialNumber}</p>
+            </div>
+          </div>
+        )}
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Sensor Type</label>
@@ -439,6 +583,15 @@ export function ConfigurationPanel() {
             {status === 'success' && <CheckCircle className="h-5 w-5" />}
             {status === 'error' && <XCircle className="h-5 w-5" />}
             <span className="text-sm font-medium">{message}</span>
+          </div>
+        )}
+        {status === 'success' && requiresRestart && (
+          <div className="mt-4 flex items-start space-x-3 rounded-md border border-orange-300 bg-orange-50 p-4 text-sm text-orange-900">
+            <AlertTriangle className="h-5 w-5 mt-0.5 flex-shrink-0" />
+            <div>
+              <p className="font-semibold">Restart required</p>
+              <p>Power cycle or reboot the sensor now. Auto Mode will not start until the sensor restarts.</p>
+            </div>
           </div>
         )}
       </div>
