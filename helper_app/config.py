@@ -19,7 +19,14 @@ DEFAULT_ALLOWED_ORIGINS: Final[list[str]] = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "https://localhost:5173",
+    "https://sensor.zenithtek.in",
 ]
+DEFAULT_SUPABASE_URL: Final[str] = "https://dqxfwdaazfzyfrwzkmed.supabase.co"
+DEFAULT_SUPABASE_ANON_KEY: Final[str] = (
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRxeGZ3"
+    "ZGFhemZ6eWZyd3prbWVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMwMjI2MzMsImV4cCI6MjA3OD"
+    "U5ODYzM30.d1-VhrXSQXbz4pl98BCGmNKb6GkUR5R5k_x5zIdPqJY"
+)
 
 TOKEN_ENV_KEY: Final[str] = "ZENITH_HELPER_TOKEN"
 TOKEN_FILE: Final[Path] = Path.home() / ".zenith_helper_token"
@@ -65,8 +72,8 @@ class HelperSettings:
             host=os.getenv("ZENITH_HELPER_HOST", DEFAULT_HOST),
             port=int(os.getenv("ZENITH_HELPER_PORT", DEFAULT_PORT)),
             default_baud_rate=int(os.getenv("ZENITH_HELPER_BAUD", DEFAULT_BAUD_RATE)),
-            supabase_url=os.getenv(SUPABASE_URL_ENV),
-            supabase_anon_key=os.getenv(SUPABASE_ANON_KEY_ENV),
+            supabase_url=os.getenv(SUPABASE_URL_ENV, DEFAULT_SUPABASE_URL),
+            supabase_anon_key=os.getenv(SUPABASE_ANON_KEY_ENV, DEFAULT_SUPABASE_ANON_KEY),
             log_level=os.getenv("ZENITH_HELPER_LOG_LEVEL", "INFO"),
             updates_dir=updates_dir,
             update_poll_interval=poll_interval,

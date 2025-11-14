@@ -26,5 +26,7 @@ dist-ssr
 helper_app/.venv/
 helper_app/dist/
 helper_app/build/
+helper_app/.appimage-tools/
 helper_app/**/__pycache__/
 helper_app/**/*.pyc
+*.AppImage

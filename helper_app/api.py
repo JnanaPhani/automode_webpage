@@ -120,6 +120,10 @@ def create_app(allowed_origins: Optional[List[str]] = None) -> FastAPI:
                 raise HTTPException(status_code=403, detail="Origin not allowed")
         return {"token": TOKEN}
 
+    @app.options("/status")
+    async def options_status() -> Dict[str, Any]:
+        return {}
+
     @app.get("/status")
     async def status(platform: Optional[str] = None, token: None = Depends(verify_token)) -> Dict[str, Any]:
         nonlocal latest_update

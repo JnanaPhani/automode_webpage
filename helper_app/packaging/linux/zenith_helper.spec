@@ -7,22 +7,25 @@ Usage:
 """
 
 from pathlib import Path
+import os
 
 block_cipher = None
 
-project_root = Path(__file__).resolve().parents[2]
+project_root_env = os.environ.get("ZENITH_HELPER_PROJECT_ROOT")
+if not project_root_env:
+    raise RuntimeError("ZENITH_HELPER_PROJECT_ROOT environment variable not set")
 
-legacy_tree = Tree(project_root / "helper_app" / "legacy", prefix="helper_app/legacy")
+project_root = Path(project_root_env).resolve()
 
 datas = [
-    legacy_tree,
-    (project_root / "helper_app" / "env.example", "helper_app"),
-    (project_root / "helper_app" / "version.py", "helper_app"),
-    (project_root / "helper_app" / "config.py", "helper_app"),
-    (project_root / "helper_app" / "logging_utils.py", "helper_app"),
-    (project_root / "helper_app" / "session.py", "helper_app"),
-    (project_root / "helper_app" / "updater.py", "helper_app"),
-    (project_root / "helper_app" / "controller.py", "helper_app"),
+    (str(project_root / "legacy"), "helper_app/legacy"),
+    (project_root / "env.example", "helper_app"),
+    (project_root / "version.py", "helper_app"),
+    (project_root / "config.py", "helper_app"),
+    (project_root / "logging_utils.py", "helper_app"),
+    (project_root / "session.py", "helper_app"),
+    (project_root / "updater.py", "helper_app"),
+    (project_root / "controller.py", "helper_app"),
 ]
 
 hidden_imports = [
@@ -47,7 +50,7 @@ hidden_imports = [
 ]
 
 a = Analysis(
-    ["helper_app/worker.py"],
+    [str(project_root / "worker.py")],
     pathex=[str(project_root)],
     binaries=[],
     datas=datas,

@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 import argparse
+import os
 import subprocess
 import sys
 from pathlib import Path
 
 
 def run_pyinstaller(spec_path: Path, dist_path: Path, work_path: Path) -> None:
+    env = os.environ.copy()
+    env["ZENITH_HELPER_PROJECT_ROOT"] = str(spec_path.resolve().parent.parent.parent)
     command = [
         sys.executable,
         "-m",
@@ -16,21 +19,22 @@ def run_pyinstaller(spec_path: Path, dist_path: Path, work_path: Path) -> None:
         str(dist_path),
         "--workpath",
         str(work_path),
+        "--noconfirm",
     ]
-    subprocess.check_call(command)
+    subprocess.check_call(command, env=env)
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Package the Zenith Helper for Linux using PyInstaller.")
     parser.add_argument(
         "--dist",
-        default="dist/linux",
-        help="Output directory for packaged artifacts (default: dist/linux)",
+        default="helper_app/dist/linux",
+        help="Output directory for packaged artifacts (default: helper_app/dist/linux)",
     )
     parser.add_argument(
         "--work",
-        default="build/linux",
-        help="Temporary work directory used by PyInstaller (default: build/linux)",
+        default="helper_app/build/linux",
+        help="Temporary work directory used by PyInstaller (default: helper_app/build/linux)",
     )
     args = parser.parse_args()
 

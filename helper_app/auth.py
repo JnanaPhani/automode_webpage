@@ -2,15 +2,17 @@
 
 from __future__ import annotations
 
-from fastapi import Depends, Header, HTTPException, status
+from fastapi import Depends, Header, HTTPException, Request, status
 
 from helper_app.config import ensure_token
 
 TOKEN = ensure_token()
 
 
-def verify_token(x_zenith_token: str = Header(...)) -> None:
-    if x_zenith_token != TOKEN:
+def verify_token(request: Request, x_zenith_token: str | None = Header(default=None)) -> None:
+    if request.method == "OPTIONS":
+        return
+    if not x_zenith_token or x_zenith_token != TOKEN:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid authentication token",

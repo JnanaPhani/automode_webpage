@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AlertTriangle, CheckCircle, Loader2, Play, Plug, Power, RefreshCw, XCircle, Copy, Check } from 'lucide-react';
 import { HelperClient, HelperPortInfo, HelperStatus, HelperUpdateInfo } from '../services/helperClient';
+import { getHelperDownload } from '../utils/helperDownloads';
 import {
   SENSOR_PROFILES,
   SensorType,
@@ -16,8 +17,6 @@ const navigatorInfo =
     : undefined;
 const PLATFORM = navigatorInfo?.userAgentData?.platform ?? navigatorInfo?.platform ?? 'unknown';
 const LOG_HISTORY_LIMIT = 400;
-const DEFAULT_DOWNLOAD_URL =
-  'https://dqxfwdaazfzyfrwzkmed.supabase.co/storage/v1/object/public/helper-installers/';
 
 function formatBytes(length: number): string {
   if (!Number.isFinite(length) || length < 0) {
@@ -88,6 +87,7 @@ export function ConfigurationPanel() {
   const DEFAULT_IMU_OPTION =
     IMU_SAMPLING_OPTIONS.find((option) => option.isDefault) ?? IMU_SAMPLING_OPTIONS[0];
   const [imuSamplingId, setImuSamplingId] = useState<string>(DEFAULT_IMU_OPTION.id);
+  const helperDownload = useMemo(() => getHelperDownload(PLATFORM), []);
   const [loading, setLoading] = useState(false);
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
@@ -782,9 +782,14 @@ export function ConfigurationPanel() {
             <p className="font-semibold">Helper not detected.</p>
             <p className="mt-1">
               Make sure the Zenith Helper application is installed and running on this computer. You can download the
-              latest installer from{' '}
-              <a href={DEFAULT_DOWNLOAD_URL} className="underline text-[#085f63]" target="_blank" rel="noreferrer">
-                the helper releases page
+              latest installer for this platform from{' '}
+              <a
+                href={helperDownload.url}
+                className="underline text-[#085f63]"
+                target="_blank"
+                rel="noreferrer"
+              >
+                {helperDownload.label}
               </a>
               .
             </p>

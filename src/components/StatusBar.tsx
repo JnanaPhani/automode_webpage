@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react';
 import { AlertTriangle, CheckCircle, XOctagon } from 'lucide-react';
 import { HelperClient } from '../services/helperClient';
+import { getHelperDownload } from '../utils/helperDownloads';
 
-const PLATFORM = navigator.userAgentData?.platform ?? navigator.platform ?? 'unknown';
+const PLATFORM =
+  typeof navigator !== 'undefined'
+    ? (navigator as Navigator & { userAgentData?: { platform?: string } }).userAgentData?.platform ??
+      navigator.platform ??
+      'unknown'
+    : 'unknown';
 const STATUS_POLL_INTERVAL = 10000;
-const DEFAULT_DOWNLOAD_URL =
-  'https://dqxfwdaazfzyfrwzkmed.supabase.co/storage/v1/object/public/helper-installers/';
 
 type HelperState =
   | { level: 'info'; message: string }
@@ -17,6 +21,7 @@ export function StatusBar() {
     level: 'warn',
     message: 'Waiting for helper pairing. Launch the helper app to connect.',
   });
+  const helperDownload = getHelperDownload(PLATFORM);
 
   useEffect(() => {
     let cancelled = false;
@@ -87,13 +92,8 @@ export function StatusBar() {
         <Icon className="h-4 w-4 text-white" />
         <span>{helperState.message}</span>
         {helperState.level === 'error' && helperState.showDownload && (
-          <a
-            className="underline text-white ml-2"
-            href={DEFAULT_DOWNLOAD_URL}
-            target="_blank"
-            rel="noreferrer"
-          >
-            Download Helper
+          <a className="underline text-white ml-2" href={helperDownload.url} target="_blank" rel="noreferrer">
+            {helperDownload.label}
           </a>
         )}
       </div>
