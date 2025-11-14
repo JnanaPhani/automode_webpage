@@ -2,13 +2,25 @@
 
 from __future__ import annotations
 
+import os
+import sys
+
 import uvicorn  # type: ignore
 
 from helper_app.api import create_app
 from helper_app.config import HelperSettings, ensure_token
 
 
+def ensure_std_streams() -> None:
+    """Ensure stdout/stderr exist for uvicorn logging when running windowless."""
+    for name in ("stdout", "stderr"):
+        stream = getattr(sys, name)
+        if stream is None:
+            setattr(sys, name, open(os.devnull, "w"))
+
+
 def main() -> None:  # pragma: no cover - runtime entry
+    ensure_std_streams()
     settings = HelperSettings.from_env()
     token = ensure_token()
     print(f"Zenith Helper starting on http://{settings.host}:{settings.port}")

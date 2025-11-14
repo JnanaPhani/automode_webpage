@@ -6,23 +6,25 @@ Usage:
     pyinstaller helper_app/packaging/windows/zenith_helper.spec
 """
 
+import inspect
 from pathlib import Path
 
 block_cipher = None
 
-project_root = Path(__file__).resolve().parents[2]
+spec_file = Path(__file__).resolve() if "__file__" in globals() else Path(inspect.getfile(inspect.currentframe())).resolve()
+project_root = spec_file.parents[3]
+app_root = project_root / "helper_app"
 
-legacy_tree = Tree(project_root / "helper_app" / "legacy", prefix="helper_app/legacy")
+legacy_tree = Tree(app_root / "legacy", prefix="helper_app/legacy")
 
 datas = [
-    legacy_tree,
-    (project_root / "helper_app" / "env.example", "helper_app"),
-    (project_root / "helper_app" / "version.py", "helper_app"),
-    (project_root / "helper_app" / "config.py", "helper_app"),
-    (project_root / "helper_app" / "logging_utils.py", "helper_app"),
-    (project_root / "helper_app" / "session.py", "helper_app"),
-    (project_root / "helper_app" / "updater.py", "helper_app"),
-    (project_root / "helper_app" / "controller.py", "helper_app"),
+    (app_root / "env.example", "helper_app"),
+    (app_root / "version.py", "helper_app"),
+    (app_root / "config.py", "helper_app"),
+    (app_root / "logging_utils.py", "helper_app"),
+    (app_root / "session.py", "helper_app"),
+    (app_root / "updater.py", "helper_app"),
+    (app_root / "controller.py", "helper_app"),
 ]
 
 hidden_imports = [
@@ -47,7 +49,7 @@ hidden_imports = [
 ]
 
 a = Analysis(
-    ["helper_app/worker.py"],
+    [str(app_root / "worker.py")],
     pathex=[str(project_root)],
     binaries=[],
     datas=datas,
@@ -83,6 +85,7 @@ coll = COLLECT(
     a.binaries,
     a.zipfiles,
     a.datas,
+    legacy_tree,
     strip=False,
     upx=True,
     upx_exclude=[],
