@@ -11,19 +11,20 @@ const steps = [
   },
   {
     icon: <Server className="h-4 w-4 text-[#085f63]" />,
-    title: 'Open the tool',
+    title: 'Install & start the helper',
     items: [
-      'Use the latest desktop version of Chrome or Edge browser.',
-      'Keep browser open during setup.',
+      'Install the Zenith Helper app on Windows, macOS, or Linux.',
+      'Launch the helper — copy the token it prints and paste it in the portal.',
+      'Keep the helper running while you configure sensors.',
     ],
   },
   {
     icon: <SlidersHorizontal className="h-4 w-4 text-[#085f63]" />,
     title: 'Choose your sensor',
     items: [
-      'Press “Select Sensor” and choose the USB device from the list.',
-      'Pick your sensor from the sensor type list.',
-      'If you selected the IMU, choose a sampling rate.',
+      'Click “Select & Connect” once the helper token is set.',
+      'Pick your sensor type and, for IMU, choose a sampling rate.',
+      'Use “Refresh Ports” if the device list is empty.',
     ],
   },
   {

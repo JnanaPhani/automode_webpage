@@ -1,47 +1,101 @@
 import { useEffect, useState } from 'react';
-import { AlertTriangle, CheckCircle } from 'lucide-react';
-import { webSerialService } from '../services/webSerial';
+import { AlertTriangle, CheckCircle, XOctagon } from 'lucide-react';
+import { HelperClient } from '../services/helperClient';
+
+const PLATFORM = navigator.userAgentData?.platform ?? navigator.platform ?? 'unknown';
+const STATUS_POLL_INTERVAL = 10000;
+const DEFAULT_DOWNLOAD_URL =
+  'https://dqxfwdaazfzyfrwzkmed.supabase.co/storage/v1/object/public/helper-installers/';
+
+type HelperState =
+  | { level: 'info'; message: string }
+  | { level: 'warn'; message: string }
+  | { level: 'error'; message: string; showDownload?: boolean };
 
 export function StatusBar() {
-  const [supported] = useState(webSerialService.isSupported());
-  const [hasPermission, setHasPermission] = useState(false);
+  const [helperState, setHelperState] = useState<HelperState>({
+    level: 'warn',
+    message: 'Waiting for helper pairing. Launch the helper app to connect.',
+  });
 
   useEffect(() => {
-    if (!supported) {
+    let cancelled = false;
+
+    const pollStatus = async () => {
+      const token = localStorage.getItem('helperToken') ?? '';
+      const baseUrl = localStorage.getItem('helperBaseUrl') ?? 'http://127.0.0.1:7421';
+
+      if (!token) {
+        if (!cancelled) {
+          setHelperState({
+            level: 'warn',
+            message: 'Waiting for helper pairing. Launch the helper app to connect.',
+          });
+        }
       return;
     }
 
-    let active = true;
+      const client = new HelperClient(token, baseUrl);
 
-    (async () => {
       try {
-        const ports = await webSerialService.getSavedPorts();
-        if (active) {
-          setHasPermission(ports.length > 0);
+        const status = await client.status(PLATFORM);
+        if (cancelled) {
+          return;
         }
-      } catch {
-        // ignore
+        if (status.connected && status.port) {
+          setHelperState({
+            level: 'info',
+            message: `Helper connected to ${status.port} @ ${status.baudRate.toLocaleString()} bps.`,
+          });
+        } else {
+          setHelperState({
+            level: 'warn',
+            message: 'Helper ready — select a port and click “Connect & Detect Sensor”.',
+          });
+        }
+      } catch (error) {
+        if (!cancelled) {
+          console.warn('Helper status polling failed', error);
+          setHelperState({
+            level: 'error',
+            message: 'Helper not detected. Install and start the helper application.',
+            showDownload: true,
+          });
+        }
       }
-    })();
+    };
+
+    pollStatus();
+    const interval = window.setInterval(pollStatus, STATUS_POLL_INTERVAL);
+    const handleStorage = () => pollStatus();
+    window.addEventListener('storage', handleStorage);
 
     return () => {
-      active = false;
+      cancelled = true;
+      window.clearInterval(interval);
+      window.removeEventListener('storage', handleStorage);
     };
-  }, [supported]);
+  }, []);
 
-  const Icon = supported ? CheckCircle : AlertTriangle;
-  const bgClass = supported ? 'bg-[#085f63]' : 'bg-red-600';
-  const text = supported
-    ? hasPermission
-      ? 'Web Serial ready — previously authorised device detected.'
-      : 'Web Serial ready — select your sensor to begin.'
-    : 'Web Serial is not supported in this browser.';
+  const bgClass =
+    helperState.level === 'info' ? 'bg-[#085f63]' : helperState.level === 'warn' ? 'bg-yellow-600' : 'bg-red-600';
+  const Icon = helperState.level === 'info' ? CheckCircle : helperState.level === 'warn' ? AlertTriangle : XOctagon;
 
   return (
     <div className={`fixed bottom-0 left-0 right-0 px-4 py-2 text-sm ${bgClass} text-white`}>
       <div className="max-w-7xl mx-auto flex items-center space-x-2">
         <Icon className="h-4 w-4 text-white" />
-        <span>{text}</span>
+        <span>{helperState.message}</span>
+        {helperState.level === 'error' && helperState.showDownload && (
+          <a
+            className="underline text-white ml-2"
+            href={DEFAULT_DOWNLOAD_URL}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Download Helper
+          </a>
+        )}
       </div>
     </div>
   );

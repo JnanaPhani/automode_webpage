@@ -142,7 +142,7 @@ const SENSOR_PROFILES_MAP: Record<SensorType, SensorProfile> = {
   vibration: {
     label: 'Vibration Sensor',
     model: 'Epson M-A542VR1',
-    summary: 'Programs the vibration sensor into Auto Start mode.',
+    summary: ' ',
     defaultBaudRate: 460800,
     baudRates: [230400, 460800, 921600],
     resetCommands: [
@@ -169,7 +169,7 @@ const SENSOR_PROFILES_MAP: Record<SensorType, SensorProfile> = {
   imu: {
     label: 'IMU Sensor',
     model: 'Epson M-G552PR80',
-    summary: 'Programs the IMU into Auto Start mode.',
+    summary: ' ',
     defaultBaudRate: 460800,
     baudRates: [230400, 460800, 921600],
     resetCommands: [
@@ -467,62 +467,62 @@ export const webSerialService = {
     try {
       const session = await ensureSession(port, baudRate, log);
       return await withSessionIO(session, log, async (writer, reader) => {
-        try {
-          log(`Configuring ${profile.label} (${profile.model}) at ${baudRate.toLocaleString()} bps`);
-          log(profile.summary);
+    try {
+      log(`Configuring ${profile.label} (${profile.model}) at ${baudRate.toLocaleString()} bps`);
+      log(profile.summary);
 
-          log('Sending sensor reset sequence');
-          await sendCommands(writer, reader, profile.resetCommands);
+      log('Sending sensor reset sequence');
+      await sendCommands(writer, reader, profile.resetCommands);
 
-          if (sensor === 'imu') {
-            if (!imuSampling) {
-              throw new Error('No sampling option provided for IMU sensor.');
-            }
-            if (imuSampling.rate > 500 && baudRate < 921600) {
-              log(
-                `Warning: ${imuSampling.label} typically requires 921600 baud. Selected ${baudRate.toLocaleString()} bps may overflow the host interface.`,
-                'stderr',
-              );
-            }
-            await configureImuSampling(writer, reader, log, imuSampling);
+      if (sensor === 'imu') {
+        if (!imuSampling) {
+          throw new Error('No sampling option provided for IMU sensor.');
+        }
+        if (imuSampling.rate > 500 && baudRate < 921600) {
+          log(
+            `Warning: ${imuSampling.label} typically requires 921600 baud. Selected ${baudRate.toLocaleString()} bps may overflow the host interface.`,
+            'stderr',
+          );
+        }
+        await configureImuSampling(writer, reader, log, imuSampling);
 
-            const imuBaseCommands: number[][] = [
-              [0, 0xfe, 0x01, 0x0d],
-              [0, 0x88, 0x03, 0x0d], // UART_CTRL: AUTO_START + UART_AUTO
-              [0, 0x8c, 0x02, 0x0d], // BURST_CTRL1: COUNT on, checksum off
-              [0, 0x8d, 0xf0, 0x0d], // BURST_CTRL2: FLAG, TEMP, GYRO, ACCL
-              [0, 0x8f, 0x70, 0x0d], // BURST_CTRL4: 32-bit outputs
-            ];
-            await sendCommands(writer, reader, imuBaseCommands);
-          } else {
-            log(profile.configureLog);
-            await sendCommands(writer, reader, profile.configureCommands);
-          }
+        const imuBaseCommands: number[][] = [
+          [0, 0xfe, 0x01, 0x0d],
+          [0, 0x88, 0x03, 0x0d], // UART_CTRL: AUTO_START + UART_AUTO
+          [0, 0x8c, 0x02, 0x0d], // BURST_CTRL1: COUNT on, checksum off
+          [0, 0x8d, 0xf0, 0x0d], // BURST_CTRL2: FLAG, TEMP, GYRO, ACCL
+          [0, 0x8f, 0x70, 0x0d], // BURST_CTRL4: 32-bit outputs
+        ];
+        await sendCommands(writer, reader, imuBaseCommands);
+      } else {
+        log(profile.configureLog);
+        await sendCommands(writer, reader, profile.configureCommands);
+      }
 
-          log('Triggering flash backup to persist settings');
-          await sendCommands(writer, reader, profile.flashBackupCommands);
+      log('Triggering flash backup to persist settings');
+      await sendCommands(writer, reader, profile.flashBackupCommands);
 
-          log('Waiting for flash backup to complete...');
-          await pollFlashBackup(writer, reader, log);
+      log('Waiting for flash backup to complete...');
+      await pollFlashBackup(writer, reader, log);
 
-          log('Verifying flash backup status');
-          await verifyFlashBackup(writer, reader);
+      log('Verifying flash backup status');
+      await verifyFlashBackup(writer, reader);
 
-          profile.successLogs.forEach((line) => log(line));
+      profile.successLogs.forEach((line) => log(line));
 
-          return {
-            success: true,
-            message: profile.successMessage,
+      return {
+        success: true,
+        message: profile.successMessage,
             requiresRestart: true,
-          };
-        } catch (error) {
-          const message =
-            error instanceof Error ? error.message : 'An unknown error occurred during configuration';
-          log(message, 'stderr');
-          return {
-            success: false,
-            message,
-          };
+      };
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'An unknown error occurred during configuration';
+      log(message, 'stderr');
+      return {
+        success: false,
+        message,
+      };
         }
       });
     } catch (error) {
@@ -634,13 +634,13 @@ export const webSerialService = {
             }
           }
         }
-      });
-    } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
+        });
+      } catch (error) {
+        const message =
+          error instanceof Error
+            ? error.message
           : 'An unknown error occurred while preparing the serial session.';
-      log(message, 'stderr');
+        log(message, 'stderr');
       return { success: false, message };
     }
   },
@@ -664,18 +664,18 @@ export const webSerialService = {
       return await withSessionIO(session, log, async (writer, reader) => {
         try {
           await exitAutoModeSequence(writer, reader, log, profile, persist);
-          log('Auto mode disabled successfully.');
-          return {
-            success: true,
+      log('Auto mode disabled successfully.');
+      return {
+        success: true,
             message: persist
               ? 'Auto mode disabled and persisted to flash.'
               : 'Auto mode disabled (not persisted).',
-          };
-        } catch (error) {
-          const message =
-            error instanceof Error ? error.message : 'Failed to disable auto mode.';
-          log(message, 'stderr');
-          return { success: false, message };
+      };
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Failed to disable auto mode.';
+      log(message, 'stderr');
+      return { success: false, message };
         }
       });
     } catch (error) {
@@ -738,13 +738,13 @@ export const webSerialService = {
           log(message, 'stderr');
           return { success: false, message };
         }
-      });
-    } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
+        });
+      } catch (error) {
+        const message =
+          error instanceof Error
+            ? error.message
           : 'An unknown error occurred while preparing the serial session.';
-      log(message, 'stderr');
+        log(message, 'stderr');
       return { success: false, message };
     }
   },
@@ -793,7 +793,7 @@ async function exitAutoModeSequence(
   persistDisableAuto: boolean,
 ): Promise<void> {
   log('Stopping sensor sampling and requesting configuration mode');
-  await sendCommands(writer, reader, [
+      await sendCommands(writer, reader, [
     [0, WINDOW_REGISTER, WINDOW_ID_CONFIGURATION, 0x0d],
     [0, 0x83, 0x02, 0x0d],
   ]);
@@ -972,10 +972,10 @@ async function stopDrain(session: SerialSession): Promise<void> {
   if (session.drainTask) {
     try {
       await session.drainTask;
-    } catch {
-      // ignore
+      } catch {
+        // ignore
+      }
     }
-  }
   session.drainAbort = undefined;
   session.drainTask = undefined;
 }

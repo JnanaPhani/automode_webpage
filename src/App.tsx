@@ -59,10 +59,10 @@ function App() {
           </span>
           <h1 className="text-2xl font-semibold">Use a Laptop or Desktop Browser</h1>
           <p className="text-base text-gray-200">
-            Sensor configuration requires larger screens and the Web Serial API, which are not fully supported on mobile devices.
+            Sensor configuration requires the Zenith Helper application running on the same computer, and a desktop browser to control it.
           </p>
           <p className="text-sm text-gray-400">
-            Please reopen this page on a laptop or desktop running Chrome, Edge, or another Chromium-based browser.
+            Please reopen this page on a laptop or desktop. Once there, install the helper app and continue the configuration steps.
           </p>
         </div>
       </div>
