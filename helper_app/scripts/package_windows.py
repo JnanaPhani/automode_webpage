@@ -24,13 +24,13 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Package the Zenith Helper for Windows using PyInstaller.")
     parser.add_argument(
         "--dist",
-        default="dist/windows",
-        help="Output directory for packaged artifacts (default: dist/windows)",
+        default="helper_app/dist/windows",
+        help="Output directory for packaged artifacts (default: helper_app/dist/windows)",
     )
     parser.add_argument(
         "--work",
-        default="build/windows",
-        help="Temporary work directory used by PyInstaller (default: build/windows)",
+        default="helper_app/build/windows",
+        help="Temporary work directory used by PyInstaller (default: helper_app/build/windows)",
     )
     args = parser.parse_args()
 
