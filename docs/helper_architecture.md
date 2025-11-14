@@ -83,6 +83,7 @@ All requests include header `X-Zenith-Token: <random-token>` generated per helpe
 - Successful lookups are cached in-memory so portal status checks avoid redundant Supabase calls.
 - Downloaded installer packages are saved to `~/.zenith_helper/updates` (override via `ZENITH_HELPER_UPDATES_DIR`), with SHA-256 verification when a checksum is provided.
 - `/pair` is only accessible from approved origins (matching the CORS whitelist) so the browser can obtain the token automatically without exposing it publicly.
+- The whitelist defaults to local development URLs; set `ZENITH_HELPER_ALLOWED_ORIGINS` (comma-separated, e.g. `https://sensor.zenithtek.in`) to authorise production domains.
 - When an update is available, the helper downloads the installer, verifies checksum, and prompts the user via system notification or the portal (API response includes `updateAvailable` flag).
 
 ## Portal Changes

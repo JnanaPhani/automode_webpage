@@ -21,3 +21,10 @@ dist-ssr
 *.sln
 *.sw?
 .env
+
+# Helper Python project artifacts
+helper_app/.venv/
+helper_app/dist/
+helper_app/build/
+helper_app/**/__pycache__/
+helper_app/**/*.pyc
