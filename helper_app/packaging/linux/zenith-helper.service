@@ -1,0 +1,14 @@
+[Unit]
+Description=Zenith Sensor Helper
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=%h/.zenith-helper/zenith-helper/zenith-helper
+Restart=on-failure
+Environment=PYTHONUNBUFFERED=1
+WorkingDirectory=%h/.zenith-helper/zenith-helper
+
+[Install]
+WantedBy=default.target
+

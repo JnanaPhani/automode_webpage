@@ -6,7 +6,7 @@ This folder contains platform-specific assets used to bundle the Zenith Helper i
 
 - `windows/` – PyInstaller spec and helper scripts for generating a standalone `.exe` bundle. Future milestones will add a tray/service wrapper and MSI installer.
 - `mac/` – Placeholder for macOS builds. We will use PyInstaller (or Briefcase) to output a `.app` bundle and ship a LaunchAgent for auto-start.
-- `linux/` – Placeholder for Linux packages. Planned outputs include an AppImage and `.deb` with a systemd user service.
+- `linux/` – PyInstaller spec + packaging script producing a runnable bundle; AppImage and `.deb` wrappers will build on top of this output.
 
 ## Common Expectations
 
