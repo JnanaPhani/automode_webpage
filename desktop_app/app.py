@@ -18,9 +18,11 @@ def run() -> None:
     
     # Set application icon if available
     icon_paths = [
-        Path(__file__).parent.parent / "public" / "app-icon.png",
-        Path(sys.executable).parent / "public" / "app-icon.png",
-        Path(sys.executable).parent.parent / "public" / "app-icon.png",
+        Path(__file__).parent.parent / "public" / "favicon.ico",  # Development - use .ico
+        Path(sys.executable).parent / "_internal" / "public" / "favicon.ico",  # Packaged (in _internal)
+        Path(sys.executable).parent / "_internal" / "public" / "app-icon.png",  # Packaged fallback
+        Path(sys.executable).parent / "public" / "favicon.ico",  # Packaged (if in same dir)
+        Path(__file__).parent.parent / "public" / "app-icon.png",  # Development fallback
     ]
     for icon_path in icon_paths:
         if icon_path.exists():

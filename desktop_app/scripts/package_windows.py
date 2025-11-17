@@ -7,6 +7,16 @@ from pathlib import Path
 
 
 def run_pyinstaller(spec_path: Path, dist_path: Path, work_path: Path) -> None:
+    import shutil
+    # Remove existing output directory if it exists
+    output_dir = dist_path / "ZenithTek-SensorConfig"
+    if output_dir.exists():
+        try:
+            shutil.rmtree(output_dir)
+        except PermissionError:
+            # If we can't delete, PyInstaller will handle it with --noconfirm
+            pass
+    
     command = [
         sys.executable,
         "-m",
@@ -16,6 +26,7 @@ def run_pyinstaller(spec_path: Path, dist_path: Path, work_path: Path) -> None:
         str(dist_path),
         "--workpath",
         str(work_path),
+        "--noconfirm",
     ]
     subprocess.check_call(command)
 

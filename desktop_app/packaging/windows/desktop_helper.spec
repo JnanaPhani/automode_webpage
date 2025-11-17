@@ -26,6 +26,7 @@ datas = [
     (app_root / "controller.py", "helper_app"),
     (public_root / "zenithtek-logo.png", "public"),
     (public_root / "app-icon.png", "public"),
+    (public_root / "favicon.ico", "public"),
 ]
 
 hidden_imports = [
@@ -60,7 +61,7 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name="zenith-helper-gui",
+    name="ZenithTek-SensorConfig",
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -68,7 +69,7 @@ exe = EXE(
     console=False,
     disable_windowed_traceback=False,
     target_arch=None,
-    icon=None,
+    icon=str(public_root / "favicon.ico"),
 )
 
 coll = COLLECT(
@@ -80,7 +81,7 @@ coll = COLLECT(
     strip=False,
     upx=True,
     upx_exclude=[],
-    name="zenith-helper-gui",
+    name="ZenithTek-SensorConfig",
 )
 
 

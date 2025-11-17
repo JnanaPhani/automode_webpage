@@ -159,25 +159,115 @@ class SensorConfigurator:
     def check_auto_mode(self) -> bool:
         """Check if the sensor is currently in auto mode.
         
+        This is a read-only check that does NOT change the sensor's state.
+        
         Returns:
             True if AUTO bit is set in MODE_CTRL, False otherwise
         """
         try:
+            logger.info("Checking if sensor is in auto mode...")
+            # Flush buffer multiple times to clear any streaming data
+            # We do this without sending any commands that would change the sensor state
             if hasattr(self.comm, "flush_input_buffer"):
-                self.comm.flush_input_buffer()
-            result = self.comm.send_commands(
-                [
-                    [0, 0xFE, 0x00, 0x0D],
-                    [4, 0x02, 0x00, 0x0D],
-                ]
-            )
-            if len(result) >= 4:
-                mode_register = (result[-3] << 8) | result[-2]
-                return (mode_register & 0x0400) != 0
+                for _ in range(5):
+                    self.comm.flush_input_buffer()
+                    time.sleep(0.05)
+            
+            # Try to read MODE_CTRL register directly without changing sensor state
+            # If sensor is streaming, we might get corrupted data, so try a few times
+            valid_reads = 0
+            auto_mode_reads = 0
+            streaming_detected = 0
+            
+            for attempt in range(5):
+                try:
+                    # Just read the register - don't send any commands that change state
+                    result = self.comm.send_commands(
+                        [
+                            [0, 0xFE, 0x00, 0x0D],  # Select window 0
+                            [4, 0x02, 0x00, 0x0D],  # Read MODE_CTRL register (address 0x02)
+                        ]
+                    )
+                    # Check if we got a valid response (should be exactly 4 bytes: addr, msb, lsb, cr)
+                    if len(result) == 4:
+                        mode_register = (result[-3] << 8) | result[-2]
+                        # If AUTO bit (bit 10 = 0x0400) is set, it's in auto mode
+                        if (mode_register & 0x0400) != 0:
+                            auto_mode_reads += 1
+                            logger.debug("Auto mode detected: MODE_CTRL=0x%04X", mode_register)
+                        else:
+                            valid_reads += 1
+                            logger.debug("Not in auto mode: MODE_CTRL=0x%04X", mode_register)
+                    elif len(result) > 4:
+                        # Extra bytes indicate streaming data mixed in - sensor is likely in auto mode
+                        streaming_detected += 1
+                        logger.debug("Response has extra bytes (%d bytes) - likely streaming (auto mode)", len(result))
+                        time.sleep(0.1)
+                        continue
+                    else:
+                        # Too few bytes - might be streaming or error
+                        logger.debug("Response too short (%d bytes) - retrying", len(result))
+                        time.sleep(0.1)
+                        continue
+                except Exception:
+                    if attempt < 4:
+                        time.sleep(0.1)
+                        continue
+                    # If we can't read at all after multiple attempts, likely streaming
+                    logger.debug("Could not read MODE_CTRL after %d attempts - sensor likely in auto mode", attempt + 1)
+                    streaming_detected += 1
+            
+            # Decision logic: prioritize actual register reads over streaming detection
+            # Trust valid reads - if we get consistent reads, use them
+            
+            # If we got multiple consistent auto mode reads, return True
+            if auto_mode_reads >= 2:
+                logger.info("Sensor is in auto mode (AUTO bit set in MODE_CTRL, %d consistent reads)", auto_mode_reads)
+                return True
+            
+            # If we got multiple consistent valid reads saying NOT in auto mode, trust that
+            if valid_reads >= 2:
+                logger.info("Sensor is not in auto mode (MODE_CTRL AUTO bit not set, %d consistent reads)", valid_reads)
+                return False
+            
+            # If we got one auto mode read and streaming detected, likely auto mode
+            if auto_mode_reads >= 1 and streaming_detected >= 2:
+                logger.info("Sensor is likely in auto mode (AUTO bit set + streaming detected)")
+                return True
+            
+            # If we got consistent streaming (3+ times) without valid reads, assume auto mode
+            if streaming_detected >= 3 and valid_reads == 0:
+                logger.info("Consistent streaming detected without valid reads - sensor likely in auto mode")
+                return True
+            
+            # If we got one valid read saying NOT in auto mode and no streaming, trust it
+            if valid_reads >= 1 and streaming_detected == 0:
+                logger.info("Sensor is not in auto mode (MODE_CTRL AUTO bit not set, 1 valid read, no streaming)")
+                return False
+            
+            # If we got one auto mode read, might be auto mode
+            if auto_mode_reads >= 1:
+                logger.warning("Got one auto mode read - assuming auto mode to be safe")
+                return True
+            
+            # If we got some streaming but also got valid reads, trust the valid reads
+            if valid_reads >= 1:
+                logger.info("Got valid read saying not in auto mode despite some streaming - trusting valid read")
+                return False
+            
+            # If we couldn't get any valid reads but got some streaming, assume auto mode
+            if streaming_detected >= 1:
+                logger.warning("Some streaming detected but no valid reads - assuming auto mode")
+                return True
+            
+            # If we couldn't get any valid reads at all, be conservative and assume NOT in auto mode
+            # (Better to try detection than to incorrectly block it)
+            logger.warning("Could not get reliable MODE_CTRL reads - assuming NOT in auto mode (will proceed with detection)")
             return False
         except Exception:
-            logger.debug("Failed to check auto mode status", exc_info=True)
-            return False
+            logger.warning("Failed to check auto mode status - assuming auto mode to be safe", exc_info=True)
+            # On error, assume auto mode to be safe (better to prompt user than miss it)
+            return True
 
     def detect_identity(self) -> Optional[dict]:
         logger.info("Reading product and serial number registers")

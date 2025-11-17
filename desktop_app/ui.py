@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import sys
 from pathlib import Path
 from typing import Optional
@@ -10,6 +11,8 @@ from helper_app.controller import SensorType
 
 from desktop_app.runtime import DeviceIdentity, HelperRuntime
 
+LOG = logging.getLogger(__name__)
+
 
 class MainWindow(QtWidgets.QMainWindow):
     """Primary window for the desktop helper."""
@@ -17,14 +20,17 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, runtime: HelperRuntime) -> None:
         super().__init__()
         self.runtime = runtime
-        self._detect_after_connect = False
         self._pending_sensor_type: Optional[SensorType] = None
         self._exit_auto_then_detect = False
+        self._detection_in_progress = False
         self.setWindowTitle("Zenith Tek Sensor Configuration Tool")
-        self.resize(900, 650)
+        self.setFixedSize(900, 650)  # Fixed size - prevents resizing
         self._build_ui()
         self._wire_signals()
         self.runtime.publish_ports()
+        # Remove maximize button while explicitly keeping close and minimize buttons
+        flags = QtCore.Qt.WindowType.Window | QtCore.Qt.WindowType.WindowCloseButtonHint | QtCore.Qt.WindowType.WindowMinimizeButtonHint
+        self.setWindowFlags(flags)
 
     # UI construction ---------------------------------------------------------
     def _build_ui(self) -> None:
@@ -44,8 +50,9 @@ class MainWindow(QtWidgets.QMainWindow):
         # Try multiple paths: packaged exe location, development location
         logo_paths = [
             Path(__file__).parent.parent / "public" / "zenithtek-logo.png",  # Development
+            Path(sys.executable).parent / "_internal" / "public" / "zenithtek-logo.png",  # Packaged (in _internal)
             Path(sys.executable).parent / "public" / "zenithtek-logo.png",  # Packaged (if in same dir)
-            Path(sys.executable).parent.parent / "public" / "zenithtek-logo.png",  # Packaged (if in _internal)
+            Path(sys.executable).parent.parent / "public" / "zenithtek-logo.png",  # Packaged (alternative)
         ]
         logo_path = None
         for path in logo_paths:
@@ -104,10 +111,14 @@ class MainWindow(QtWidgets.QMainWindow):
         connection_layout.addWidget(QtWidgets.QLabel("Select Sensor"), 1, 0)
         connection_layout.addWidget(self.sensor_combo, 1, 1)
 
-        self.connect_btn = QtWidgets.QPushButton("Connect and Detect")
+        self.connect_btn = QtWidgets.QPushButton("Connect")
+        self.detect_btn = QtWidgets.QPushButton("Detect")
         self.disconnect_btn = QtWidgets.QPushButton("Disconnect")
-        self.disconnect_btn.setEnabled(False)
-        connection_layout.addWidget(self.connect_btn, 2, 0, 1, 2)
+        self.detect_btn.setEnabled(False)  # Disabled until connected
+        self.disconnect_btn.setEnabled(False)  # Disabled until connected
+        
+        connection_layout.addWidget(self.connect_btn, 2, 0)
+        connection_layout.addWidget(self.detect_btn, 2, 1)
         connection_layout.addWidget(self.disconnect_btn, 2, 2)
 
         layout.addWidget(connection_group)
@@ -185,7 +196,7 @@ class MainWindow(QtWidgets.QMainWindow):
             "⚠️ <b>IMPORTANT:</b> RAW data sampling rates are <b>FIXED</b> and cannot be changed.\n\n"
             "• Velocity RAW: <b>3000 Sps</b> (FIXED)\n"
             "• Displacement RAW: <b>300 Sps</b> (FIXED)\n\n"
-            "Only RMS/P-P (Root Mean Square / Peak-to-Peak) rates can be configured."
+            # "Only RMS/P-P (Root Mean Square / Peak-to-Peak) rates can be configured."
         )
         info_label.setWordWrap(True)
         info_label.setStyleSheet("color: #666; padding: 5px;")
@@ -220,6 +231,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _wire_signals(self) -> None:
         self.connect_btn.clicked.connect(self._handle_connect_clicked)
+        self.detect_btn.clicked.connect(self._handle_detect_clicked)
         self.disconnect_btn.clicked.connect(self.runtime.disconnect_port)
         self.refresh_ports_btn.clicked.connect(self.runtime.publish_ports)
         self.configure_btn.clicked.connect(lambda: self._run_command("configure"))
@@ -245,10 +257,46 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         # Use default baud rate of 460800
         baud = 460800
-        self._detect_after_connect = True
         self.runtime.connect_port(port, baud)
 
+    def _handle_detect_clicked(self) -> None:
+        """Handle detect button click."""
+        try:
+            if not self.disconnect_btn.isEnabled():
+                QtWidgets.QMessageBox.warning(self, "Not Connected", "Please connect to a port first.")
+                return
+            # Prevent multiple simultaneous detection attempts
+            if self._detection_in_progress:
+                QtWidgets.QMessageBox.warning(self, "Detection in Progress", "A detection is already in progress. Please wait for it to complete.")
+                return
+            # Disable detect button during detection
+            self.detect_btn.setEnabled(False)
+            self._detection_in_progress = True
+            sensor_choice = self.sensor_combo.currentData()
+            sensor = sensor_choice if sensor_choice in ("vibration", "imu") else "vibration"
+            self._pending_sensor_type = sensor
+            # Check auto mode before detecting
+            self.runtime.check_auto_mode(sensor)
+        except Exception as exc:
+            LOG.error("Error in _handle_detect_clicked: %s", exc, exc_info=True)
+            QtWidgets.QMessageBox.critical(self, "Error", f"Failed to start detection:\n{exc}")
+            self._append_log(f"Error starting detection: {exc}")
+            # Re-enable detect button on error
+            if self.disconnect_btn.isEnabled():
+                self.detect_btn.setEnabled(True)
+            self._pending_sensor_type = None
+            self._detection_in_progress = False
+
+    def _set_action_buttons_enabled(self, enabled: bool) -> None:
+        """Enable or disable all action buttons."""
+        for button in (self.configure_btn, self.exit_auto_btn, self.reset_btn):
+            button.setEnabled(enabled)
+
     def _run_command(self, command: str) -> None:
+        # Disable all action buttons and detect button while operation is in progress
+        self._set_action_buttons_enabled(False)
+        self.detect_btn.setEnabled(False)
+        
         sensor = self._selected_sensor_type()
         if command == "configure":
             # For IMU, pass sampling rate and tap value
@@ -273,51 +321,95 @@ class MainWindow(QtWidgets.QMainWindow):
         return "vibration"
 
     def _on_state_changed(self, connected: bool, port: str, baud: int) -> None:
+        # Connect button: disabled when connected
         self.connect_btn.setEnabled(not connected)
+        # Detect button: enabled when connected (unless action is in progress)
+        self.detect_btn.setEnabled(connected)
+        # Disconnect button: enabled when connected
         self.disconnect_btn.setEnabled(connected)
-        for button in (self.configure_btn, self.exit_auto_btn, self.reset_btn):
-            button.setEnabled(connected)
+        # Only enable action buttons if connected (and not during an operation)
+        self._set_action_buttons_enabled(connected)
         status = "Connected" if connected else "Disconnected"
         self._append_log(f"{status} to {port or 'n/a'} @ {baud} bps")
-        if connected and self._detect_after_connect:
-            self._detect_after_connect = False
-            sensor_choice = self.sensor_combo.currentData()
-            sensor = sensor_choice if sensor_choice in ("vibration", "imu") else "vibration"
-            self._pending_sensor_type = sensor
-            # Check auto mode before detecting
-            self.runtime.check_auto_mode(sensor)
 
     def _on_auto_mode_detected(self, is_auto_mode: bool) -> None:
         """Handle auto mode detection result."""
-        if is_auto_mode and self._pending_sensor_type:
-            reply = QtWidgets.QMessageBox.question(
-                self,
-                "Sensor in Auto Mode",
-                "The sensor is already in auto mode. Would you like to exit auto mode before detecting?",
-                QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No,
-                QtWidgets.QMessageBox.StandardButton.Yes,
-            )
-            if reply == QtWidgets.QMessageBox.StandardButton.Yes:
-                self._append_log("Exiting auto mode before detection...")
-                # Exit auto mode, then detect after command finishes
-                self._exit_auto_then_detect = True
-                self.runtime.exit_auto(self._pending_sensor_type)
-            else:
-                # Proceed with detection anyway
-                self._append_log("Proceeding with detection while sensor is in auto mode...")
+        try:
+            if is_auto_mode and self._pending_sensor_type:
+                reply = QtWidgets.QMessageBox.question(
+                    self,
+                    "Sensor in Auto Mode",
+                    "The sensor is already in auto mode. Would you like to exit auto mode before detecting?",
+                    QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No,
+                    QtWidgets.QMessageBox.StandardButton.Yes,
+                )
+                if reply == QtWidgets.QMessageBox.StandardButton.Yes:
+                    self._append_log("Exiting auto mode before detection...")
+                    # Exit auto mode, then detect after command finishes
+                    self._exit_auto_then_detect = True
+                    # Disable buttons during operation
+                    self._set_action_buttons_enabled(False)
+                    self.detect_btn.setEnabled(False)
+                    try:
+                        self.runtime.exit_auto(self._pending_sensor_type)
+                    except Exception as exc:
+                        LOG.error("Failed to start exit_auto: %s", exc)
+                        QtWidgets.QMessageBox.critical(self, "Error", f"Failed to exit auto mode:\n{exc}")
+                        self._append_log(f"Failed to exit auto mode: {exc}")
+                        # Re-enable buttons on error
+                        if self.disconnect_btn.isEnabled():
+                            self._set_action_buttons_enabled(True)
+                            self.detect_btn.setEnabled(True)
+                        self._exit_auto_then_detect = False
+                        self._pending_sensor_type = None
+                else:
+                    # User chose not to exit auto mode - cancel detection
+                    QtWidgets.QMessageBox.information(
+                        self,
+                        "Detection Cancelled",
+                        "Detection cancelled. Please exit auto mode first to get accurate sensor information.",
+                    )
+                    self._append_log("Detection cancelled. Please exit auto mode first to get accurate sensor information.")
+                    self._pending_sensor_type = None
+                    self._detection_in_progress = False
+                    # Re-enable detect button if still connected
+                    if self.disconnect_btn.isEnabled():
+                        self.detect_btn.setEnabled(True)
+            elif self._pending_sensor_type:
+                # Not in auto mode, proceed with detection
                 self.runtime.detect(self._pending_sensor_type)
                 self._pending_sensor_type = None
-        elif self._pending_sensor_type:
-            # Not in auto mode, proceed with detection
-            self.runtime.detect(self._pending_sensor_type)
+                # Keep _detection_in_progress = True until detection finishes
+        except Exception as exc:
+            LOG.error("Error in _on_auto_mode_detected: %s", exc, exc_info=True)
+            QtWidgets.QMessageBox.critical(self, "Error", f"Error during auto mode detection:\n{exc}")
+            self._append_log(f"Error during auto mode detection: {exc}")
+            # Re-enable detect button on error
+            if self.disconnect_btn.isEnabled():
+                self.detect_btn.setEnabled(True)
             self._pending_sensor_type = None
+            self._exit_auto_then_detect = False
+            self._detection_in_progress = False
 
     def _on_detection_finished(self, identity: DeviceIdentity) -> None:
-        sensor = identity.sensor_type or self.sensor_combo.currentData() or "vibration"
-        self.sensor_label.setText(sensor.title() if isinstance(sensor, str) else "")
-        self.product_field.setText(identity.product_id or identity.product_id_raw or "Unknown")
-        self.serial_field.setText(identity.serial_number or "Unknown")
-        self._append_log("Sensor identity retrieved successfully.")
+        try:
+            sensor = identity.sensor_type or self.sensor_combo.currentData() or "vibration"
+            self.sensor_label.setText(sensor.title() if isinstance(sensor, str) else "")
+            self.product_field.setText(identity.product_id or identity.product_id_raw or "Unknown")
+            self.serial_field.setText(identity.serial_number or "Unknown")
+            self._append_log("Sensor identity retrieved successfully.")
+            # Re-enable detect button if still connected
+            if self.disconnect_btn.isEnabled():
+                self.detect_btn.setEnabled(True)
+            self._detection_in_progress = False
+        except Exception as exc:
+            LOG.error("Error in _on_detection_finished: %s", exc, exc_info=True)
+            QtWidgets.QMessageBox.critical(self, "Error", f"Error processing detection result:\n{exc}")
+            self._append_log(f"Error processing detection result: {exc}")
+            # Re-enable detect button on error
+            if self.disconnect_btn.isEnabled():
+                self.detect_btn.setEnabled(True)
+            self._detection_in_progress = False
 
     def _on_command_finished(self, command: str, result: object) -> None:
         if hasattr(result, "message"):
@@ -326,21 +418,51 @@ class MainWindow(QtWidgets.QMainWindow):
             message = f"{command} completed"
         self._append_log(str(message))
         
+        # Re-enable action buttons and detect button if still connected
+        if self.disconnect_btn.isEnabled():
+            self._set_action_buttons_enabled(True)
+            self.detect_btn.setEnabled(True)
+        
         # If we exited auto mode and need to detect, do it now
         if command == "exit_auto" and self._exit_auto_then_detect and self._pending_sensor_type:
             self._exit_auto_then_detect = False
-            self._append_log("Auto mode exited. Proceeding with detection...")
-            self.runtime.detect(self._pending_sensor_type)
+            sensor_type = self._pending_sensor_type
             self._pending_sensor_type = None
+            self._append_log("Auto mode exited. Proceeding with detection...")
+            self.detect_btn.setEnabled(False)  # Disable during detection
+            try:
+                if self.disconnect_btn.isEnabled():  # Make sure we're still connected
+                    self.runtime.detect(sensor_type)
+                else:
+                    self._append_log("Connection lost. Detection cancelled.")
+                    if self.disconnect_btn.isEnabled():
+                        self.detect_btn.setEnabled(True)
+            except Exception as exc:
+                LOG.error("Failed to start detection after exit_auto: %s", exc)
+                QtWidgets.QMessageBox.critical(self, "Error", f"Failed to start detection:\n{exc}")
+                self._append_log(f"Failed to start detection: {exc}")
+                # Re-enable detect button on error
+                if self.disconnect_btn.isEnabled():
+                    self.detect_btn.setEnabled(True)
 
     def _on_operation_failed(self, command: str, message: str) -> None:
         QtWidgets.QMessageBox.critical(self, "Operation failed", f"{command} failed:\n{message}")
         self._append_log(f"{command} failed: {message}")
         
+        # Re-enable action buttons and detect button if still connected
+        if self.disconnect_btn.isEnabled():
+            self._set_action_buttons_enabled(True)
+            self.detect_btn.setEnabled(True)
+        
+        # If detection failed, clear the detection in progress flag
+        if command == "detect":
+            self._detection_in_progress = False
+        
         # If exit_auto failed but we were trying to detect, clear the flag
         if command == "exit_auto" and self._exit_auto_then_detect:
             self._exit_auto_then_detect = False
             self._pending_sensor_type = None
+            self._detection_in_progress = False
 
     def _append_log(self, message: str) -> None:
         self.log_view.appendPlainText(message)

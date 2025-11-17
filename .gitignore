@@ -24,9 +24,16 @@ dist-ssr
 
 # Helper Python project artifacts
 helper_app/.venv/
+helper_app/.packaging-venv/
 helper_app/dist/
 helper_app/build/
 helper_app/.appimage-tools/
 helper_app/**/__pycache__/
 helper_app/**/*.pyc
 *.AppImage
+
+# Desktop app build artifacts
+desktop_app/build/
+desktop_app/dist/
+**/__pycache__/
+**/*.pyc
