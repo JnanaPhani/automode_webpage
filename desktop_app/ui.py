@@ -137,6 +137,64 @@ class MainWindow(QtWidgets.QMainWindow):
 
         layout.addWidget(sensor_group)
 
+        # IMU Configuration (only shown for IMU sensors)
+        self.imu_config_group = QtWidgets.QGroupBox("IMU Configuration")
+        imu_config_layout = QtWidgets.QGridLayout(self.imu_config_group)
+        imu_config_layout.setSpacing(8)
+        imu_config_layout.setContentsMargins(10, 10, 10, 10)
+        imu_config_layout.setColumnStretch(0, 0)
+        imu_config_layout.setColumnStretch(1, 1)
+
+        # Sampling rate combo box
+        self.sampling_rate_combo = QtWidgets.QComboBox()
+        # Add supported sampling rates
+        supported_rates = [2000, 1000, 500, 400, 250, 200, 125, 100, 80, 62.5, 50, 40, 31.25, 25, 20, 15.625]
+        for rate in supported_rates:
+            if isinstance(rate, int):
+                self.sampling_rate_combo.addItem(f"{rate} SPS", rate)
+            else:
+                self.sampling_rate_combo.addItem(f"{rate:.3f} SPS", rate)
+        # Set default to 125 SPS
+        default_idx = supported_rates.index(125)
+        self.sampling_rate_combo.setCurrentIndex(default_idx)
+
+        # TAP value (optional)
+        self.tap_value_spin = QtWidgets.QSpinBox()
+        self.tap_value_spin.setMinimum(0)
+        self.tap_value_spin.setMaximum(128)
+        self.tap_value_spin.setSpecialValueText("Auto (use minimum)")
+        self.tap_value_spin.setValue(0)  # 0 means auto
+        self.tap_value_spin.setEnabled(True)
+
+        imu_config_layout.addWidget(QtWidgets.QLabel("Sampling Rate"), 0, 0)
+        imu_config_layout.addWidget(self.sampling_rate_combo, 0, 1)
+        imu_config_layout.addWidget(QtWidgets.QLabel("TAP Value (optional)"), 1, 0)
+        imu_config_layout.addWidget(self.tap_value_spin, 1, 1)
+
+        # Initially hide IMU config (only show for IMU)
+        self.imu_config_group.setVisible(False)
+        layout.addWidget(self.imu_config_group)
+
+        # Vibration Sensor Info (only shown for vibration sensors)
+        self.vibration_info_group = QtWidgets.QGroupBox("Vibration Sensor Information")
+        vibration_info_layout = QtWidgets.QVBoxLayout(self.vibration_info_group)
+        vibration_info_layout.setSpacing(8)
+        vibration_info_layout.setContentsMargins(10, 10, 10, 10)
+
+        info_label = QtWidgets.QLabel(
+            "⚠️ <b>IMPORTANT:</b> RAW data sampling rates are <b>FIXED</b> and cannot be changed.\n\n"
+            "• Velocity RAW: <b>3000 Sps</b> (FIXED)\n"
+            "• Displacement RAW: <b>300 Sps</b> (FIXED)\n\n"
+            "Only RMS/P-P (Root Mean Square / Peak-to-Peak) rates can be configured."
+        )
+        info_label.setWordWrap(True)
+        info_label.setStyleSheet("color: #666; padding: 5px;")
+        vibration_info_layout.addWidget(info_label)
+
+        # Initially hide vibration info (only show for vibration)
+        self.vibration_info_group.setVisible(False)
+        layout.addWidget(self.vibration_info_group)
+
         # Actions
         actions_group = QtWidgets.QGroupBox("Actions")
         actions_layout = QtWidgets.QHBoxLayout(actions_group)
@@ -175,6 +233,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.runtime.logMessage.connect(self._append_log)
         self.runtime.portsUpdated.connect(self._update_ports)
         self.runtime.autoModeDetected.connect(self._on_auto_mode_detected)
+        self.sensor_combo.currentIndexChanged.connect(self._on_sensor_type_changed)
 
     # Slots -------------------------------------------------------------------
     def _handle_connect_clicked(self) -> None:
@@ -192,7 +251,15 @@ class MainWindow(QtWidgets.QMainWindow):
     def _run_command(self, command: str) -> None:
         sensor = self._selected_sensor_type()
         if command == "configure":
-            self.runtime.configure(sensor)
+            # For IMU, pass sampling rate and tap value
+            if sensor == "imu":
+                sampling_rate = self.sampling_rate_combo.currentData()
+                tap_value = self.tap_value_spin.value()
+                # If tap_value is 0, it means auto, so pass None
+                tap_value = None if tap_value == 0 else tap_value
+                self.runtime.configure(sensor, sampling_rate=sampling_rate, tap_value=tap_value)
+            else:
+                self.runtime.configure(sensor)
         elif command == "exit_auto":
             self.runtime.exit_auto(sensor)
         elif command == "full_reset":
@@ -277,6 +344,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _append_log(self, message: str) -> None:
         self.log_view.appendPlainText(message)
+
+    def _on_sensor_type_changed(self, index: int) -> None:
+        """Show/hide sensor-specific configuration based on selected sensor type."""
+        sensor = self.sensor_combo.currentData()
+        self.imu_config_group.setVisible(sensor == "imu")
+        self.vibration_info_group.setVisible(sensor == "vibration")
 
     def _update_ports(self, ports: list) -> None:
         previous = self.port_combo.currentText()

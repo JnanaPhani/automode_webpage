@@ -122,7 +122,13 @@ class SensorController:
     async def configure(self, sensor: SensorType, **kwargs) -> CommandResult:
         def _run(comm, configurator_cls):
             configurator = configurator_cls(comm)
-            success = configurator.configure()
+            # Extract sampling_rate and tap_value for IMU
+            if sensor == "imu":
+                sampling_rate = kwargs.get("sampling_rate", 125.0)
+                tap_value = kwargs.get("tap_value")
+                success = configurator.configure(sampling_rate=sampling_rate, tap_value=tap_value)
+            else:
+                success = configurator.configure()
             warning = self._collect_warning(configurator)
             if not success:
                 return CommandResult(False, "Configuration failed. Check logs for details.", warning=warning)

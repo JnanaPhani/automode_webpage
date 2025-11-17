@@ -38,6 +38,30 @@ PRODUCT_ID_ALIASES = {
     "G365PDF1": "M-G552PR80",
 }
 
+# Sampling rate configuration mapping
+# Format: (sampling_rate_sps, dout_rate_value, min_tap_value)
+# Based on datasheet section 6.16 SMPL_CTRL Register
+SAMPLING_RATE_CONFIG = {
+    2000: (0x00, 0),      # 2000 Sps, TAP ≥ 0
+    1000: (0x01, 2),      # 1000 Sps, TAP ≥ 2
+    500: (0x02, 4),       # 500 Sps, TAP ≥ 4
+    400: (0x08, 8),       # 400 Sps, TAP ≥ 8
+    250: (0x03, 8),       # 250 Sps, TAP ≥ 8
+    200: (0x09, 16),      # 200 Sps, TAP ≥ 16
+    125: (0x04, 16),      # 125 Sps, TAP ≥ 16 (default)
+    100: (0x0A, 32),      # 100 Sps, TAP ≥ 32
+    80: (0x0B, 32),       # 80 Sps, TAP ≥ 32
+    62.5: (0x05, 32),     # 62.5 Sps, TAP ≥ 32
+    50: (0x0C, 64),       # 50 Sps, TAP ≥ 64
+    40: (0x0D, 64),       # 40 Sps, TAP ≥ 64
+    31.25: (0x06, 64),    # 31.25 Sps, TAP ≥ 64
+    25: (0x0E, 128),      # 25 Sps, TAP = 128
+    20: (0x0F, 128),      # 20 Sps, TAP = 128
+    15.625: (0x07, 128),  # 15.625 Sps, TAP = 128
+}
+
+DEFAULT_SAMPLING_RATE = 125  # Default: 125 Sps
+
 
 class SensorConfigurator:
     """Provide high-level configuration operations for the IMU."""
@@ -314,20 +338,71 @@ class SensorConfigurator:
             "serial_words": serial_words,
         }
 
-    def configure_registers(self) -> bool:
-        """Write the IMU register settings for UART Auto Start."""
+    def configure_registers(self, sampling_rate: float = DEFAULT_SAMPLING_RATE, tap_value: Optional[int] = None) -> bool:
+        """
+        Write the IMU register settings for UART Auto Start.
+        
+        Args:
+            sampling_rate: Sampling rate in SPS (samples per second). Must be one of the supported rates.
+            tap_value: Optional TAP value for the moving average filter. If None, uses minimum required TAP.
+        
+        Returns:
+            True if configuration succeeded, False otherwise.
+        """
         try:
+            # Validate and get sampling rate configuration
+            if sampling_rate not in SAMPLING_RATE_CONFIG:
+                supported_rates = sorted(SAMPLING_RATE_CONFIG.keys())
+                logger.error(
+                    "Unsupported sampling rate: %.3f SPS. Supported rates: %s",
+                    sampling_rate,
+                    ", ".join(f"{r} SPS" if isinstance(r, int) else f"{r:.3f} SPS" for r in supported_rates),
+                )
+                return False
+            
+            dout_rate, min_tap = SAMPLING_RATE_CONFIG[sampling_rate]
+            
+            # Determine TAP value
+            if tap_value is None:
+                tap_value = min_tap
+            elif tap_value < min_tap:
+                logger.warning(
+                    "TAP value %d is below minimum %d for %.3f SPS. Using minimum TAP value.",
+                    tap_value, min_tap, sampling_rate
+                )
+                tap_value = min_tap
+            
+            # Validate TAP value is one of the supported values
+            supported_taps = [0, 2, 4, 8, 16, 32, 64, 128]
+            if tap_value not in supported_taps:
+                # Round to nearest supported value
+                closest_tap = min(supported_taps, key=lambda x: abs(x - tap_value))
+                logger.warning(
+                    "TAP value %d is not a standard value. Using closest supported value: %d",
+                    tap_value, closest_tap
+                )
+                tap_value = closest_tap
+            
+            logger.info(
+                "Configuring IMU with sampling rate: %.3f SPS (DOUT_RATE=0x%02X), TAP=%d",
+                sampling_rate, dout_rate, tap_value
+            )
+            
             register_writes: List[List[int]] = [
                 [0, 0xFE, 0x01, 0x0D],  # WINDOW = 1
-                [0, 0x85, 0x04, 0x0D],  # SMPL_CTRL: 125 SPS
-                [0, 0x86, 0x04, 0x0D],  # TAP: 16 taps (burst)
+                [0, 0x85, dout_rate, 0x0D],  # SMPL_CTRL: DOUT_RATE in high byte
+                [0, 0x86, tap_value, 0x0D],  # TAP: moving average filter taps
                 [0, 0x88, 0x03, 0x0D],  # UART_CTRL: UART_AUTO=1, AUTO_START=1
                 [0, 0x8C, 0x02, 0x0D],  # BURST_CTRL1: COUNT on, checksum off
                 [0, 0x8D, 0xF0, 0x0D],  # BURST_CTRL2: FLAG, TEMP, GYRO, ACCL on
                 [0, 0x8F, 0x70, 0x0D],  # BURST_CTRL4: 32-bit outputs
             ]
             self._write_commands(register_writes)
-            logger.info("IMU configuration registers programmed for UART Auto Start")
+            logger.info(
+                "IMU configuration registers programmed for UART Auto Start "
+                "(%.3f SPS, TAP=%d)",
+                sampling_rate, tap_value
+            )
             return True
         except Exception as exc:  # pragma: no cover - serial runtime failure
             logger.error("Failed to configure IMU registers: %s", exc)
@@ -472,13 +547,22 @@ class SensorConfigurator:
             logger.error("Failed to exit auto mode: %s", exc)
             return False
 
-    def configure(self) -> bool:
-        """Perform the complete IMU Auto Start configuration sequence."""
+    def configure(self, sampling_rate: float = DEFAULT_SAMPLING_RATE, tap_value: Optional[int] = None) -> bool:
+        """
+        Perform the complete IMU Auto Start configuration sequence.
+        
+        Args:
+            sampling_rate: Sampling rate in SPS (samples per second). Default is 125 SPS.
+            tap_value: Optional TAP value for the moving average filter. If None, uses minimum required TAP.
+        
+        Returns:
+            True if configuration succeeded, False otherwise.
+        """
         self._warnings.clear()
         try:
             self.reset_sensor()
 
-            if not self.configure_registers():
+            if not self.configure_registers(sampling_rate=sampling_rate, tap_value=tap_value):
                 return False
 
             if not self.flash_backup():

@@ -168,8 +168,8 @@ class HelperRuntime(QtCore.QObject):
                 self.operationFailed.emit("detect", str(exc))
         threading.Thread(target=_runner, daemon=True).start()
 
-    def configure(self, sensor: SensorType) -> None:
-        self._run_command("configure", sensor)
+    def configure(self, sensor: SensorType, sampling_rate: Optional[float] = None, tap_value: Optional[int] = None) -> None:
+        self._run_command("configure", sensor, sampling_rate=sampling_rate, tap_value=tap_value)
 
     def exit_auto(self, sensor: SensorType) -> None:
         self._run_command("exit_auto", sensor)
@@ -177,12 +177,12 @@ class HelperRuntime(QtCore.QObject):
     def full_reset(self, sensor: SensorType) -> None:
         self._run_command("full_reset", sensor)
 
-    def _run_command(self, command: str, sensor: SensorType) -> None:
+    def _run_command(self, command: str, sensor: SensorType, **kwargs) -> None:
         self._ensure_ready()
         assert self._controller
         async def _do_command() -> CommandResult:
             if command == "configure":
-                return await self._controller.configure(sensor)
+                return await self._controller.configure(sensor, **kwargs)
             if command == "exit_auto":
                 return await self._controller.exit_auto(sensor)
             if command == "full_reset":
