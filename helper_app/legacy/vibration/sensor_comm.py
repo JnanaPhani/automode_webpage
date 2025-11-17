@@ -121,6 +121,18 @@ class SensorCommunication:
         
         return result
 
+    def flush_input_buffer(self) -> None:
+        """Clear any unread bytes from the serial input buffer."""
+        if not self.is_open() or not self.connection:
+            return
+        try:
+            # reset_input_buffer is available on pyserial Serial objects
+            flush = getattr(self.connection, "reset_input_buffer", None)
+            if callable(flush):
+                flush()
+        except Exception as exc:  # pragma: no cover - defensive
+            logger.debug("Failed to flush serial input buffer: %s", exc)
+
     def send_commands(self, commands: List[List[int]]) -> List[int]:
         """Send multiple commands sequentially.
         

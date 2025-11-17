@@ -207,7 +207,11 @@ def create_app(allowed_origins: Optional[List[str]] = None) -> FastAPI:
         baud = payload.get("baudRate")
         if not port:
             raise HTTPException(status_code=400, detail="port is required")
-        await session.connect(port=port, baud=baud)
+        try:
+            await session.connect(port=port, baud=baud)
+        except RuntimeError as exc:
+            LOG.error("Connect failed for port %s: %s", port, exc)
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
         return {"connected": True, "port": port, "baudRate": session.baudrate}
 
     @app.get("/ports")
@@ -236,13 +240,24 @@ def create_app(allowed_origins: Optional[List[str]] = None) -> FastAPI:
 
     @app.post("/detect")
     async def detect(payload: Dict[str, Any], token: None = Depends(verify_token)) -> DetectionResult:
-        sensor: SensorType = payload.get("sensor", "vibration")
+        sensor: SensorType = payload.get("sensor")
         if sensor not in ("vibration", "imu"):
-            raise HTTPException(status_code=400, detail="Invalid sensor type")
+            raise HTTPException(status_code=400, detail="sensor field is required and must be vibration or imu")
         result = await controller.detect(sensor)
         if not result.success:
             raise HTTPException(status_code=500, detail=result.message or "Detection failed")
-        return result
+        return {
+            "success": True,
+            "sensor_type": result.sensor_type,
+            "sensorType": result.sensor_type,
+            "product_id": result.product_id,
+            "productId": result.product_id,
+            "product_id_raw": result.product_id_raw,
+            "productIdRaw": result.product_id_raw,
+            "serial_number": result.serial_number,
+            "serialNumber": result.serial_number,
+            "message": result.message,
+        }
 
     @app.post("/configure")
     async def configure(payload: Dict[str, Any], token: None = Depends(verify_token)) -> CommandResult:

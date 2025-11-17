@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import asyncio
 import logging
+import time
 from dataclasses import dataclass
 from typing import Any, Literal, Optional
 
@@ -10,7 +12,9 @@ from helper_app.logging_utils import LogBroadcaster
 from helper_app.session import SerialSession
 
 from helper_app.legacy.vibration.sensor_config import SensorConfigurator as VibrationConfigurator
+from helper_app.legacy.vibration.sensor_comm import SensorCommunication as VibrationComm
 from helper_app.legacy.imu.sensor_config import SensorConfigurator as ImuConfigurator
+from helper_app.legacy.imu.sensor_comm import SensorCommunication as ImuComm
 
 SensorType = Literal["vibration", "imu"]
 LOG = logging.getLogger(__name__)
@@ -19,6 +23,7 @@ LOG = logging.getLogger(__name__)
 @dataclass
 class DetectionResult:
     success: bool
+    sensor_type: Optional[SensorType] = None
     product_id: Optional[str] = None
     serial_number: Optional[str] = None
     product_id_raw: Optional[str] = None
@@ -53,29 +58,66 @@ class SensorController:
         return None
 
     async def detect(self, sensor: SensorType) -> DetectionResult:
-        def _run(comm, configurator_cls):
-            configurator = configurator_cls(comm)
-            info = configurator.detect_identity()
-            if not info:
-                raise RuntimeError("Identity read failed")
-            return info
+        loop = asyncio.get_running_loop()
+        port = self._session.port
+        baud = self._session.baudrate
+        if not port:
+            return DetectionResult(success=False, message="Serial port is not connected.")
+
+        await self._session.disconnect()
+        # Give Windows time to release the port
+        await asyncio.sleep(0.5)
+
+        def _detect_with_fresh_connection():
+            comm_cls = VibrationComm if sensor == "vibration" else ImuComm
+            configurator_cls = VibrationConfigurator if sensor == "vibration" else ImuConfigurator
+            comm = comm_cls(port=port, baud=baud)
+            # Retry opening the port in case Windows hasn't released it yet
+            max_retries = 3
+            for attempt in range(max_retries):
+                try:
+                    comm.open()
+                    break
+                except Exception as exc:
+                    if attempt < max_retries - 1:
+                        time.sleep(0.3)
+                        continue
+                    raise
+            try:
+                configurator = configurator_cls(comm)
+                info = configurator.detect_identity()
+                if not info:
+                    raise RuntimeError("Unable to determine sensor identity from response.")
+                product_raw = (info.get("product_id_raw") or "").strip()
+                serial = (info.get("serial_number") or "").strip()
+                if len(product_raw) < 4 and len(serial) < 4:
+                    raise RuntimeError("Unable to determine sensor identity from response.")
+                return info
+            finally:
+                comm.close()
+                # Give Windows time to release before reconnecting
+                time.sleep(0.3)
 
         try:
-            LOG.info("Detect command requested for sensor=%s", sensor)
-            if sensor == "vibration":
-                info = await self._session.run(lambda comm: _run(comm, VibrationConfigurator))
-            else:
-                info = await self._session.run(lambda comm: _run(comm, ImuConfigurator))
+            info = await loop.run_in_executor(None, _detect_with_fresh_connection)
             return DetectionResult(
                 success=True,
+                sensor_type=sensor,
                 product_id=info.get("product_id"),
                 product_id_raw=info.get("product_id_raw"),
                 serial_number=info.get("serial_number"),
                 message="Sensor identity retrieved successfully.",
             )
-        except Exception as exc:  # pragma: no cover - legacy logic exceptions
+        except Exception as exc:
             LOG.exception("Detect failed", exc_info=True)
-            return DetectionResult(success=False, message=f"Identity read failed: {exc}")
+            return DetectionResult(success=False, message=str(exc))
+        finally:
+            # Wait a bit more before reconnecting to ensure port is fully released
+            await asyncio.sleep(0.3)
+            try:
+                await self._session.connect(port=port, baud=baud)
+            except Exception as reconnect_exc:
+                LOG.error("Failed to restore serial connection: %s", reconnect_exc)
 
     async def configure(self, sensor: SensorType, **kwargs) -> CommandResult:
         def _run(comm, configurator_cls):
@@ -94,6 +136,24 @@ class SensorController:
         except Exception as exc:  # pragma: no cover
             LOG.exception("Configure failed: %s", exc)
             return CommandResult(False, str(exc))
+
+    async def check_auto_mode(self, sensor: SensorType) -> bool:
+        """Check if the sensor is currently in auto mode.
+        
+        Returns:
+            True if sensor is in auto mode, False otherwise
+        """
+        def _run(comm, configurator_cls):
+            configurator = configurator_cls(comm)
+            return configurator.check_auto_mode()
+
+        try:
+            if sensor == "vibration":
+                return await self._session.run(lambda comm: _run(comm, VibrationConfigurator))
+            return await self._session.run(lambda comm: _run(comm, ImuConfigurator))
+        except Exception as exc:
+            LOG.debug("Failed to check auto mode: %s", exc)
+            return False
 
     async def exit_auto(self, sensor: SensorType, persist: bool = True) -> CommandResult:
         def _run(comm, configurator_cls):

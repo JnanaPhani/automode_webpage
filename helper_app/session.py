@@ -9,6 +9,7 @@ from concurrent.futures import ThreadPoolExecutor
 from typing import Callable, Optional, TypeVar
 
 from helper_app.config import HelperSettings
+from helper_app.legacy.vibration.platform_utils import PlatformUtils
 from helper_app.legacy.vibration.sensor_comm import SensorCommunication
 
 LOG = logging.getLogger(__name__)
@@ -27,6 +28,8 @@ class SerialSession:
         self._executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="serial-session")
         self._drain_stop = threading.Event()
         self._drain_thread: Optional[threading.Thread] = None
+        self._open_retries = 3
+        self._retry_delay = 0.75
 
     async def connect(self, port: str, baud: Optional[int] = None) -> None:
         """Open or re-open the serial connection with the specified port."""
@@ -34,18 +37,18 @@ class SerialSession:
         async with self._lock:
             target_baud = baud or self._settings.default_baud_rate
 
-            if self._comm and self._port == port and self._baud == target_baud and self._comm.is_open():
-                LOG.debug("SerialSession: already connected to %s @ %s", port, target_baud)
+            normalized_port = self._normalize_port(port)
+            if self._comm and self._port == normalized_port and self._baud == target_baud and self._comm.is_open():
+                LOG.debug("SerialSession: already connected to %s @ %s", normalized_port, target_baud)
                 return
 
             await self._close_locked()
 
-            self._port = port
+            if normalized_port != port:
+                LOG.info("SerialSession: normalized port '%s' -> '%s'", port, normalized_port)
+            self._port = normalized_port
             self._baud = target_baud
-            self._comm = SensorCommunication(port=port, baud=target_baud)
-            await asyncio.get_running_loop().run_in_executor(self._executor, self._comm.open)
-            LOG.info("SerialSession: connected to %s @ %s baud", port, target_baud)
-            self._start_drain_locked()
+            await self._open_locked(reason="connect()")
 
     async def disconnect(self) -> None:
         """Close the serial connection and stop background tasks."""
@@ -72,9 +75,7 @@ class SerialSession:
             if not self._comm or not self._comm.is_open():
                 if not self._port:
                     raise RuntimeError("Serial port is not connected")
-                self._comm = SensorCommunication(port=self._port, baud=self._baud)
-                await asyncio.get_running_loop().run_in_executor(self._executor, self._comm.open)
-                self._start_drain_locked()
+                await self._open_locked(reason="auto-reconnect")
 
             self._stop_drain_locked()
             if self._comm and self._comm.is_open():
@@ -88,6 +89,10 @@ class SerialSession:
                     LOG.warning("SerialSession: failed to flush buffers before command: %s", exc)
             try:
                 return await asyncio.get_running_loop().run_in_executor(self._executor, func, self._comm)
+            except Exception as exc:
+                LOG.exception("SerialSession: command failed, dropping connection: %s", exc)
+                await self._close_locked()
+                raise
             finally:
                 self._start_drain_locked()
 
@@ -129,5 +134,47 @@ class SerialSession:
             self._drain_thread.join(timeout=1.0)
         self._drain_thread = None
         self._drain_stop.clear()
+
+    async def _open_locked(self, reason: str) -> None:
+        if not self._port:
+            raise RuntimeError("Serial port is not configured")
+        attempts = 0
+        last_exc: Exception | None = None
+        loop = asyncio.get_running_loop()
+        while attempts < self._open_retries:
+            try:
+                self._comm = SensorCommunication(port=self._port, baud=self._baud)
+                await loop.run_in_executor(self._executor, self._comm.open)
+                LOG.info("SerialSession: connected to %s @ %s baud (%s)", self._port, self._baud, reason)
+                self._start_drain_locked()
+                return
+            except Exception as exc:  # pragma: no cover - hardware-dependent
+                last_exc = exc
+                LOG.warning(
+                    "SerialSession: failed to open %s @ %s (attempt %s/%s, reason=%s): %s",
+                    self._port,
+                    self._baud,
+                    attempts + 1,
+                    self._open_retries,
+                    reason,
+                    exc,
+                )
+                self._comm = None
+                attempts += 1
+                if attempts < self._open_retries:
+                    await asyncio.sleep(self._retry_delay)
+        raise RuntimeError(f"Failed to open serial port {self._port}: {last_exc}")
+
+    @staticmethod
+    def _normalize_port(port: str) -> str:
+        cleaned = port.strip()
+        if PlatformUtils.is_windows():
+            for separator in (" ", "(", "\t"):
+                idx = cleaned.find(separator)
+                if idx > 0:
+                    cleaned = cleaned[:idx]
+                    break
+            cleaned = cleaned.upper()
+        return cleaned
 
 

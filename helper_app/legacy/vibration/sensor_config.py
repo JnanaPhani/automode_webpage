@@ -71,10 +71,34 @@ class SensorConfigurator:
         )
         logger.debug("Sensor reset commands sent")
 
+    def _enter_configuration_mode(self) -> None:
+        """Ensure the sensor is in configuration mode before issuing reads."""
+        if hasattr(self.comm, "flush_input_buffer"):
+            self.comm.flush_input_buffer()
+        # Request configuration mode (MODE_CMD=0b10)
+        self._write_commands(
+            [
+                [0, 0xFE, 0x00, 0x0D],
+                [0, 0x83, 0x02, 0x0D],
+            ]
+        )
+        time.sleep(0.05)
+        # Clear UART auto bits so burst streaming pauses while we read registers.
+        self._write_commands(
+            [
+                [0, 0xFE, 0x01, 0x0D],
+                [0, 0x88, 0x00, 0x0D],
+            ]
+        )
+        time.sleep(0.05)
+        self._wait_until_ready()
+
     def _wait_until_ready(self, timeout: float = 3.0) -> bool:
         start = time.time()
         while time.time() - start < timeout:
             try:
+                if hasattr(self.comm, "flush_input_buffer"):
+                    self.comm.flush_input_buffer()
                 result = self.comm.send_commands(
                     [
                         [0, 0xFE, 0x01, 0x0D],
@@ -95,6 +119,10 @@ class SensorConfigurator:
 
     def _read_word(self, address: int, window: int) -> Optional[int]:
         try:
+            # Drop any burst/streaming bytes before issuing a register read so that
+            # the response contains only the register frame we are expecting.
+            if hasattr(self.comm, "flush_input_buffer"):
+                self.comm.flush_input_buffer()
             result = self.comm.send_commands(
                 [
                     [0, 0xFE, window & 0xFF, 0x0D],
@@ -128,12 +156,44 @@ class SensorConfigurator:
                     chars.append(chr(byte))
         return "".join(chars).strip()
 
+    def check_auto_mode(self) -> bool:
+        """Check if the sensor is currently in auto mode.
+        
+        Returns:
+            True if AUTO bit is set in MODE_CTRL, False otherwise
+        """
+        try:
+            if hasattr(self.comm, "flush_input_buffer"):
+                self.comm.flush_input_buffer()
+            result = self.comm.send_commands(
+                [
+                    [0, 0xFE, 0x00, 0x0D],
+                    [4, 0x02, 0x00, 0x0D],
+                ]
+            )
+            if len(result) >= 4:
+                mode_register = (result[-3] << 8) | result[-2]
+                return (mode_register & 0x0400) != 0
+            return False
+        except Exception:
+            logger.debug("Failed to check auto mode status", exc_info=True)
+            return False
+
     def detect_identity(self) -> Optional[dict]:
         logger.info("Reading product and serial number registers")
+
+        # Ensure the sensor is in a clean configuration state before reading.
+        self.reset_sensor()
+        time.sleep(0.2)
+        self._enter_configuration_mode()
 
         product_words = []
         for reg in PROD_ID_REGISTERS:
             word = self._read_word(reg, 0x01)
+            if word is None and product_words:
+                logger.warning("Retrying product ID register 0x%02X", reg)
+                self._enter_configuration_mode()
+                word = self._read_word(reg, 0x01)
             if word is None:
                 logger.error("Failed to read product ID register 0x%02X", reg)
                 return None
@@ -148,6 +208,10 @@ class SensorConfigurator:
         serial_words = []
         for reg in SERIAL_REGISTERS:
             word = self._read_word(reg, 0x01)
+            if word is None and serial_words:
+                logger.warning("Retrying serial register 0x%02X", reg)
+                self._enter_configuration_mode()
+                word = self._read_word(reg, 0x01)
             if word is None:
                 logger.error("Failed to read serial register 0x%02X", reg)
                 return None
