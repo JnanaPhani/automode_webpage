@@ -8,14 +8,28 @@ from pathlib import Path
 
 def run_pyinstaller(spec_path: Path, dist_path: Path, work_path: Path) -> None:
     import shutil
+    import time
+    import os
     # Remove existing output directory if it exists
     output_dir = dist_path / "ZenithTek-SensorConfig"
     if output_dir.exists():
-        try:
-            shutil.rmtree(output_dir)
-        except PermissionError:
-            # If we can't delete, PyInstaller will handle it with --noconfirm
-            pass
+        # Try multiple times with delays to handle locked files
+        for attempt in range(3):
+            try:
+                # On Windows, try to remove read-only files
+                def handle_remove_readonly(func, path, exc):
+                    if os.path.exists(path):
+                        os.chmod(path, 0o777)
+                        func(path)
+                
+                shutil.rmtree(output_dir, onerror=handle_remove_readonly)
+                break
+            except (PermissionError, OSError):
+                if attempt < 2:
+                    time.sleep(1)  # Wait 1 second before retry
+                else:
+                    # If we can't delete, PyInstaller will handle it with --noconfirm
+                    pass
     
     command = [
         sys.executable,

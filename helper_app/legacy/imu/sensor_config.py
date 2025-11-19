@@ -62,6 +62,18 @@ SAMPLING_RATE_CONFIG = {
 
 DEFAULT_SAMPLING_RATE = 125  # Default: 125 Sps
 
+# Mapping from TAP count to register value
+TAP_TO_REGISTER = {
+    0: 0x00,
+    2: 0x01,
+    4: 0x02,
+    8: 0x03,
+    16: 0x04,
+    32: 0x05,
+    64: 0x06,
+    128: 0x07,
+}
+
 
 class SensorConfigurator:
     """Provide high-level configuration operations for the IMU."""
@@ -452,9 +464,9 @@ class SensorConfigurator:
             
             dout_rate, min_tap = SAMPLING_RATE_CONFIG[sampling_rate]
             
-            # Determine TAP value
+            # Determine TAP value - always use TAP = 128 (0x07) as standard
             if tap_value is None:
-                tap_value = min_tap
+                tap_value = 128  # Standard TAP value for all sampling rates
             elif tap_value < min_tap:
                 logger.warning(
                     "TAP value %d is below minimum %d for %.3f SPS. Using minimum TAP value.",
@@ -473,15 +485,18 @@ class SensorConfigurator:
                 )
                 tap_value = closest_tap
             
+            # Convert TAP count to register value
+            tap_register = TAP_TO_REGISTER[tap_value]
+            
             logger.info(
-                "Configuring IMU with sampling rate: %.3f SPS (DOUT_RATE=0x%02X), TAP=%d",
-                sampling_rate, dout_rate, tap_value
+                "Configuring IMU with sampling rate: %.3f SPS (DOUT_RATE=0x%02X), TAP=%d (register=0x%02X)",
+                sampling_rate, dout_rate, tap_value, tap_register
             )
             
             register_writes: List[List[int]] = [
                 [0, 0xFE, 0x01, 0x0D],  # WINDOW = 1
                 [0, 0x85, dout_rate, 0x0D],  # SMPL_CTRL: DOUT_RATE in high byte
-                [0, 0x86, tap_value, 0x0D],  # TAP: moving average filter taps
+                [0, 0x86, tap_register, 0x0D],  # TAP: moving average filter taps (0x07 = 128 taps)
                 [0, 0x88, 0x03, 0x0D],  # UART_CTRL: UART_AUTO=1, AUTO_START=1
                 [0, 0x8C, 0x02, 0x0D],  # BURST_CTRL1: COUNT on, checksum off
                 [0, 0x8D, 0xF0, 0x0D],  # BURST_CTRL2: FLAG, TEMP, GYRO, ACCL on

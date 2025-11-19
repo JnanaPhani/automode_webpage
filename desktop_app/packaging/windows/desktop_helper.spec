@@ -13,20 +13,19 @@ project_root = spec_file.parents[3]
 app_root = project_root / "helper_app"
 desktop_root = project_root / "desktop_app"
 
-legacy_tree = Tree(app_root / "legacy", prefix="helper_app/legacy")
-
 public_root = project_root / "public"
 
 datas = [
-    (app_root / "env.example", "helper_app"),
-    (app_root / "version.py", "helper_app"),
-    (app_root / "config.py", "helper_app"),
-    (app_root / "logging_utils.py", "helper_app"),
-    (app_root / "session.py", "helper_app"),
-    (app_root / "controller.py", "helper_app"),
-    (public_root / "zenithtek-logo.png", "public"),
-    (public_root / "app-icon.png", "public"),
-    (public_root / "favicon.ico", "public"),
+    (str(app_root / "legacy"), "helper_app/legacy"),
+    (str(app_root / "env.example"), "helper_app"),
+    (str(app_root / "version.py"), "helper_app"),
+    (str(app_root / "config.py"), "helper_app"),
+    (str(app_root / "logging_utils.py"), "helper_app"),
+    (str(app_root / "session.py"), "helper_app"),
+    (str(app_root / "controller.py"), "helper_app"),
+    (str(public_root / "zenithtek-logo.png"), "public"),
+    (str(public_root / "app-icon.png"), "public"),
+    (str(public_root / "favicon.ico"), "public"),
 ]
 
 hidden_imports = [
@@ -77,7 +76,6 @@ coll = COLLECT(
     a.binaries,
     a.zipfiles,
     a.datas,
-    legacy_tree,
     strip=False,
     upx=True,
     upx_exclude=[],

@@ -99,8 +99,28 @@ class SerialSession:
     async def _close_locked(self) -> None:
         if self._comm:
             self._stop_drain_locked()
-            await asyncio.get_running_loop().run_in_executor(self._executor, self._comm.close)
-            LOG.info("SerialSession: disconnected")
+            try:
+                # Add timeout to prevent hanging on close
+                loop = asyncio.get_running_loop()
+                await asyncio.wait_for(
+                    loop.run_in_executor(self._executor, self._comm.close),
+                    timeout=3.0
+                )
+                LOG.info("SerialSession: disconnected")
+            except asyncio.TimeoutError:
+                LOG.warning("SerialSession: close operation timed out, forcing cleanup")
+                # Force cleanup even if close timed out
+                try:
+                    # Try to close without waiting
+                    if hasattr(self._comm, 'connection') and self._comm.connection:
+                        try:
+                            self._comm.connection.close()
+                        except Exception:
+                            pass
+                except Exception:
+                    pass
+            except Exception as exc:
+                LOG.warning("SerialSession: error during close: %s", exc)
         self._comm = None
 
     def _start_drain_locked(self) -> None:

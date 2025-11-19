@@ -102,11 +102,23 @@ class HelperRuntime(QtCore.QObject):
             LOG.warning("Failed to list ports: %s", exc)
         self.portsUpdated.emit(devices)
 
-    def _run_async_operation(self, name: str, coro):
+    def _run_async_operation(self, name: str, coro, timeout: Optional[float] = None):
         def _runner() -> None:
             try:
-                result = asyncio.run_coroutine_threadsafe(coro, self._loop).result()
+                future = asyncio.run_coroutine_threadsafe(coro, self._loop)
+                # Use timeout to prevent indefinite blocking (especially important for disconnect)
+                if timeout is not None:
+                    result = future.result(timeout=timeout)
+                else:
+                    # For disconnect, use a shorter timeout to prevent freezing
+                    if name == "disconnect":
+                        result = future.result(timeout=5.0)  # 5 second timeout for disconnect
+                    else:
+                        result = future.result(timeout=30.0)  # 30 second timeout for other operations
                 self.commandFinished.emit(name, result)
+            except asyncio.TimeoutError:
+                LOG.error("%s operation timed out after %s seconds", name, timeout or (5.0 if name == "disconnect" else 30.0))
+                self.operationFailed.emit(name, f"Operation timed out - the operation may still be in progress")
             except Exception as exc:
                 LOG.error("%s failed: %s", name, exc)
                 self.operationFailed.emit(name, str(exc))
@@ -118,31 +130,41 @@ class HelperRuntime(QtCore.QObject):
         self._ensure_ready()
         assert self._session
         async def _do_connect() -> None:
-            await self._session.connect(port=port, baud=baud)
+            # Add timeout to connect operation
+            await asyncio.wait_for(self._session.connect(port=port, baud=baud), timeout=10.0)
             connected = self._session.is_connected()
             self.stateChanged.emit(connected, self._session.port or "", self._session.baudrate)
-        self._run_async_operation("connect", _do_connect())
+        self._run_async_operation("connect", _do_connect(), timeout=12.0)
 
     def disconnect_port(self) -> None:
         self._ensure_ready()
         assert self._session
         async def _do_disconnect() -> None:
-            await self._session.disconnect()
-            self.stateChanged.emit(False, "", self._session.baudrate)
-        self._run_async_operation("disconnect", _do_disconnect())
+            try:
+                # Use asyncio.wait_for to add a timeout to the disconnect operation
+                await asyncio.wait_for(self._session.disconnect(), timeout=4.0)
+                self.stateChanged.emit(False, "", self._session.baudrate)
+            except asyncio.TimeoutError:
+                LOG.warning("Disconnect timed out - forcing state update")
+                # Force state update even if disconnect timed out
+                self.stateChanged.emit(False, "", self._session.baudrate)
+                raise
+        self._run_async_operation("disconnect", _do_disconnect(), timeout=5.0)
 
     def check_auto_mode(self, sensor: SensorType) -> None:
         """Check if sensor is in auto mode and emit signal."""
         self._ensure_ready()
         assert self._controller
         async def _do_check() -> bool:
-            return await self._controller.check_auto_mode(sensor)
+            # Add timeout to auto mode check
+            return await asyncio.wait_for(self._controller.check_auto_mode(sensor), timeout=5.0)
         def _runner() -> None:
             try:
-                is_auto = asyncio.run_coroutine_threadsafe(_do_check(), self._loop).result()
+                future = asyncio.run_coroutine_threadsafe(_do_check(), self._loop)
+                is_auto = future.result(timeout=6.0)  # 6 second timeout for auto mode check
                 self.autoModeDetected.emit(is_auto)
-            except Exception as exc:
-                LOG.debug("Auto mode check failed: %s", exc)
+            except (asyncio.TimeoutError, Exception) as exc:
+                LOG.debug("Auto mode check failed or timed out: %s", exc)
                 self.autoModeDetected.emit(False)
         threading.Thread(target=_runner, daemon=True).start()
 
@@ -150,10 +172,12 @@ class HelperRuntime(QtCore.QObject):
         self._ensure_ready()
         assert self._controller
         async def _do_detect() -> DetectionResult:
-            return await self._controller.detect(sensor)
+            # Add timeout to detection operation to prevent hanging
+            return await asyncio.wait_for(self._controller.detect(sensor), timeout=30.0)
         def _runner() -> None:
             try:
-                result = asyncio.run_coroutine_threadsafe(_do_detect(), self._loop).result()
+                future = asyncio.run_coroutine_threadsafe(_do_detect(), self._loop)
+                result = future.result(timeout=35.0)  # 35 second timeout for detection
                 if not result.success:
                     raise RuntimeError(result.message or "Detection failed")
                 identity = DeviceIdentity(
@@ -163,6 +187,9 @@ class HelperRuntime(QtCore.QObject):
                     serial_number=result.serial_number,
                 )
                 self.detectionFinished.emit(identity)
+            except asyncio.TimeoutError:
+                LOG.error("Detection operation timed out after 35 seconds")
+                self.operationFailed.emit("detect", "Detection timed out - the sensor may not be responding. Please check the connection and try again.")
             except Exception as exc:
                 LOG.error("Detection failed: %s", exc)
                 self.operationFailed.emit("detect", str(exc))

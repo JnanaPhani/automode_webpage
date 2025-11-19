@@ -23,6 +23,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._pending_sensor_type: Optional[SensorType] = None
         self._exit_auto_then_detect = False
         self._detection_in_progress = False
+        self._auto_disconnecting = False  # Flag to track auto-disconnect operations
         self.setWindowTitle("Zenith Tek Sensor Configuration Tool")
         self.setFixedSize(900, 650)  # Fixed size - prevents resizing
         self._build_ui()
@@ -160,27 +161,21 @@ class MainWindow(QtWidgets.QMainWindow):
         self.sampling_rate_combo = QtWidgets.QComboBox()
         # Add supported sampling rates
         supported_rates = [2000, 1000, 500, 400, 250, 200, 125, 100, 80, 62.5, 50, 40, 31.25, 25, 20, 15.625]
+        default_rate = 125
         for rate in supported_rates:
-            if isinstance(rate, int):
+            if rate == default_rate:
+                # Add "(default)" label for the default rate
+                self.sampling_rate_combo.addItem(f"{rate} SPS (default)", rate)
+            elif isinstance(rate, int):
                 self.sampling_rate_combo.addItem(f"{rate} SPS", rate)
             else:
                 self.sampling_rate_combo.addItem(f"{rate:.3f} SPS", rate)
         # Set default to 125 SPS
-        default_idx = supported_rates.index(125)
+        default_idx = supported_rates.index(default_rate)
         self.sampling_rate_combo.setCurrentIndex(default_idx)
-
-        # TAP value (optional)
-        self.tap_value_spin = QtWidgets.QSpinBox()
-        self.tap_value_spin.setMinimum(0)
-        self.tap_value_spin.setMaximum(128)
-        self.tap_value_spin.setSpecialValueText("Auto (use minimum)")
-        self.tap_value_spin.setValue(0)  # 0 means auto
-        self.tap_value_spin.setEnabled(True)
 
         imu_config_layout.addWidget(QtWidgets.QLabel("Sampling Rate"), 0, 0)
         imu_config_layout.addWidget(self.sampling_rate_combo, 0, 1)
-        imu_config_layout.addWidget(QtWidgets.QLabel("TAP Value (optional)"), 1, 0)
-        imu_config_layout.addWidget(self.tap_value_spin, 1, 1)
 
         # Initially hide IMU config (only show for IMU)
         self.imu_config_group.setVisible(False)
@@ -299,13 +294,11 @@ class MainWindow(QtWidgets.QMainWindow):
         
         sensor = self._selected_sensor_type()
         if command == "configure":
-            # For IMU, pass sampling rate and tap value
+            # For IMU, pass sampling rate (TAP = 128 is now standard and handled by backend)
             if sensor == "imu":
                 sampling_rate = self.sampling_rate_combo.currentData()
-                tap_value = self.tap_value_spin.value()
-                # If tap_value is 0, it means auto, so pass None
-                tap_value = None if tap_value == 0 else tap_value
-                self.runtime.configure(sensor, sampling_rate=sampling_rate, tap_value=tap_value)
+                # TAP value is always 128 (standard), so pass None to use default
+                self.runtime.configure(sensor, sampling_rate=sampling_rate, tap_value=None)
             else:
                 self.runtime.configure(sensor)
         elif command == "exit_auto":
@@ -320,6 +313,15 @@ class MainWindow(QtWidgets.QMainWindow):
         # default to vibration for legacy behavior
         return "vibration"
 
+    def _perform_auto_disconnect(self) -> None:
+        """Perform the auto-disconnect operation (called via QTimer)."""
+        try:
+            self.runtime.disconnect_port()
+        except Exception as exc:
+            LOG.error("Auto-disconnect failed: %s", exc)
+            self._append_log(f"Auto-disconnect failed: {exc}")
+            self._auto_disconnecting = False
+
     def _on_state_changed(self, connected: bool, port: str, baud: int) -> None:
         # Connect button: disabled when connected
         self.connect_btn.setEnabled(not connected)
@@ -331,6 +333,26 @@ class MainWindow(QtWidgets.QMainWindow):
         self._set_action_buttons_enabled(connected)
         status = "Connected" if connected else "Disconnected"
         self._append_log(f"{status} to {port or 'n/a'} @ {baud} bps")
+        
+        # Show completion dialog (skip if this is an auto-disconnect to avoid duplicate dialogs)
+        if connected:
+            QtWidgets.QMessageBox.information(
+                self,
+                "Connection Established",
+                f"Successfully connected to {port or 'sensor'} @ {baud} bps.\n\n"
+                f"You can now detect and configure the sensor."
+            )
+        else:
+            # Only show disconnect dialog if it's not an auto-disconnect
+            if not self._auto_disconnecting:
+                QtWidgets.QMessageBox.information(
+                    self,
+                    "Disconnected",
+                    "Disconnected from sensor successfully."
+                )
+            else:
+                # Reset the flag after auto-disconnect completes
+                self._auto_disconnecting = False
 
     def _on_auto_mode_detected(self, is_auto_mode: bool) -> None:
         """Handle auto mode detection result."""
@@ -398,6 +420,18 @@ class MainWindow(QtWidgets.QMainWindow):
             self.product_field.setText(identity.product_id or identity.product_id_raw or "Unknown")
             self.serial_field.setText(identity.serial_number or "Unknown")
             self._append_log("Sensor identity retrieved successfully.")
+            
+            # Show completion dialog
+            sensor_name = identity.product_id or identity.product_id_raw or "Sensor"
+            QtWidgets.QMessageBox.information(
+                self,
+                "Detection Complete",
+                f"Sensor detected successfully.\n\n"
+                f"Product ID: {sensor_name}\n"
+                f"Serial Number: {identity.serial_number or 'Unknown'}\n\n"
+                f"You can now configure the sensor settings."
+            )
+            
             # Re-enable detect button if still connected
             if self.disconnect_btn.isEnabled():
                 self.detect_btn.setEnabled(True)
@@ -417,6 +451,45 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             message = f"{command} completed"
         self._append_log(str(message))
+        
+        # Show completion dialog with next steps
+        requires_restart = getattr(result, "requires_restart", False)
+        sensor = self._selected_sensor_type()
+        
+        if command == "configure":
+            if requires_restart:
+                QtWidgets.QMessageBox.information(
+                    self,
+                    "Configuration Complete",
+                    "Sensor is set to auto mode.\n\n"
+                    "Please restart the sensor (power cycle or reset) to start receiving data."
+                )
+                # Automatically disconnect after setting sensor to auto mode
+                # Use QTimer to defer disconnect slightly to avoid blocking after modal dialog
+                if self.disconnect_btn.isEnabled():
+                    self._append_log("Auto-disconnecting from COM port after auto mode configuration...")
+                    self._auto_disconnecting = True
+                    QtCore.QTimer.singleShot(100, self._perform_auto_disconnect)
+            else:
+                QtWidgets.QMessageBox.information(
+                    self,
+                    "Configuration Complete",
+                    "Sensor configuration completed successfully."
+                )
+        elif command == "exit_auto":
+            QtWidgets.QMessageBox.information(
+                self,
+                "Auto Mode Disabled",
+                "Auto mode has been disabled successfully.\n\n"
+                "The sensor is now in configuration mode."
+            )
+        elif command == "full_reset":
+            QtWidgets.QMessageBox.information(
+                self,
+                "Factory Reset Complete",
+                "Factory reset completed successfully.\n\n"
+                "Please restart the sensor (power cycle or reset) to apply the changes."
+            )
         
         # Re-enable action buttons and detect button if still connected
         if self.disconnect_btn.isEnabled():
@@ -446,6 +519,15 @@ class MainWindow(QtWidgets.QMainWindow):
                     self.detect_btn.setEnabled(True)
 
     def _on_operation_failed(self, command: str, message: str) -> None:
+        # For disconnect timeouts, don't show error dialog - state is already updated
+        if command == "disconnect" and "timed out" in message.lower():
+            self._append_log(f"Disconnect timed out, but connection state has been updated.")
+            # Reset auto-disconnect flag if it was set
+            if self._auto_disconnecting:
+                self._auto_disconnecting = False
+            return
+        
+        # For other operations, show error dialog
         QtWidgets.QMessageBox.critical(self, "Operation failed", f"{command} failed:\n{message}")
         self._append_log(f"{command} failed: {message}")
         
