@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-from PySide6 import QtCore, QtGui, QtWidgets
+from PySide6 import QtCore, QtGui, QtWidgets  # type: ignore[import-untyped]
 
 from helper_app.controller import SensorType
 
