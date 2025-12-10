@@ -79,7 +79,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         title_label = QtWidgets.QLabel("Sensor Configuration Tool")
         title_label.setStyleSheet("font-size: 18px; font-weight: bold; color: #333;")
-        subtitle_label = QtWidgets.QLabel("Configure Epson Vibration Sensors and IMUs")
+        subtitle_label = QtWidgets.QLabel("Configure Epson Vibration Sensors, IMUs, and Accelerometers")
         subtitle_label.setStyleSheet("font-size: 11px; color: #666;")
 
         title_layout.addWidget(title_label)
@@ -105,6 +105,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.sensor_combo = QtWidgets.QComboBox()
         self.sensor_combo.addItem("Vibration", "vibration")
         self.sensor_combo.addItem("IMU", "imu")
+        self.sensor_combo.addItem("Accelerometer", "accelerometer")
 
         connection_layout.addWidget(QtWidgets.QLabel("Select Port"), 0, 0)
         connection_layout.addWidget(self.port_combo, 0, 1)
@@ -189,8 +190,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         info_label = QtWidgets.QLabel(
             "⚠️ <b>IMPORTANT:</b> RAW data sampling rates are <b>FIXED</b> and cannot be changed.\n\n"
-            "• Velocity RAW: <b>3000 Sps</b> (FIXED)\n"
-            "• Displacement RAW: <b>300 Sps</b> (FIXED)\n\n"
+            # "• Velocity RAW: <b>3000 Sps</b> (FIXED)\n"
+            "• Displacement: <b>300 Sps</b> (FIXED)\n\n"
             # "Only RMS/P-P (Root Mean Square / Peak-to-Peak) rates can be configured."
         )
         info_label.setWordWrap(True)
@@ -200,6 +201,46 @@ class MainWindow(QtWidgets.QMainWindow):
         # Initially hide vibration info (only show for vibration)
         self.vibration_info_group.setVisible(False)
         layout.addWidget(self.vibration_info_group)
+
+        # Accelerometer Configuration (only shown for Accelerometer sensors)
+        self.accelerometer_config_group = QtWidgets.QGroupBox("Accelerometer Configuration")
+        accelerometer_config_layout = QtWidgets.QGridLayout(self.accelerometer_config_group)
+        accelerometer_config_layout.setSpacing(8)
+        accelerometer_config_layout.setContentsMargins(10, 10, 10, 10)
+        accelerometer_config_layout.setColumnStretch(0, 0)
+        accelerometer_config_layout.setColumnStretch(1, 1)
+
+        # Sampling rate combo box for accelerometer
+        self.accelerometer_sps_combo = QtWidgets.QComboBox()
+        # Add supported SPS rates: 100, 200, 500, 1000
+        supported_sps_rates = [100, 200, 500, 1000]
+        default_sps_rate = 200  # Factory default
+        for rate in supported_sps_rates:
+            if rate == default_sps_rate:
+                self.accelerometer_sps_combo.addItem(f"{rate} SPS (default)", rate)
+            else:
+                self.accelerometer_sps_combo.addItem(f"{rate} SPS", rate)
+        # Set default to 200 SPS
+        default_sps_idx = supported_sps_rates.index(default_sps_rate)
+        self.accelerometer_sps_combo.setCurrentIndex(default_sps_idx)
+
+        accelerometer_config_layout.addWidget(QtWidgets.QLabel("Sampling Rate (SPS)"), 0, 0)
+        accelerometer_config_layout.addWidget(self.accelerometer_sps_combo, 0, 1)
+
+        # # Info label about fixed settings
+        # info_label = QtWidgets.QLabel(
+        #     "• Filter: 512 taps (fixed)\n"
+        #     "• Cutoff frequency: Auto-selected based on SPS rate\n"
+        #     "• Output: Acceleration (all axes)\n"
+        #     "• Measurement mode: Standard noise floor"
+        # )
+        # info_label.setWordWrap(True)
+        # info_label.setStyleSheet("color: #666; padding: 5px; font-size: 10px;")
+        # accelerometer_config_layout.addWidget(info_label, 1, 0, 1, 2)
+
+        # Initially hide accelerometer config (only show for accelerometer)
+        self.accelerometer_config_group.setVisible(False)
+        layout.addWidget(self.accelerometer_config_group)
 
         # Actions
         actions_group = QtWidgets.QGroupBox("Actions")
@@ -250,8 +291,12 @@ class MainWindow(QtWidgets.QMainWindow):
         if not port:
             QtWidgets.QMessageBox.warning(self, "Missing port", "Please select a serial port.")
             return
-        # Use default baud rate of 460800
-        baud = 460800
+        # Set baud rate based on sensor type
+        sensor = self._selected_sensor_type()
+        if sensor == "accelerometer":
+            baud = 230400  # Default baud rate for accelerometer
+        else:
+            baud = 460800  # Default baud rate for vibration and IMU
         self.runtime.connect_port(port, baud)
 
     def _handle_detect_clicked(self) -> None:
@@ -268,7 +313,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.detect_btn.setEnabled(False)
             self._detection_in_progress = True
             sensor_choice = self.sensor_combo.currentData()
-            sensor = sensor_choice if sensor_choice in ("vibration", "imu") else "vibration"
+            sensor = sensor_choice if sensor_choice in ("vibration", "imu", "accelerometer") else "vibration"
             self._pending_sensor_type = sensor
             # Check auto mode before detecting
             self.runtime.check_auto_mode(sensor)
@@ -299,6 +344,9 @@ class MainWindow(QtWidgets.QMainWindow):
                 sampling_rate = self.sampling_rate_combo.currentData()
                 # TAP value is always 128 (standard), so pass None to use default
                 self.runtime.configure(sensor, sampling_rate=sampling_rate, tap_value=None)
+            elif sensor == "accelerometer":
+                sps_rate = self.accelerometer_sps_combo.currentData()
+                self.runtime.configure(sensor, sps_rate=sps_rate)
             else:
                 self.runtime.configure(sensor)
         elif command == "exit_auto":
@@ -308,7 +356,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _selected_sensor_type(self) -> SensorType:
         sensor = self.sensor_combo.currentData()
-        if sensor in ("vibration", "imu"):
+        if sensor in ("vibration", "imu", "accelerometer"):
             return sensor
         # default to vibration for legacy behavior
         return "vibration"
@@ -554,6 +602,7 @@ class MainWindow(QtWidgets.QMainWindow):
         sensor = self.sensor_combo.currentData()
         self.imu_config_group.setVisible(sensor == "imu")
         self.vibration_info_group.setVisible(sensor == "vibration")
+        self.accelerometer_config_group.setVisible(sensor == "accelerometer")
 
     def _update_ports(self, ports: list) -> None:
         previous = self.port_combo.currentText()

@@ -1,0 +1,2 @@
+"""Accelerometer sensor configuration module."""
+

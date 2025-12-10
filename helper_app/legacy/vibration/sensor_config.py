@@ -321,11 +321,91 @@ class SensorConfigurator:
             "serial_words": serial_words,
         }
 
-    def set_uart_auto_start(self) -> bool:
+    def set_output_type(self, output_type: str = "displacement") -> bool:
+        """Set the sensor output physical quantity.
+        
+        Args:
+            output_type: Output type, either "velocity" or "displacement"
+            
+        Returns:
+            True if successful, False otherwise
+        """
         try:
-            self.reset_sensor()
-            time.sleep(0.1)
+            # OUTPUT_SEL values for SIG_CTRL register (bits [7:4])
+            # 0000 = Velocity RAW (factory default)
+            # 0100 = Displacement RAW
+            if output_type.lower() == "displacement":
+                output_sel = 0x40  # 01000000 in binary (bits [7:4] = 0100)
+                output_name = "Displacement RAW"
+            elif output_type.lower() == "velocity":
+                output_sel = 0x00  # 00000000 in binary (bits [7:4] = 0000)
+                output_name = "Velocity RAW"
+            else:
+                logger.error("Invalid output type: %s. Use 'velocity' or 'displacement'", output_type)
+                return False
+            
+            logger.info("Setting output type to %s...", output_name)
+            
+            # Set Window 1
+            self._write_commands([[0, 0xFE, 0x01, 0x0D]])
+            time.sleep(0.01)
+            
+            # Write OUTPUT_SEL to SIG_CTRL register (low byte)
+            self._write_commands([[0, 0x80, output_sel, 0x0D]])
+            logger.info("SIG_CTRL register set (OUTPUT_SEL = 0x%02X)", output_sel)
+            
+            # Wait for output mode setting to complete (~118ms according to datasheet)
+            time.sleep(0.12)
+            
+            # Verify OUTPUT_STAT bit [0] returns to 0 (setting complete)
+            verify_commands = [
+                [0, 0xFE, 0x01, 0x0D],
+                [4, 0x00, 0x00, 0x0D],  # Read SIG_CTRL
+            ]
+            result = self.comm.send_commands(verify_commands)
+            
+            if len(result) >= 4:
+                sig_ctrl_low = result[-2]  # LSByte (using -2 to match existing pattern)
+                output_stat = sig_ctrl_low & 0x01
+                if output_stat != 0:
+                    logger.warning("OUTPUT_STAT still in progress, waiting longer...")
+                    # Wait a bit more and check again
+                    time.sleep(0.1)
+                    result = self.comm.send_commands(verify_commands)
+                    if len(result) >= 4:
+                        sig_ctrl_low = result[-2]
+                        output_stat = sig_ctrl_low & 0x01
+            
+            # Check for hardware errors in DIAG_STAT1
+            diag_commands = [
+                [0, 0xFE, 0x00, 0x0D],
+                [4, 0x04, 0x00, 0x0D],  # Read DIAG_STAT1
+            ]
+            diag_result = self.comm.send_commands(diag_commands)
+            
+            if len(diag_result) >= 4:
+                diag_msb = diag_result[-3]  # MSByte (using -3 to match existing pattern)
+                hard_err = (diag_msb >> 5) & 0x07  # Bits [7:5]
+                if hard_err != 0:
+                    logger.error("Hardware error detected (HARD_ERR=0x%X)", hard_err)
+                    return False
+            
+            logger.info("Output type set to %s successfully", output_name)
+            return True
+            
+        except Exception as e:
+            logger.error("Failed to set output type: %s", e)
+            return False
 
+    def set_uart_auto_start(self) -> bool:
+        """Enable UART Auto Start mode.
+        
+        Note: This method does not reset the sensor. Call reset_sensor() separately if needed.
+        
+        Returns:
+            True if successful, False otherwise
+        """
+        try:
             commands = [
                 [0, 0xFE, 0x01, 0x0D],
                 [0, 0x88, 0x03, 0x0D],
@@ -404,12 +484,30 @@ class SensorConfigurator:
             logger.error(f"Flash backup failed: {e}")
             return False
 
-    def configure(self) -> bool:
-        """Configure sensor in UART Auto Start mode."""
+    def configure(self, output_type: str = "displacement") -> bool:
+        """Configure sensor in UART Auto Start mode.
+        
+        Args:
+            output_type: Output type, either "velocity" or "displacement" (default: "displacement")
+            
+        Returns:
+            True if successful, False otherwise
+        """
         self._warnings.clear()
         try:
+            # Reset sensor first
+            self.reset_sensor()
+            time.sleep(0.1)
+            
+            # Set output type (velocity or displacement)
+            if not self.set_output_type(output_type):
+                return False
+            
+            # Enable UART Auto Start
             if not self.set_uart_auto_start():
                 return False
+            
+            # Save to flash
             if not self.flash_backup():
                 warning_message = (
                     "Flash backup failed during configuration. Auto Start is enabled for this session, "
@@ -417,8 +515,11 @@ class SensorConfigurator:
                 )
                 logger.warning(warning_message)
                 self._add_warning(warning_message)
+            
+            output_name = "Displacement" if output_type.lower() == "displacement" else "Velocity"
             logger.info("Sensor configured in UART Auto Start mode successfully")
-            logger.info("After power cycle or reset, sensor will automatically start transmitting data")
+            logger.info("Output type: %s", output_name)
+            logger.info("After power cycle or reset, sensor will automatically start transmitting %s data", output_name.lower())
             logger.info(f"Configuration tool by {AUTHOR} at {ORGANIZATION}")
             return True
             

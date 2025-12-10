@@ -1,0 +1,4540 @@
+﻿M-A542VR1
+
+3 Axis Vibration Sensor: M-A542VR1 
+
+Features 
+
+⚫ Waterproof and dustproof unit equipped with EPSON 
+vibration sensor M-A342VD1
+
+⚫ Capable of measuring velocity, velocity RMS, and 
+velocity Peak to Peak (ISO10816/20816 compliant)
+
+⚫ Flat Frequency Response : 10 Hz ~ 1000 Hz (-3 dB)
+
+⚫ Insensitive to magnetic influences
+
+⚫ Wide output range : ±100 mm/s (110 dB)
+
+⚫ Low Noise : 1.4×10-4 (mm/s)/√Hz Typ.
+
+⚫ 3-Axis Digital Output : RS422
+
+⚫ Capable of measuring Displacement : 1 Hz ~ 100 Hz
+
+⚫ Low cross-axis sensitivity (capable of 0.1% with Description 
+
+alignment compensation by host post-process) and The M-A542 is a three axis digital velocity/displacement 
+
+low sensitivity error (1550×10-6) to ensure high output vibration sensor featuring low noise, high stability, 
+
+accuracy and low power consumption using fine processing 
+
+technology of Quartz. 
+⚫ Built-in Self Test Function
+
+⚫ Waterproof, Dustproof : IP67 Incorporating high accuracy, wide bandwidth, and 
+
+durability, the versatile M-A542 is well suited to a widerange 
+⚫ Regulation : CE marking (EN61326-1 ClassA, RoHS 
+
+Directive), FCC part15B of challenging applications such as Condition Based 
+
+Maintenance (CBM), Machine Health Monitoring (MHM), 
+Application 
+
+and Structural Health Monitoring (SHM). 
+⚫ Condition Based Maintenance (CBM)
+
+The M-A542 is packaged in a waterproof and dustproof 
+⚫ Machine Health Monitoring (MHM)
+
+metallic case supporting RS422 interface. This ruggedized 
+⚫ Structural Health Monitoring (SHM)
+
+unit is suitable for industrial use that requires remote 
+⚫ Vibration Analysis, Control and Stabilization
+
+mounting, or long-distance wiring.  
+⚫ Motion Analysis and Control
+
+⚫ Lissajous Analysis Outline Dimentions 
+
+Typical Performance Characteristic 
+
+Unit: mm 
+Figure  Noise Density (Velocity Output) 
+
+Block Diagram 
+
+Figure  Frequency Response (Velocity Output) 
+
+Full Data Sheet Page 1 M-A542_DataSheet_E_Rev20220401
+
+
+
+M-A542VR1
+
+Table of Contents 
+
+Revision History ········································································································································ 7
+
+Ordering Information ··································································································································· 8
+
+Evaluation tools ········································································································································· 8
+
+Symbols ··················································································································································· 9
+
+Notice of the Document ······························································································································· 9
+
+Specifications ······································································································································· 10
+
+1.1. Absolute Maximum Ratings ················································································································ 10
+
+1.2. Recommended Operating Condition ····································································································· 10
+
+1.3. Performance and Electrical Specifications ····························································································· 11
+
+Mechanical Dimensions ·························································································································· 13
+
+2.1. Outline Dimensions ·························································································································· 13
+
+2.2. Connector Specifications ··················································································································· 14
+
+Typical Performance Characteristics ········································································································· 15
+
+Basic Operation ···································································································································· 16
+
+4.1. Connection To Host ·························································································································· 16
+
+4.2. Precaution for Wiring and Cabling ········································································································ 16
+
+4.3. Precaution for Supplying Power ·········································································································· 16
+
+4.4. Operation Mode ······························································································································· 17
+
+4.5. Functional Block ······························································································································ 18
+
+4.6. Sampling Counter ···························································································································· 19
+
+4.7. Self Test ········································································································································· 19
+
+4.9. Structural Resonance Warning ············································································································ 21
+
+4.10. Checksum ······································································································································ 21
+
+4.11. Automatic Start (For UART Auto Sampling Only) ···················································································· 21
+
+4.12. Frequency Response Characteristics ··································································································· 22
+
+4.13. Velocity and Displacement Output ······································································································· 23
+
+4.14. Alignment Compensation ··················································································································· 25
+
+Digital Interface ····································································································································· 26
+
+5.1. Serial Interface Specification ·············································································································· 27
+
+5.1.1. UART Read Timing (Normal Mode) ·························································································· 28
+
+5.1.2. UART Read Timing (Burst Mode) ····························································································· 28
+
+5.1.3. UART Write Timing ··············································································································· 29
+
+5.1.4. UART Auto Sampling Operation ······························································································ 29
+
+5.2. Data Packet Format ·························································································································· 30
+
+5.3. Recommended Communication Conditions ··························································································· 32
+
+User Register ······································································································································· 33
+
+6.1. BURST Register (Window 0) ·············································································································· 36
+
+6.2. MODE_CTRL Register (Window 0) ······································································································ 36
+
+6.3. DIAG_STAT1 Register (Window 0) ······································································································ 37
+
+6.4. FLAG (ND/EA) Register (Window 0) ····································································································· 38
+
+6.5. COUNT Register (Window 0) ·············································································································· 39
+
+Full Data Sheet Page 2 M-A542_DataSheet_E_Rev20220401
+
+
+
+M-A542VR1
+
+6.6. DIAG_STAT2 Register (Window 0) ······································································································ 39
+
+6.7. TEMP1 Register (Window 0) ·············································································································· 40
+
+6.8. ACC_SELFTEST_DATA1 Register (Window 0) ······················································································ 40
+
+6.9. ACC_SELFTEST_DATA2 Register (Window 0) ······················································································ 40
+
+6.10. TEMP2 Register (Window 0) ·············································································································· 41
+
+6.11. VELC Register (Window 0) ················································································································· 42
+
+6.12. DISP Register (Window 0) ················································································································· 42
+
+6.13. SIG_CTRL Register (Window 1) ·········································································································· 43
+
+6.14. MSC_CTRL Register (Window 1) ········································································································ 44
+
+6.15. SMPL_CTRL Register (Window 1) ······································································································· 45
+
+6.16. UART_CTRL Register (Window 1) ······································································································· 46
+
+6.17. GLOB_CMD Register (Window 1)········································································································ 46
+
+6.18. BURST_CTRL Register (Window 1) ····································································································· 47
+
+6.19. ALIGNMENT_COEF_CMD Register (Window 1) ···················································································· 48
+
+6.20. ALIGNMENT_COEF_DATA Register (Window 1) ··················································································· 48
+
+6.21. ALIGNMENT_COEF_ADDR Register (Window 1) ··················································································· 48
+
+6.22. X_ALARM Register (Window 1) ·········································································································· 49
+
+6.23. Y_ALARM Register (Window 1) ·········································································································· 49
+
+6.24. Z_ALARM Register (Window 1) ··········································································································· 49
+
+6.25. PROD_ID Register (Window 1) ··········································································································· 49
+
+6.26. VERSION Register (Window 1) ··········································································································· 50
+
+6.27. SERIAL_NUM Register (Window 1) ····································································································· 50
+
+6.28. WIN_CTRL Register (Window 0,1) ······································································································· 50
+
+Sample Program Sequence ····················································································································· 51
+
+7.1. UART Sample Programs ··················································································································· 51
+
+7.1.1. Power-On Sequence (UART) ·································································································· 51
+
+7.1.2. Register Read and Write (UART) ····························································································· 51
+
+7.1.3. Configure Output Physical Quantity (UART) ··············································································· 51
+
+7.1.4. Sampling (UART) ················································································································· 51
+
+7.1.5. Self Test (UART) ·················································································································· 53
+
+7.1.6. Software Reset (UART) ········································································································· 54
+
+7.1.7. Non-Volatile Memory Backup (UART) ······················································································· 54
+
+7.1.8. Non-Volatile Memory Reset (UART) ························································································· 54
+
+7.1.9. Auto Start (UART) ················································································································· 54
+
+7.1.10. UART Communication Baud Rate Setting (UART) ······································································· 54
+
+Handling Notes ····································································································································· 55
+
+8.1. Cautions for Use ······························································································································ 55
+
+8.2. Cautions for Storage ························································································································· 55
+
+8.3. Other Cautions ································································································································ 55
+
+8.4. Limited Warranty ······························································································································ 56
+
+Standards and Approvals ························································································································ 57
+
+9.1. Notice ············································································································································ 57
+
+9.2. CE Marking ····································································································································· 57
+
+9.3. RoHS & WEEE ································································································································ 57
+
+9.4. FCC Compliance Statement for American users ····················································································· 57
+
+Full Data Sheet Page 3 M-A542_DataSheet_E_Rev20220401
+
+
+
+M-A542VR1
+
+9.5. Industry ICES Compliance Statement for Canadian users········································································· 57
+
+9.6. For GB[UKCA] and NI[UK(NI)] users ···································································································· 57
+
+Contact  ·············································································································································· 58
+
+Full Data Sheet Page 4 M-A542_DataSheet_E_Rev20220401
+
+
+
+M-A542VR1
+
+List of Figure 
+
+Figure 2.1 Outline Dimensions (millimeters) 13
+
+Figure 2.2 Recommended Mounting Dimension (millimeters) 13
+
+Figure 2.3 Axial Direction 14
+
+Figure 2.4 Connector Pin Layout 14
+
+Figure 3.1 Noise Frequency Characteristic (Velocity Output) 15
+
+Figure 3.2 Noise Frequency Characteristic (Displacement Output) 15
+
+Figure 4.1 Connection Example 16
+
+Figure 4.2 Surge Protection Circuit 16
+
+Figure 4.3 Operational State Diagram 18
+
+Figure 4.4 Functional Block Diagram – Velocity 18
+
+Figure 4.5 Functional Block Diagram – Displacement 18
+
+Figure 4.6 Example of Sensor Placement for Sensitivity Test 20
+
+Figure 4.7 Checksum 21
+
+Figure 4.8 Frequency Response Characteristics (Velocity Output) 22
+
+Figure 4.9 Frequency Response Characteristics (Displacement Output) 22
+
+Figure 4.10 Example of Integral Filter Transient Response at the Start of Measurement (Velocity Output) 23
+
+Figure 4.11 Example of Integral Filter Transient Response at the Start of Measurement (Displacement Output) 23
+
+Figure 4.12 Example of Integral Filter Transient Response at 90° Change in Placement Attitude (Velocity Output) 24
+
+Figure 4.13 Example of Integral Filter Transient Response at 90° Change in Placement Attitude (Displacement Output)
+
+24
+
+Figure 4.14 Alignment Compensation Coefficient Reading Sequence 25
+
+Figure 5.1 UART Bit Format 27
+
+Figure 5.2 UART Read Timing (Normal Mode) 28
+
+Figure 5.3 UART Read Timing (Burst Mode) 28
+
+Figure 5.4 UART Write Timing 29
+
+Figure 5.5 UART Auto Sampling 29
+
+Full Data Sheet Page 5 M-A542_DataSheet_E_Rev20220401
+
+
+
+M-A542VR1
+
+List of Table 
+
+Table 1.1 Absolute Maximum Rating 10
+
+Table 1.2 Recommended Operating Condition 10
+
+Table 1.3 Sensor Specifications 11
+
+Table 1.4 Interfsce Specifications 12
+
+Table 1.5 Current Consumption 12
+
+Table 2.1 Pin Function Description 14
+
+Table 2.2 Conector Part number 14
+
+Table 4.1 Transient Response Time of FIR filters at the Start of Measurement 22
+
+Table 4.2 Alignment Compensation Coefficients Memory Map 25
+
+Table 5.1 UART Communication Settings 27
+
+Table 5.2 UART Timing 27
+
+Table 5.3 UART Timing (tREADRATE requirements for Burst Mode) 27
+
+Table 5.4 Command Format (Read) 28
+
+Table 5.5 Response Format (Read) 28
+
+Table 5.6 Command Format (Burst Mode) 29
+
+Table 5.7 Command Format (Write) 29
+
+Table 5.8 Example of Data Packet Format 1 (UART BURST / AUTO SAMPLING) 30
+
+Table 5.9 Example of Data Packet Format 2 (UART BURST / AUTO SAMPLING) 31
+
+Table 5.10 Communication Condition Selection Matrix for UART 1 32
+
+Table 5.11 Communication Condition Selection Matrix for UART 2 32
+
+Table 6.1 Register Map 34
+
+Table 6.2 Diagnosis Details for Each Structural Resonance Level 39
+
+Table 6.3 Mapping of Output Rate and Update Rate to Setting Values (Velocity) 45
+
+Table 6.4 Mapping of Output Rate and Update Rate to Setting Values (Displacement) 45
+
+Full Data Sheet Page 6 M-A542_DataSheet_E_Rev20220401
+
+
+
+M-A542VR1
+
+Revision History 
+
+Rev. No. Data Page Description 
+
+20220210 2022/2/10 ALL New release. 
+
+20220401 2022/4/1 8 Product Number Change 
+
+Full Data Sheet Page 7 M-A542_DataSheet_E_Rev20220401
+
+
+
+M-A542VR1
+
+Ordering Information 
+
+The product can be ordered with the following numbers. Please inquire separately about details. 
+
+Product Model Number Product Name Comments 
+X2F000041000100 M-A542VR1 This product. 
+
+Evaluation tools 
+
+Evaluation tools can be provided for this product. Please inquire separately about details. 
+
+Product Model Number Product Name Comments 
+X2H000041000100 M-M52EV161 Magnet Base for Accelerometer/IMU. 
+
+Option for simply fixing A542 to the machine to be measured with a 
+magnet. 
+
+- Vibration Logger Accelerometer/Vibration sensor Logger Software. 
+For more information, please contact us. 
+
+Full Data Sheet Page 8 M-A542_DataSheet_E_Rev20220401
+
+
+
+M-A542VR1
+
+Symbols 
+
+● Compliant with the EU RoHS directive.
+* About products without the Pb-Free label
+Product terminals are lead-free but the internal components of the product contain lead (high melting
+point solder lead as well as the lead contained in the glass of an electronic component are both not
+applicable under the EU RoHS directive).
+
+Notice of the Document 
+
+NOTICE：PLEASE READ CAREFULLY BELOW BEFORE THE USE OF THIS DOCUMENT  ©Seiko Epson Corporation 2022 
+
+―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― 
+ The content of this document is subject t o change without notice. 
+1. This document may not be copied, reproduced, or used for any other purposes, in whole or in part, without the consent of Seiko Epson 
+
+Corporation(“Epson”).
+
+2. Before purchasing or using Epson products, please contact with our sales representative for the latest information and be always sure to check the 
+
+latest information published on Epson’s official web sites and sources.
+
+3. Information provided in this document such as application circuits, programs, usage, etc., are for reference purpose only. Please use the application 
+
+circuits, programs, usage, etc. in the design of your equipment or systems at your own responsibility. Epson makes no guarantees against any 
+
+infringements or damages to any third parties’ intellectual property rights or any other rights resulting from the information. This document does not grant 
+
+you any licenses, intellectual property rights or any other rights with respect to Epson products owned by Epson or any third parties.
+
+4. Epson is committed to constantly improving quality and reliability, but semiconductor products in general are subject to malfunction and failure. In using
+
+Epson products, you shall be responsible for safe design in your products; your hardware, software and systems are designed enough to prevent any 
+
+harm or damages to life, health or property even if any malfunction or failure might be caused by Epson products. In designing of your products with 
+
+using Epson products, please be sure to check and comply with the latest information regarding Epson products (this document, specifications, data 
+
+sheets, manuals, Epson’s web site, etc.). When using the information included in the above materials such as product data, chart, technical contents, 
+
+programs, algorithms and application circuit examples, you shall evaluate your products both in stand-alone basis and within your overall systems. You 
+
+shall be solely responsible for deciding whether or not to adopt and use Epson products.
+
+5. Epson has prepared this document and programs provided in this document carefully to be accurate and dependable, but Epson does not guarantee 
+
+that the information and the programs are always accurate and complete. Epson assumes no responsibility for any damages which you incurred by due 
+
+to misinformation in this document and the programs.
+
+6. No dismantling, analysis, reverse engineering, modification, alteration, adaptation, reproduction, etc., of Epson products is allowed.
+
+7. Epson products have been designed, developed and manufactured to be used in general electronic applications (office equipment, communications 
+
+equipment, measuring instruments, home electronics, etc.) and applications individually listed in this document (“General Purpose”). Epson products are 
+
+NOT intended for any use beyond the General Purpose that requires particular/higher quality or reliability in order to refrain from causing any
+
+malfunction or failure leading to harm to life, health or serious property damage or severe impact on society, including, but not limited to listed below.
+
+Therefore, you are advised to use Epson products only for the General Purpose. Should you desire to buy and use Epson products for the particular 
+
+purpose other than the General Purpose, Epson makes no warranty and disclaims with respect to Epson products, whether express or implied, 
+
+including without limitation any implied warranty of merchantability or fitness for any particular purpose.
+
+【Particular purpose】
+
+Space equipment (artificial satellites, rockets, etc.) 
+
+Transportation vehicles and their control equipment (automobiles, aircraft, trains, ships, etc.) 
+
+Medical equipment (other than applications individually listed in this document) / Relay equipment to be placed on sea floor 
+
+Power station control equipment / Disaster or crime prevention equipment / Traffic control equipment / Financial equipment 
+
+Other applications requiring similar levels of reliability as the above 
+
+8. Epson products listed in this document and our associated technologies shall not be used in any equipment or systems that laws and regulations in
+
+Japan or any other countries prohibit to manufacture, use or sell. Furthermore, Epson products and our associated technologies shall not be used for 
+
+developing military weapons of mass destruction, military purpose use, or any other military applications. If exporting Epson products or our associated 
+
+technologies, you shall comply with the Foreign Exchange and Foreign Trade Control Act in Japan, Export Administration Regulations in the U.S.A 
+
+(EAR) and other export-related laws and regulations in Japan and any other countries and follow the required procedures as provided by the relevant 
+
+laws and regulations.
+
+9. Epson assumes no responsibility for any damages (whether direct or indirect) caused by or in relation with your non-compliance with the terms and 
+
+conditions in this document.
+
+10. Epson assumes no responsibility for any damages (whether direct or indirect) incurred by any third party that you assign, transfer, loan, etc., Epson 
+
+products.
+
+11. For more details or other concerns about this document, please contact our sales representative.
+
+12. Company names and product names listed in this document are trademarks or registered trademarks of their respective companies.
+
+2022.08 
+
+© Seiko Epson Corporation 2022, All rights reserved. 
+
+Full Data Sheet Page 9 M-A542_DataSheet_E_Rev20220401
+
+
+
+M-A542VR1
+
+Specifications 
+
+1.1. Absolute Maximum Ratings 
+
+Table 1.1 Absolute Maximum Rating 
+
+Parameter Min. Typ. Max. Unit 
+
+VIN to GND -0.3 +32 V 
+
+Voltage on any pin to GND -32 +32 V 
+
+Storage Temperature Range -40 85 °C 
+
+Operating Temperature Range -30 70 °C 
+
+Shock Resistance (Half-sine 0.2 ms)*1 1000 G 
+If the unit is operated beyond the absolute maximum rating, malfunction may occur, or the unit may fail completely. Although 
+the unit may appear to operate normally, reliability may decrease. 
+
+CAUTION: 
+
+*1) Excessive vibration or shock independent of the above listed conditions may increase the possibility of
+malfunction or causing a failure! 
+
+Precautions on excitation of structural resonance 
+
+If the structural resonance frequency of this product around 4.5 kHz is excited, the input signal may be improperly amplified, 
+and proper measurement may not be performed. Confirm that there is no influence from the resonance frequency by 
+performing a structural resonance level test (see 4.7 Self-Test) when using this product. 
+
+1.2. Recommended Operating Condition 
+
+Table 1.2 Recommended Operating Condition 
+
+Parameter Term Condition Min. Typ. Max. Unit 
+
+Power supply voltage VIN VIN to GND *2 9*1 12 32 V 
+
+Port input voltage VPORT RD+/RD- to GND 5 V 
+
+Operating temperature TOPE -30 - 70 °C 
+
+*1) When power supply voltage is 9V or less, the master may not be able to communicate with this node normally even if the
+LED turns on. If excessively long cables are used, communication may not be performed properly due to IR drop, etc. Use
+the appropriate cable length, communication bit rate, and power supply voltage under the operating environment. 
+
+*2) The power supply voltage must reach the recommended operating condition within 2 seconds after power is applied to this
+node. 
+
+Full Data Sheet Page 10 M-A542_DataSheet_E_Rev20220401
+
+
+
+M-A542VR1
+
+1.3. Performance and Electrical Specifications 
+
+Table 1.3 Sensor Specifications 
+
+Ta = -30 °C ~ +70 °C, VIN = 12V, ≤ ±1 G, unless otherwise noted. 
+Parameter Test Conditions / Comments Min. Typ. Max. Unit 
+
+VELOCITY 
+Sensitivity 
+
+Output Range f = 10 Hz ~ 1000 Hz -100 +100 mm/s 
+Scale Factor 2-22 (m/s)/LSB 2.38 x 10-4 (mm/s)/LSB 
+Sensitivity Error +25 °C, ≤ 1 G -1550 +1550 x10-6 of FS 
+Nonlinearity ≤ 1 G, Best fit straight line, +25°C -0.15 +0.15 % of FS 
+Cross Axis Sensitivity No alignment correction ±0.9 *3 % 
+
+Noise 
+(mm/s)/√Hz, 
+
+Noise Density +25 °C, Average, f = 200 Hz ~ 1000 Hz 1.4 x 10-4 rms 
+Cantilever +25 °C, VCC = 3.3 V
+Resonance Frequency 4460 Hz 
+
+Frequency Property 
+Frequency Range -3 dB at +25 °C 10 ~ 1000 Hz 
+
+DISPLACEMENT 
+Sensitivity 
+Output Range f = 1 Hz ~ 100 Hz -200 +200 mm 
+
+Scale Factor 2-22 m/LSB 2.38 x 10-4 mm/LSB 
+Nonlinearity ≤ 1 G, Best fit straight line, +25°C -0.15 +0.15 % of FS 
+Cross Axis Sensitivity ±0.9 *3 % 
+
+Noise 
+
++25 °C, Average, f = 20 Hz ~ 100 Hz mm/√Hz, 
+Noise Density 0.7 x 10-5 
+
+rms 
+Frequency Property 
+Frequency Range -3 dB at +25 °C 1 ~ 100 Hz 
+
+TEMPERATURE SENSOR 
+Output Range -30 +85 °C 
+16 bit Scale Factor *1 Output = 2634 (0x0A4A) at +25 °C -0.0037918 °C/LSB 
+8 bit Scale Factor *1 Output = 2634 (0x0A4A) at +25 °C -0.9707008 °C/LSB 
+
+RELIABILITY 
+MTBF*2 JIS-C5003 Ta = +25 °C 87600 h 
+
+*1) This is a reference value used for the internal temperature correction, and is not guaranteed to accurately output the interior
+temperature. 
+
+*2) The MTBF is an estimated value derived from the result of high temperature operation with a system requirement of Ta =
+25 °C and a 60 % reliability level. 
+
+*3) When the alignment is corrected by the host, the cross axis sensitivity that can be achieved is Typ. 0.1 %. See 4.14
+Alignment Compensation. 
+
+Note) The values in the specifications are based on the data calibrated at the factory. The values may change according to 
+the way the product is used. 
+
+Note) The Max/Min value is the maximum/minimum value of the design or factory shipment examination, unless otherwise 
+specified. 
+
+Note) The calibrated standard 1G gravitational acceleration value is 9.80665 m/s2. 
+
+Full Data Sheet Page 11 M-A542_DataSheet_E_Rev20220401
+
+
+
+ 
+
+M-A542VR1  
+
+Table 1.4 Interfsce Specifications 
+
+Ta = 25 °C, VIN = 12 V, unless otherwise noted. 
+Parameter  Test Conditions Min. Typ. Max. Unit 
+
+DRIVER 
+Differential Output Voltage RL = 120 Ω, TD- ~ TD+ 2 2.5  V 
+ RL = 54 Ω, TD- ~ TD+ 1.5 2  V 
+Common Mode Output Voltage RL = 120 Ω 1 2.5 3 V 
+Output Resistance   120  Ω 
+Rise or Fall Time RL = 120 Ω   400 ns 
+RECEIVER 
+Differential Input voltage  -25  25 V 
+Input Resistance   120  Ω 
+FUNCTIONAL TIMES*1  (Time until data is available) 
+Power-On Start-Up Time*2    900 ms 
+Reset Recovery Time*2    970 ms 
+Flash Backup Time     310 ms 
+Flash Reset Time    2300 ms 
+Self Test Time  ACC Test , TEMP Test , VDD Test   300 ms 
+
+Structural Resonance Level Test   820 ms 
+Flash Test   5 ms 
+
+Output Mode Setting Time    118 ms 
+Sampling Start Time    5 ms 
+Sampling Stop Time    1 ms 
+Output Data Rate Velocity Raw data   3000  Sps 
+
+Displacement Raw data  300  Sps 
+Velocity RMS/PP data 0.1  25.5 s 
+Displacement RMS/PP data 1  255 s 
+
+Clock Accuracy     ±0.001 % 
+*1) These specifications do not include the effect of temperature fluctuation and response time of the internal filter. 
+*2) Do not access the interface during startup and reinitialization. 
+ 
+ 
+
+Table 1.5 Current Consumption 
+
+Ta = 25 °C, RL = 120 Ω, unless otherwise specified; all voltages are defined with respect to ground; positive currents flow into 
+the sensor unit.;  
+
+Parameter Term Condition Min. Typ. Max. Unit 
+Vin = 12 V  37.2  mA 
+
+Standby current IIN(ready) 
+Vin = 24 V  20.0  mA 
+
+Operating current  
+ Vin = 12 V, 460.8 kbps, 3000 Sps  50.7  mA 
+
+(Velocity) 
+Operating current 
+
+ Vin = 12 V, 460.8 kbps, 300 Sps  42.8  mA 
+(Displacement) 
+
+Maximum input current IIN(max)    90 mA 
+
+ 
+ 
+ 
+
+  
+
+Full Data Sheet Page 12 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+ Mechanical Dimensions 
+
+2.1. Outline Dimensions 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+Figure 2.1 Outline Dimensions (millimeters) 
+
+ 
+
+ 
+
+Figure 2.2 Recommended Mounting Dimension (millimeters) 
+
+ 
+ 
+
+Full Data Sheet Page 13 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+ 
+
+ 
+
+Figure 2.3 Axial Direction 
+
+ 
+
+2.2. Connector Specifications 
+ 
+
+ 
+
+Figure 2.4 Connector Pin Layout 
+
+ 
+
+Table 2.1 Pin Function Description 
+
+Pin No. Mnemonic Type*1 Description 
+
+1 NC N/A Do Not Connect 
+
+2 VIN S Power supply (9 ~ 32 V) 
+
+3 GND S 0V 
+
+4 TD- O Transmit Data (-) 
+
+5 RD+ I Received Data (+) 
+
+6 TD+ O Transmit Data (+) 
+
+7 NC N/A Do Not Connect 
+
+8 RD- I Received Data (-) 
+
+*1) Pin Type  I: Input, O: Output, I/O: Input/Output, S: Supply, N/A: Not Applicable 
+
+Note) Please use an M12-8 pin mating female connector that corresponds to IP67 specifications. 
+ 
+ 
+
+Table 2.2 describes the connector manufacturer and the model number which is used in this product. 
+
+Table 2.2 Conector Part number 
+
+Maker Parts Number RoHS Compliant 
+
+PHOENIX CONTACT SACC-DSI-MS-8CON-M12-SCO SH Yes 
+ 
+ 
+ 
+
+Full Data Sheet Page 14 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+ Typical Performance Characteristics 
+
+ 
+
+Figure 3.1 Noise Frequency Characteristic (Velocity Output) 
+
+ 
+
+ 
+
+Figure 3.2 Noise Frequency Characteristic (Displacement Output) 
+
+ 
+ 
+
+*1) The above graph is a typical example of the product characteristics, and is not guaranteed by the specification. 
+*2) ASD: Amplitude Spectral Density 
+
+ 
+
+Full Data Sheet Page 15 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+ Basic Operation 
+
+4.1. Connection To Host 
+
+ 
+
+Figure 4.1 Connection Example 
+
+ 
+
+4.2. Precaution for Wiring and Cabling 
+
+ This product has internal 120Ω terminator on the transmit/receive port (TD/RD). 
+ It is recommended that twisted pair cable with shielding should be used. Each signal pair should be connected to each 
+
+cable pair. (ex: RD+ and RD-) 
+ It is recommended that shield connects to ground (at the host) when a cable with shield is used. 
+ Maximum recommended cable length is 250 meters (460.8 kbps) as a guideline. However, even if the cable length is 
+
+within the guidelines, the communication may be unstable or unusable depending on system environment. The cabling 
+should be evaluated in the target system environment to confirm proper operation. (Ref: TIA-EIA-422-B ANNEX A) 
+
+ 
+
+4.3. Precaution for Supplying Power 
+
+The user should be aware of serious risks on the power supply exposure to the following: 
+• High voltage noise by increased resistance and inductance on power supply line. 
+• Surge voltage from lightning and environmental equipment. 
+
+Figure 4.2 describes the external reference protection circuit against the lightning surge with a surge level based on 
+IEC61000-4-5, +/-1 kV (power supply line to the power supply ground) and +/-2 kV (power supply line to the earth).  
+ 
+
+VP : VIN (Power supply) 
+PGND : GND (Power supply ground) 
+FGND : EARTH (System ground earth) 
+U3039 : Surge absorber to power supply (Okaya Electric Industries) 
+ERZ-V14D390 : Surge absorber to earth ground (Panasonic) 
+
+Figure 4.2 Surge Protection Circuit 
+
+Full Data Sheet Page 16 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+ 
+
+4.4. Operation Mode 
+
+The following operational modes are available in the device. Sampling mode has two submodes: Manual mode and Auto 
+mode. 
+
+(1) Configuration mode 
+
+(2) Sampling mode 
+
+• Manual mode 
+
+• Auto mode 
+
+Immediately after a hardware reset or power-on, internal initialization starts. During the internal initialization, all the register 
+values and states of external pins are undefined. After the internal initialization is completed, the device goes into 
+Configuration mode automatically, except when AUTO_START and UART_AUTO sampling are both enabled (the device 
+then goes into Sampling mode automatically). To change the operation mode, write to MODE_CMD (MODE_CTRL 
+[0x02(W0)], bit [9:8]) (*1) and make various changes to the sensor setting in Configuration mode (*2). After configuration is 
+completed, go to Sampling mode to read out the temperature and velocity/displacement data.  
+
+By executing software reset (Register: GLOB_CMD [0x0A (W1)], write 1 to SOFT_RST in bit [7]), internal initialization 
+operation is executed regardless of the current operation mode. 
+
+When the UART interface is used, writing to UART_AUTO (UART_CTRL [0x08(W1)], bit [0]) can switch between Manual 
+sampling and Auto sampling (*3).  
+
+ 
+
+*1) The following explains register notation used in this document. 
+
+For example, MODE_CTRL [0x02(W0)], bit [9:8] refers to: 
+
+• MODE_CTRL: Register Name 
+
+• [0x02(W0)]: First number is the Register Address, (W0) refers to Window Number “0” 
+
+• bit [9:8]: Bits from 9 to 8 
+
+ 
+
+*2) Make sure that the device is in Configuration mode when you write to the registers to configure operational settings. In 
+Sampling mode, writing to registers is ignored except the following cases. 
+
+• Writing to MODE_CMD (MODE_CTRL [0x02(W0)], bit [9:8]) 
+
+• Writing to SOFT_RST (GLOB_CMD [0x0A(W1)], bit [7]) 
+
+• Writing to WINDOW_ID (WIN_CTRL [0x7E(W0/W1)], bit [7:0]) 
+
+ 
+
+*3) While the device is with UART Auto sampling and sensor sampling is active, register read access is not supported. 
+Otherwise, the sampling data transmitted with the UART Auto sampling will be corrupted by the response data from the 
+register read. 
+
+Full Data Sheet Page 17 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+Power ON / 
+RESET 
+
+Internal 
+Initialization 
+
+At the internal initialization ends, 
+if AUTO_START = “1” 
+&& UART_AUTO = ”1”, 
+
+SOFT_RST 
+CONFIGURATION = “1” WRITE 
+
+MODE 
+
+MODE_CMD MODE_CMD 
+= “01” WRITE = “10” WRITE 
+
+SOFT_RST 
+=”1” WRITE 
+
+SAMPLING 
+MODE 
+
+At Configuration dependent operation: 
+If UART_AUTO = “1” , then Auto Sampling 
+If UART_AUTO = “0” , then Manual Sampling 
+
+ 
+
+Figure 4.3 Operational State Diagram 
+
+ 
+
+4.5. Functional Block 
+
+ 
+
+Figure 4.4 Functional Block Diagram – Velocity 
+
+ 
+
+ 
+
+Figure 4.5 Functional Block Diagram – Displacement 
+
+ 
+
+Full Data Sheet Page 18 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+4.6. Sampling Counter 
+
+1) 16-bit Counter 
+
+By reading COUNT [0x0A(W0)] register, the counter value, which is incremented based on the sampling completion timing 
+of the internal Analog Front End, can be read. The count interval timing is based on the precision of the internal reference 
+oscillator (crystal): 
+
+• For velocity: 1/6000 Sps ≒ 167 µs/count 
+
+• For displacement: 1/600 Sps ≒ 1.67 ms/count 
+
+Additionally, during UART burst mode or with UART Auto sampling, the counter value can be included in the response 
+format by setting the COUNT_OUT (BURST_CTRL [0x0C(W1)], bit [1]). For information about the response format, see 5.2 
+Data Packet Format. 
+
+2) 2-bit Counter 
+
+By reading 2BIT_COUNT of register: TEMP2 [0x2E(W0)], bit [1:0], a 2-bit count value that counts up at each output rate 
+can be obtained. Also, the 2-bit count value can be included in the burst output by setting the TEMP_SEL of the register in 
+SIG_CTRL [0x00(W1)], bit [1] to temperature format 2 and enabling the temperature output by the register setting in 
+BURST_CTRL [0x0C(W1)], bit [14]. 
+
+ 
+
+4.7. Self Test 
+
+This product has the following self test functions. For information about the execution time of the self test, see “Self Test 
+Time” in Table 1.4 Interface Specifications. 
+
+⚫ Acceleration Value 
+
+In this sensor, velocity / displacement outputs are provided based on the acceleration values. When there is no obvious 
+abnormality, the acceleration values for X, Y, and Z axes should be within -32 m/s2 ~ 32 m/s2. Additionally, the net 
+magnitude of the acceleration vector of X, Y, and Z axes acceleration values should be within 0 m/s2 ~ 32 m/s2 (these 
+ranges appear to be wide because zero point calibration is not performed in this sensor for acceleration values). 
+
+When performing the self test, make sure the device does not move during the test and the test is conducted in a place 
+without vibration. 
+
+To use this function, execute ACC_TEST of register: MSC_CTRL [0x02(W1)], bit [10], check the ACC_ERR_ALL of 
+register DIAG_STAT1 [0x04(W0)], bit [1] for diagnostic result. The magunitude value of the 3-dimensional acceleration 
+vector can be obtained by reading ACC_VEC of register: ACC_SELFTEST_DATA1 [0x2A(W0)], bit [7:0]. 
+
+⚫ Sensitivity 
+
+By utilizing the above ACC_VEC of register: ACC_SELFTEST_DATA1 [0x2A(W0)], bit [7:0] and the gravitational 
+acceleration under the measurement environment, the validity of the sensitivity can be evaluated. Follow the procedure 
+below with reference to Figure 4.6. 
+
+① Place the sensor on a horizontal surface with the target axis parallel to the gravity direction. 
+② Execut ACC_TEST of the register: MSC_CTRL [0x02(W1)], bit [10], read the acceleration value of the target axis from 
+
+the register ACC_SELFTEST_DATA1 [0x2A(W0)] or the register: ACC_SELFTEST_DATA2 [0x2C(W0)]. 
+③ Rotate the target axis 90 degrees to the horizontal plane, and perform ② again. 
+④ Confirm that there is no obvious abnormality if the difference between the acceleration values in ② and ③ is within 
+
+7.75 m/s2 ~ 11.75 m/s2. 
+  
+
+            
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+Full Data Sheet Page 19 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+Figure 4.6 Example of Sensor Placement for Sensitivity Test 
+
+ 
+⚫ Temperature Value 
+
+Determine whether the temperature sensor is operating properly. 
+
+To use this function, execute TEMP_TEST of register: MSC_CTRL [0x02 (W1)], bit [9], check the TEMP_ERR of 
+register: DIAG_STAT1 [0x04 (W0)], bit [9] for diagnostic result. 
+
+⚫ Power Supply Voltage Level 
+
+Determine whether the power supply voltage is within 3.0V to 3.6V. 
+
+To use this function, execute VDD_TEST of register: MSC_CTRL [0x02(W1)], bit [8], check the VDD_ERR of register: 
+DIAG_STAT1 [0x04(W0)], bit[8] for diagnostic result. 
+
+⚫ Nonvolatile memory 
+
+Determine whether the Nonvolatile memory is operating properly by consistency test of data in nonvolatile memory. 
+
+To use this function, execute FLASH_TEST of register: MSC_CTRL [0x02(W1)], bit [11], check the FLASH_ERR of 
+register: DIAG_STAT1 [0x04(W0)], bit [2] for diagnostic result. 
+
+⚫ Structural Resonance Level 
+
+Determine whether the input signal level amplified by the structural resonance is within the expected range. For the 
+determination details, refer to Table 6.2 in "6.6 DIAG_STAT2 Register (Window 0)". 
+
+Prior to the permanent installation of the sensor, the structural resonance level can be identified, which provides 
+information for considering how to mount the sensor or where to place the sensor during the installation procedure. 
+
+To use this function, execute EXI_TEST of register: MSC_CTRL [0x02(W1)], bit [15], check the EXI_LEVEL of register: 
+DIAG_STAT2 [0x0C(W0)], bit [13:8] for diagnostic result. 
+
+ 
+
+4.8. Threshold Detection 
+
+When the sensor value exceeds the preset threshold, an alarm is displayed. The threshold value register is common for all 
+output physical quantities, so make sure to set the threshold value according to the output physical quantity. The factory 
+default setting of the threshold is the upper limit of the velocity output. 
+
+The alarm threshold is set in the registers: XA_ALARM [0x47 - 0x46 (W1)], YA_ALARM [0x49 - 0x48 (W1)], ZA_ALARM 
+[0x4B - 0x4A (W1)] and the alarm indication is registered in FLAG [0x06 (W0)], displayed in ALARM_ERR of bit [4:2]. 
+Reading ALARM_ERR will reset the alarm display. 
+
+Full Data Sheet Page 20 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+4.9. Structural Resonance Warning 
+
+If strong vibration is applied at the structural resonance frequency band, which is outside the measurement band (see 
+Cantilever Resonance Frequency in Table 1.3 Sensor Specifications), the input signal is amplified excessively due to the 
+structural resonance of the cantilever beam, and measurement cannot be performed properly. Therefore, notification is 
+made via the structural resonance warning flag when the measurement value becomes abnormal, and at the same time, the 
+upper limit of the measurement range is output as the sensor value instead of the measurement value for warning. 
+
+The structural resonance warning notification is displayed on EXI_ERR in Register: FLAG [0x06(W0)], bit [7:5] and on 
+EXI_ERR in Register: TEMP2 [0x2E(W0)], bit [7:5]. Reading EXI_ERR will reset the warning notification. 
+
+The structural resonance level determination function provided in the self test is useful for determining possible 
+countermeasures against structural resonance. Refer to "4.7 Self Test" for details. 
+
+ 
+
+4.10. Checksum 
+
+A checksum can be appended to the response data during UART Burst mode or UART Auto sampling by enabling this 
+function in CHKSM_OUT (BURST_CTRL [0x0C(W1)], bit [0]). 
+
+The range of the data content for checksum is after the address byte (AD = 0x80) of the response data (Figure 4.7). The 
+checksum is calculated with a simple addition of the data content in units of 16-bit, and the resulting sum is truncated to 16-
+bits and appended as checksum just before delimiter byte (CR = 0x0D). Note that in the case of UART Burst Mode and 
+UART Auto sampling, the upper word of the sensor data of each axis is 8 bits, these data should be added in 8 bits. 
+
+Example 1) when the response data for UART Auto sampling is "8E00 0700 FF FFD8 00 007E 00 0296 1730", the total sum 
+is "8E00+0700+FF+FFD8+00+007E+00+0296+1730=1B01B" resulting in a checksum of "B01B". 
+
+ 
+SIN 0x8000 CR 
+
+Command  
+
+SOUT AD ND/EA TEMP  XVELC COUNT Checksum CR 
+
+ 
+
+ 
+Range of checksum 
+
+Figure 4.7 Checksum 
+
+ 
+
+4.11. Automatic Start (For UART Auto Sampling Only) 
+
+Automatic Start function is designed to be used in conjunction with the UART Auto sampling. When the power is supplied 
+or the device is restart/reset, it allows the device to automatically enter Sampling mode after completing internal initialization. 
+Please refer to Figure 4.3 for the state transition. 
+
+Follow the procedures below to enable the Automatic Start function: 
+
+• Write a “1” to both UART_AUTO (bit [0]) and AUTO_START (bit [1]) of UART_CTRL [0x08(W1)]. 
+
+• Store the current register settings to non-volatile memory by writing a “1” to FLASH_BACKUP (GLOB_CMD 
+[0x0A(W1)], bit [3]). After completion of the FLASH_BACKUP command, confirm the results by FLASH_BU_ERR 
+(DIAG_STAT1 [0x04(W0)], bit [0]). 
+
+• The device will automatically enter Sampling Mode after the power supply is cycled, or a hardware reset, or a software 
+reset command is executed. 
+
+Follow the procedures below to disable this function. 
+
+• After entering sampling mode with automatic start, write "01" to MODE_CMD of register: MODE_CTRL [0x02 (W0)], bit 
+[9:8] and enter the configuration mode. 
+
+• Write "0" to AUTO_START of register: UART_CTRL [0x08 (W1)], bit [1]. 
+
+• The subsequent steps are the same as above to store the register setting to nonvolatile memory and restart or reset 
+the device. 
+
+Full Data Sheet Page 21 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+4.12. Frequency Response Characteristics 
+
+The frequency response characteristics of this device are shown in Figure 4.8 and Figure 4.9. 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+Figure 4.8 Frequency Response Characteristics (Velocity Output) 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+Figure 4.9 Frequency Response Characteristics (Displacement Output) 
+
+ 
+
+To achieve the above frequency response characteristics, two FIR filters (512-tap BPF, 256-tap HPF) are used in this 
+product. For this reason, the transient response of the filters is produced at the start of measurement. During this period, the 
+velocity value register: VELC [0x3A-0x30(W0)] and the displacement value register: DISP [0x3A-0x30(W0)] are not updated. 
+In the case of UART Auto measurement, the output starts after the number of transient response samples elapses from the 
+start of measurement. Table 4.1 shows the total transient response time of FIR filters at the start of measurement. 
+
+Table 4.1 Transient Response Time of FIR filters at the Start of Measurement 
+
+Output physical quantity Transient response time 
+
+Velocity 0.177 s Typ. *1 
+
+Displacement 1.736 s Typ. *1 
+
+*1) The initialization duration is included. 
+
+Full Data Sheet Page 22 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+4.13. Velocity and Displacement Output 
+
+Either velocity output or displacement output can be selected in this product. The velocity output is calculated in the time 
+domain by integrating the acceleration data measured by the crystal acceleration sensor. Displacement output is calculated 
+by double integrating the acceleration data. 
+
+Instead of the velocity / displacement raw data output, you can also select to output velocity / displacement RMS (effective 
+value) or P-P (peak-to-peak value). The RMS data is the root mean square of the velocity or displacement RAW data calculated 
+for each of the 16 taps, averaged over the interval of UPDATE_RATE_RMSPP in Register: SMPL_CTRL [0x04(W1)], bit [7:0], 
+and output in the interval of DOUT_RATE_RMSPP in Register: SMPL_CTRL [0x04(W1)], bit [15:8]. P-P data is calculated as 
+the difference between the maximum and minimum values of velocity or displacement data in the time interval of 
+UPDATE_RATE_RMSPP and output in the time interval of DOUT_RATE_RMSPP. 
+
+(1) Transient Response of Integral Filter 
+
+Note that when starting measurement, or when the sensor placement attitude changes considerably for some reason, there 
+will be a transient response in the integral filter output due to bias fluctuation. Figures 4.10-13 show examples of transient 
+responses. 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+Transient Response 
+
+ 
+
+ 
+
+ 
+
+ 
+
+Figure 4.10 Example of Integral Filter Transient Response at the Start of Measurement (Velocity Output) 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+Transient Response 
+
+ 
+
+ 
+
+Figure 4.11 Example of Integral Filter Transient Response at the Start of Measurement (Displacement Output) 
+
+ 
+
+Full Data Sheet Page 23 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+Figure 4.12 Example of Integral Filter Transient Response at 90° Change in Placement Attitude (Velocity Output) 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+Figure 4.13 Example of Integral Filter Transient Response at 90° Change in Placement Attitude (Displacement 
+
+Output) 
+
+ 
+ 
+
+(2) How to switch the output physical quantity 
+
+The factory default setting is velocity output. To switch the output physical quantity, set the desired output physical quantity 
+in OUTPUT_SEL of the register: SIG_CTRL [0x00(W1)], bit [7:4]. After writing to OUTPUT_SEL, OUTPUT_STAT at bit [0] 
+changes to "1" (running), and when the setting is complete, OUTPUT_STAT returns to "0". For the setting duration, refer to 
+Output Mode Setting Time in Table 1.4 Interface Specifications. 
+
+Note) Do not write to the registers while the output physical quantity is being switched. 
+
+Note) If the switching of the output physical quantity fails, the setting will not be changed and an error will be displayed in 
+HARD_ERR of the register: DIAG_STAT1 [0x04(W0)], bit [7:5]. 
+
+Full Data Sheet Page 24 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+4.14. Alignment Compensation 
+
+By reading alignment compensation coefficients stored in the dedicated registers and applying alignment compensation by 
+the host on the measured values, the 3-axis alignment accuracy can be improved. 
+
+The procedure for reading the alignment correction coefficients and the formulas for the alignment compensation are as 
+follows. 
+ 
+
+(1) Formulas for applying alignment compensation 
+
+Px = MxDx + MxyDy + MxzDz 
+
+Py = MyxDx + MyDy + MyzDz 
+
+Pz = MzxDx + MzyDy + MzDz 
+
+*1) P: Alignment compensated values, M: Alignment compensation coefficients (32 bit), D: Measured values (32 bit) 
+
+*2) Alignment compensation coefficient data format 
+32-bit two's complement format 
+
+bit 31 : sign 
+bit 30 ~ 23 : integer 
+bit 22 ~ 0 : decimal 
+
+ 
+
+(2) Alignment compensation coefficients read-out procedure 
+
+1. First, set the coefficient address to ALIGN_ADDR in Register: ALIGNMENT_COEF_ADDR [0x3C(W1)], bit [7:0].  
+
+2. Next, write "0x01” (Read) to ALIGN_CMD in Register: ALIGNMENT_COEF_CMD [0x38(W1)] bit [1:0] to perform 
+coefficient reading. 
+
+3. Next, read the coefficient data (16 bits) from ALIGN_DATA in Register: ALIGNMENT_COEF_DATA [0x3A(W1)], 
+bit [15:0]. When the reading is completed, the address is automatically incremented, thus enabling continuous 
+execution of the reading command (step 2). 
+
+The reading sequence (Figure 4.14) and the memory map of the coefficients (Table 4.2) are shown below. 
+
+ 
+ 
+
+ALIGN ALIGN ALIGN ALIGN ALIGN ALIGN
+ _ADDR(W) _CMD(W) _DATA(R) _CMD(W) _DATA(R) _CMD(W)
+
+ SIN 0xBC 0x00 0xB8 0x01 0x3A 0x00 0xB8 0x01 0x3A 0x00 0xB8 0x01
+ 
+
+1st data 2nd data
+ 
+
+SOUT Mx_L Mx_L Mx_H Mx_H
+Auto Auto
+Increment high low Increment high low
+
+Address 0x00 0x01  0x02
+
+ 
+
+Figure 4.14 Alignment Compensation Coefficient Reading Sequence 
+
+ 
+
+Table 4.2 Alignment Compensation Coefficients Memory Map 
+
+Address Coffecient Data Address Coffecient Data Address Coffecient Data 
+
+0x00 Mx_L 0x06 Myx_L 0x0C Mzx_L 
+
+0x01 Mx_H 0x07 Myx_H 0x0D Mzx_H 
+
+0x02 Mxy_L 0x08 My_L 0x0E Mzy_L 
+
+0x03 Mxy_H 0x09 My_H 0x0F Mzy_H 
+
+0x04 Mxz_L 0x0A Myz_L 0x10 Mz_L 
+
+0x05 Mxz_H 0x0B Myz_H 0x11 Mz_H 
+
+ 
+
+Full Data Sheet Page 25 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+ Digital Interface 
+
+The registers inside the device are accessed via the RS-422 interface. 
+
+In this document, data sent to the device is called a “Command” and data sent back in response to the command is called a 
+“Response”. There are two types of commands: write command and read command. The write command has no response. 
+The write command always writes to the internal register in 8-bit words. The response to the read command, i.e. the data 
+from the internal register, is always read in 16-bit words. 
+
+When reading from the registers, there is a burst mode in addition to the normal mode. 
+
+When the output data size is large, it may exceed the bandwidth of the host interface and cause the data transmission to be 
+incorrect. In this case, the user must balance the transmission data rate and the bandwidth capability of the host interface. 
+
+Adjust the following settings accordingly to optimize the host interface bandwidth: 
+
+• For the UART, adjust the baud rate in BAUD_RATE (UART_CTRL [0x08(W1)], bit [9:8]). 
+
+Adjust the following settings accordingly to optimize the transmission data rate: 
+
+• The transmission data rate is also affected by the number of output bytes included in burst mode read transfer. The 
+adjustment to the number of output bytes is in registers BURST_CTRL [0x0C(W1)]. 
+
+Several concrete examples for setting the transmission data rate and host interface bandwidth are shown below. For the 
+selection of the read out mode for the host interface bandwidth, refer to "5.3 Recommended Control Conditions". 
+ 
+
+ ① When the output data size is small (output data example: Temperature, XYZ) 
+
+• BAUD_RATE = “01" of UART_CTRL [0x08(W1)], bit [9:8]: 460800 baud 
+• UART_AUTO = “1" of UART_CTRL [0x08(W1)], bit [0]: UART Auto sampling 
+• BURST_CTRL [0x0C(W1)] = “0x4700”: TEMP and Velocity-XYZ output 
+
+ ② When the output data size is large (output data example: Flag, temperature, XYZ, COUNT, checksum) 
+
+• BAUD_RATE = “00" of UART_CTRL [0x08(W1)], bit [9:8]: 921600 baud 
+• UART_AUTO = “1" of UART_CTRL [0x08(W1)], bit [0]: UART Auto sampling 
+• BURST_CTRL [0x0C(W1)] = “0xC703”: FLAG, TEMP, Velocity-XYZ, COUNT, and CHECKSUM output 
+
+ 
+
+ 
+
+ 
+
+ 
+
+  
+
+Full Data Sheet Page 26 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+5.1. Serial Interface Specification 
+
+Table 5.1 shows the supported UART communication settings and Figure 5.1 shows the UART bit format. Please refer to 
+BAUD_RATE (UART_CTRL [0x08(W1)], bit [9:8]) for changing the baud rate setting. 
+
+Table 5.1 UART Communication Settings 
+
+Parameter Settings 
+
+Transfer rate 115.2 kbps / 230.4 kbps / 460.8 kbps / 921.6 kbps 
+
+Start 1 bit 
+
+Data 8 bits 
+
+Stop 1 bit 
+
+Parity None 
+
+Delimiter CR (0x0D) 
+
+ 
+
+TX,RX s1 D0 D1 D2 D3 D4 D5 D6 D7 s2
+
+start bit stop bit
+
+Data
+ 
+
+Figure 5.1 UART Bit Format 
+
+For the UART interface, a delimiter (1 byte) is placed at the end of each command (by the host) and response (by this 
+device). In addition for responses, the address (1 byte) specified by the command is added (by this device) to the beginning 
+of the response. 
+
+Table 5.2 and Table 5.3 shows the timing of UART. 
+
+Table 5.2 UART Timing 
+
+Manual Sampling Auto Sampling 
+Normal Mode 
+
+Parameter Burst Mode Auto Mode Unit 
+Min. Max. Min. Max. Min. Max. 
+
+tSTALL - 25 - 50 - - *2 µs 
+tWRITERATE (115.2 kbps) 660 - - - 660 - µs 
+tWRITERATE (230.4 kbps) 350 - - - 350 - µs 
+tWRITERATE (460.8 kbps) 200 - - - 200 - µs 
+tWRITERATE (921.6 kbps) 130 - - - 130 - µs 
+tREADRATE (115.2 kbps) 660 - *1 - - *2 - µs 
+tREADRATE (230.4 kbps) 350 - *1 - - *2 - µs 
+tREADRATE (460.8 kbps) 200 - *1 - - *2 - µs 
+tREADRATE (921.6 kbps) 130 - *1 - - *2 - µs 
+
+*1) Please refer to Table 5.3. 
+*2) Register reading is not supported while in Sampling Mode with UART Auto Sampling enabled. 
+
+ 
+
+Table 5.3 UART Timing (tREADRATE requirements for Burst Mode) 
+
+Parameter Burst Mode (Min.) Unit 
+tREADRATE (115.2 kbps) 660 + 86.8 × B µs 
+tREADRATE (230.4 kbps) 350 + 43.4 × B µs 
+tREADRATE (460.8 kbps) 200 + 21.7 × B µs 
+tREADRATE (921.6 kbps) 130 + 10.9 × B µs 
+
+B = Number of receive data bytes (AD: address and CR: delimiter is not included). 
+
+Example tREADRATE Calculation: 
+BURST_CTRL [0x0C(W1)]: Set value 0x4700  
+B = 11 byte for the above stated register setting 
+
+      tREADRATE (460.8 kbps) = 200 + (21.7 × 11) = 438.7 (µs) 
+
+Full Data Sheet Page 27 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+ 
+5.1.1. UART Read Timing (Normal Mode) 
+
+The response to the read command, i.e. the data from the internal register, is always returned 16-bit data at a time. The 
+register address (AD) comes at the beginning of the response, for example, 0x02 for the MODE_CTRL [0x02(W0)] register. 
+
+ 
+
+tREADRATE
+
+tSTALL
+
+SIN Command CR Command CR
+
+SOUT AD Response CR AD Response CR
+  
+
+Figure 5.2 UART Read Timing (Normal Mode) 
+
+ 
+
+Table 5.4 Command Format (Read) 
+
+The first byte The second byte The third byte 
+7 6 5 4 3 2 1 0 7 6 5 4 3 2 1 0 7 6 5 4 3 2 1 0 
+
+0 A[6:0] XX 0x0D 
+
+A[6:0] ･･･ Register address (even address) 
+    XX ･･･ Don't Care 
+    0x0D ･･･ Delimiter 
+
+ 
+
+Table 5.5 Response Format (Read) 
+
+The first byte The second byte The third byte The fourth byte 
+7 6 5 4 3 2 1 0 7 6 5 4 3 2 1 0 7 6 5 4 3 2 1 0 7 6 5 4 3 2 1 0 
+
+0 A[6:0] D[15:8] D[7:0] 0x0D 
+
+A [6:0] ･･･ Register address (even address) 
+D [15:8]  ･･･ Register read data (upper byte) 
+
+  D [7:0] ･･･ Register read data (lower byte) 
+  0x0D ･･･ Delimiter 
+
+ 
+
+5.1.2. UART Read Timing (Burst Mode) 
+
+Burst mode access of read data is supported using a “Burst Read Command” by writing 0x00 in BURST_CMD (BURST  
+[0x00(W0)], bit [7:0]). In Burst Mode, ND/EA flag, temperature value, 3-axis velocity value, etc. are consecutively sent as a 
+response. The response format for the burst read output data is configured by register setting in BURST_CTRL [0x0C(W1)]. 
+Please refer to 5.2 Data Packet Format for the response format. 
+
+ 
+t READRATE 
+
+  
+t STALL 
+
+ 
+
+SIN 0x8000 CR  0x8000 CR 
+Command Command 
+
+ 
+SOUT AD ND/EA TEMP COUNT Checksum CR 
+
+ 
+
+ 
+Response 
+ 
+
+Figure 5.3 UART Read Timing (Burst Mode) 
+
+Full Data Sheet Page 28 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+ 
+
+Table 5.6 Command Format (Burst Mode) 
+
+The first byte The second byte The third byte 
+7 6 5 4 3 2 1 0 7 6 5 4 3 2 1 0 7 6 5 4 3 2 1 0 
+
+0x80 0x00 0x0D 
+
+0x80 ･･･ Burst Command 
+0x00 ･･･ Burst Data 0x00 
+0x0D ･･･ Delimiter 
+
+ 
+
+5.1.3. UART Write Timing 
+
+A write command to a register will have no response. Unlike register reading, registers are written in 8-bit words. 
+
+ 
+
+tWRITERATE
+
+SIN Command CR Command CR
+
+ SOUT  
+
+Figure 5.4 UART Write Timing 
+
+ 
+
+Table 5.7 Command Format (Write) 
+
+The first byte The second byte The third byte 
+7 6 5 4 3 2 1 0 7 6 5 4 3 2 1 0 7 6 5 4 3 2 1 0 
+
+1 A[6:0] D[7:0] 0x0D 
+
+A [6:0] ･･･ Register address (even or odd number) 
+D [7:0] ･･･ Register write data 
+0x0D ･･･ Delimiter 
+
+ 
+
+5.1.4. UART Auto Sampling Operation 
+
+When UART Auto sampling is active, all sensor outputs are sent as burst transfer automatically at the programmed output 
+data rate without the request from the Host. For information about the response format, see 5.2 UART Data Packet Format. 
+The response format for the burst read output data is configured by register setting in BURST_CTRL [0x0C(W1)]. 
+
+ 
+
+Internal Sync
+
+Sampling
+
+Response Response
+
+SOUT
+
+AD ND/EA TEMP XVELC YVELC ZVELC COUNT Checksum CR
+
+ 
+
+Figure 5.5 UART Auto Sampling 
+
+  
+
+Full Data Sheet Page 29 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+5.2. Data Packet Format 
+
+The following table shows example of the data packet format sent to the host in the UART Burst Mode or UART Auto 
+Sampling. 
+
+Table 5.8 Example of Data Packet Format 1 (UART BURST / AUTO SAMPLING) 
+
+BURST_CTRL [0x0C(W1)] = 0xC703 (Burst Output: FLAG, TEMP, Velocity-XYZ, COUNT, CHECKSUM) 
+SIG_CTRL [0x00(W1)] = 0x8E02 (Output Mode: Velocity, TEMP1) 
+
+Byte No. Name Bit7 Bit6 Bit5 Bit4 Bit3 Bit2 Bit1 Bit0 
+
+1 ADDRESS 0x80 
+
+ND ND ND ND 
+2 ND - - - 
+
+(Temp) (XVELC) (YVELC) (ZVELC) - 
+
+X_EXI Y_EXI Z_EXI XALARM YALARM ZALARM 
+3 EA - EA 
+
+_ERR _ERR _ERR _ERR _ERR _ERR 
+
+4 TEMP1_H TEMP1 [15:8] 
+
+5 TEMP1_L TEMP1 [7:0] 
+
+6 XVELC_HIGH_L XVELC _HIGH [7:0] 
+
+7 XVELC_LOW_H XVELC_LOW [15:8] 
+
+8 XVELC_LOW_L XVELC _LOW [7:0] 
+
+9 YVELC_HIGH_L YVELC _HIGH [7:0] 
+
+10 YVELC_LOW_H YVELC _LOW [15:8] 
+
+11 YVELC_LOW_L YVELC _LOW [7:0] 
+
+12 ZVELC_HIGH_L ZVELC _HIGH [7:0] 
+
+13 ZVELC_LOW_H ZVELC _LOW [15:8] 
+
+14 ZVELC_LOW_L ZVELC _LOW [7:0] 
+
+15 COUNT_H COUNT [15:8] 
+
+16 COUNT_L COUNT [7:0] 
+
+17 CHECKSUM_H CHECKSUM [15:8] 
+
+18 CHECKSUM_L CHECKSUM [7:0] 
+
+19 CR 0x0D 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+  
+
+Full Data Sheet Page 30 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+ 
+
+Table 5.9 Example of Data Packet Format 2 (UART BURST / AUTO SAMPLING) 
+
+BURST_CTRL [0x0C(W1)] = 0x4700 (Burst Output: TEMP, Velocity-XYZ) 
+SIG_CTRL [0x00(W1)] = 0x8E00 (Output Mode: Velocity, TEMP2) 
+
+Byte No. Name Bit7 Bit6 Bit5 Bit4 Bit3 Bit2 Bit1 Bit0 
+
+1 ADDRESS 0x80 
+
+2 TEMP2_H TEMP2 [15:8] 
+
+3 TEMP2_L TEMP2 [7:0] 
+
+4 XVELC_HIGH_L XVELC _HIGH [7:0] 
+
+5 XVELC_LOW_H XVELC_LOW [15:8] 
+
+6 XVELC_LOW_L XVELC _LOW [7:0] 
+
+7 YVELC_HIGH_L YVELC _HIGH [7:0] 
+
+8 YVELC_LOW_H YVELC _LOW [15:8] 
+
+9 YVELC_LOW_L YVELC _LOW [7:0] 
+
+10 ZVELC_HIGH_L ZVELC _HIGH [7:0] 
+
+11 ZVELC_LOW_H ZVELC _LOW [15:8] 
+
+12 ZVELC_LOW_L ZVELC _LOW [7:0] 
+
+13 CR 0x0D 
+
+  
+
+Full Data Sheet Page 31 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+5.3. Recommended Communication Conditions 
+
+To ensure that the output data bandwidth does not exceed the bandwidth capability of the host UART interface, select the 
+output physical quantity, output data size, communication speed, and read out mode respectively according to the purpose 
+of use. Table 5.10 and Table 5.11 show the selection matrices for typical output data sizes. 
+
+When sampling velocity RAW output with the maximum data size (19 Bytes), only 921.6 kbps is available for a 
+communication speed. In particular, when sampling the velocity RAW output with the initial data size (13 bytes), 
+communication at 460.8 kbps is available in AUTO mode (not available when reading out in BURST mode). 
+
+ 
+
+Table 5.10 Communication Condition Selection Matrix for UART 1 
+
+Output data size: Max.19 Bytes (Addr + Flag + Temp + X + Y + Z + Count + CS + CR) 
+
+Output physical Communication speed 
+Readout mode 
+
+quantity 921.6 kbps 460.8 kbps 230.4 kbps 115.2 kbps 
+
+Velocity RAW AUTO OK - - - 
+(3000 Sps) BURST OK - - - 
+
+Velocity RMS/P-P AUTO OK OK OK OK 
+(10 Sps ~) BURST OK OK OK OK 
+
+Displacement RAW AUTO OK OK OK OK 
+(300 Sps) BURST OK OK OK OK 
+
+Displacement AUTO OK OK OK OK 
+RMS/P-P (1 Sps ~) BURST OK OK OK OK 
+
+ 
+
+Table 5.11 Communication Condition Selection Matrix for UART 2 
+
+Output data size: Default 13 Bytes (Addr + Temp + X + Y + Z + CR) 
+
+Output physical Communication speed 
+Readout mode 
+
+quantity 921.6 kbps 460.8 kbps 230.4 kbps 115.2 kbps 
+
+Velocity RAW AUTO OK OK(*1) - - 
+(3000 Sps) BURST OK - - - 
+
+Velocity RMS/P-P AUTO OK OK OK OK 
+(10 Sps ~) BURST OK OK OK OK 
+
+Displacement RAW AUTO OK OK OK OK 
+(300 Sps) BURST OK OK OK OK 
+
+Displacement AUTO OK OK OK OK 
+RMS/P-P (1 Sps ~) BURST OK OK OK OK 
+
+*1) Factory default setting. 
+
+ 
+
+Full Data Sheet Page 32 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+ User Register 
+
+A host device (for example, a microcontroller) can control the device by accessing the control registers inside the device. 
+
+The registers are accessed in this device using a WINDOW method. The prescribed window number is first written to 
+WINDOW_ID of WIN_CTRL [0x7E(W0/W1)], bit [7:0], then the desired register address can be accessed. The WIN_CTRL  
+[0x7E(W0/W1)] register can always be accessed without needing to set the window number. 
+
+During the Power-On Start-Up Time or the Reset Recovery time specified in the Table 1.4 Interface Specifications, all the 
+register values are undefined because internal initialization is in progress. Ensure the device registers are only accessed 
+after the Power-On Start-Up Time or the Reset Recovery time is over. 
+
+For information about the initial values of the control registers after internal initialization is finished, see the “Default” 
+column in the Table 6.1. The control registers with ○ mark in the “Flash Backup” column can be saved to the non-
+volatile memory by the user, and the initial values after the power on will be the values read from the non-volatile memory. If 
+the read out from the non-volatile memory fails, the FLASH_ERR (DIAG_STAT1 [0x04(W0)], bit [2]) is set to 1 (error). 
+
+Please ensure that the device is in the Configuration Mode before writing to registers. In the Sampling Mode, writing to 
+registers is ignored except for the following cases. 
+
+• MODE_CMD in MODE_CTRL [0x02(W0)], bit [9:8] 
+• SOFT_RST in GLOB_CMD [0x0A(W1)], bit [7] 
+• WINDOW_ID in WIN_CTRL [0x7E(W0/W1)], bit [7:0] 
+
+While in the UART Auto Mode with Sampling Mode is active, register read access is not supported. Otherwise, the 
+sampling data transmitted in the UART Auto Mode will be corrupted by the response data from the register read. 
+
+Each register is 16-bit wide and one address is assigned to every 8 bits. Registers are read in 16-bit words and are written 
+in 8-bit words. The byte order of each 16-bit register is little endian, but the byte order of the 16-bit data transferred over the 
+digital interface is big endian. 
+
+Table 6.1 shows the register map, and Section 6.1 through Section 6.28 describes the registers in detail. 
+
+The “-” sign in the register assignment table in Section 6.1 through Section 6.28 means “reserved”. 
+Write a “0” to reserved bits during a write operation. 
+During a read operation, a reserved bit can return either 0 or 1 (“don’t care”). 
+Writing to a read-only register is prohibited. 
+
+ 
+Note) The explanation of the register notation MODE_CTRL [0x02(W0)], bit [9:8] is as follows: 
+
+• MODE_CTRL: Register name 
+• [0x02(W0)]: First number is the Register Address, (W0) means Window Number “0” 
+• bit [9:8]: Bits 9 to 8 
+
+ 
+
+ 
+
+Full Data Sheet Page 33 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+Table 6.1 Register Map 
+
+(*3) Read Write 
+Window Flash 
+
+Name Address Command Command R/W Default Function 
+ID Backup 
+
+16bit Read 8bit Write 
+
+0x00 0x80 W - 
+BURST 0 - - Burst mode 
+
+0x01 - - - 
+0x02 - - 0x00 Operation mode 
+
+MODE_CTRL 0 0x02XX - 
+0x03 0x83 R/W 0x04 control 
+
+0x04 - R 0x00 
+DIAG_STAT1 0 0x04XX - Diagnostic result 1 
+
+0x05 - R 0x00 
+0x06 - R 0x00 
+
+FLAG 0 0x06XX - ND/EA flag 
+0x07 - R 0x00 
+0x0A - R 0x00 
+
+COUNT 0 0x0AXX - Sampling count 
+0x0B - R 0x00 
+0x0C - R 0x00 
+
+DIAG_STAT2 0 0x0CXX - Diagnostic result 2 
+0x0D - R 0x00 
+0x10 - R 0xFF 
+
+TEMP1 0 0x10XX - Temperature value 1  
+0x11 - R 0xFF 
+
+ACC_SELFTEST 0x2A - R 0xFF Self test acceleration  
+0 0x2AXX - 
+
+_DATA1 0x2B - R 0xFF value1 (X-axis) 
+
+ACC_SELFTEST 0x2C - R 0xFF Self test acceleration  
+0 0x2CXX - 
+
+_DATA2 0x2D - R 0xFF Value2 (Y, Z-axis) 
+
+0x2E - R 0xFF 
+TEMP2 0 0x2EXX - Temperature value 2 
+
+0x2F - R 0x00 
+
+1) XVELC_HIGH 0x30 - R 0xFF 1) X Velocity High 
+0 0x30XX - 
+
+2) XDISP_HIGH 0x31 - R 0xFF 2) X Displacement High 
+
+1) XVELC_LOW 0x32 - R 0xFF 1) X Velocity Low 
+0 0x32XX - 
+
+2) XDISP_LOW 0x33 - R 0xFF 2) X Displacement Low 
+
+1) YVELC_HIGH 0x34 - R 0xFF 1) Y Velocity High 
+0 0x34XX - 
+
+2) YDISP_HIGH 0x35 - R 0xFF 2) Y Displacement High 
+
+1) YVELC_LOW 0x36 - R 0xFF 1) Y Velocity Low 
+0 0x36XX - 
+
+2) YDISP_LOW 0x37 - R 0xFF 2) Y Displacement Low 
+
+1) ZVELC_HIGH 0x38 - R 0xFF 1) Z Velocity High 
+0 0x38XX - 
+
+2) ZDISP_HIGH 0x39 - R 0xFF 2) Z Displacement High 
+
+1) ZVELC_LOW 0x3A - R 0xFF 1) Z Velocity Low 
+0 0x3AXX - 
+
+2) ZDISP_LOW 0x3B - R 0xFF 2) Z Displacement Low 
+
+0x00 0x80 R/W 0x00 ND flag control 
+SIG_CTRL 1 0x00XX ○ 
+
+0x01 0x81 R/W 0x8E Output mode control 
+
+0x02 0x82 R/W 0x26 
+MSC_CTRL 1 0x02XX ○ Self test control 
+
+0x03 0x83 R/W 0x00 
+0x04 0x84 R/W 0x07 
+
+SMPL_CTRL 1 0x04XX ○ Sampling control 
+0x05 0x85 R/W 0x0A 
+0x08 0x88 R/W 0x01 
+
+UART_CTRL 1 0x08XX ○ UART control 
+0x09 0x89 R/W 0x01 
+0x0A 0x8A R/W 0x00 
+
+GLOB_CMD 1 0x0AXX - System control 
+0x0B - R 0x00 
+0x0C 0x8C R/W 0x00 
+
+BURST_CTRL 1 0x0CXX ○ Burst control 
+0x0D 0x8D R/W 0x47 
+
+ALIGNMENT 0x38 0xB8 R/W 0x00 Alignment correction  
+1 0x38XX - 
+
+_COEF_CMD 0x39 - - 0x00  coefficient readout control 
+
+ALIGNMENT 0x3A - R 0x00 Alignment correction  
+1 0x3AXX - 
+
+_COEF_DATA 0x3B - R 0x00  coefficient 
+
+ALIGNMENT 0x3C 0xBC R/W 0x00 Alignment correction  
+1 0x3CXX - 
+
+_COEF_ADDR 0x3D - - 0x00  coefficient readout address 
+
+0x46 0xC6 R/W 0x66 
+XALARM 1 0x46XX ○ X alarm threshold value 
+
+0x47 0xC7 R/W 0x06  
+
+Full Data Sheet Page 34 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+0x48 0xC8 R/W 0x66 
+YALARM 1 0x48XX ○ Y alarm threshold value 
+
+0x49 0xC9 R/W 0x06  
+0x4A 0xCA R/W 0x66 
+
+ZALARM 1 0x4AXX ○ Z alarm threshold value 
+0x4B 0xCB R/W 0x06  
+0x6A - R 0x41 
+
+PROD_ID1 1 0x6AXX - Product ID 1 
+0x6B - R 0x33 
+0x6C - R 0x34 
+
+PROD_ID2 1 0x6CXX - Product ID 2 
+0x6D - R 0x32 
+0x6E - R 0x56 
+
+PROD_ID3 1 0x6EXX - Product ID 3 
+0x6F - R 0x44 
+0x70 - R 0x31 
+
+PROD_ID4 1 0x70XX - Product ID 4 
+0x71 - R 0x30 
+0x72 - R 
+
+VERSION 1 0x72XX - (*1) Firmware version 
+0x73 - R 
+0x74 - R  
+
+SERIAL_NUM1 1 0x74XX - (*2) Serial Number 1 
+0x75 - R 
+0x76 - R 
+
+SERIAL_NUM2 1 0x76XX - Serial Number 2 
+0x77 - R 
+0x78 - R 
+
+SERIAL_NUM3 1 0x78XX - Serial Number 3 
+0x79 - R 
+0x7A - R 
+
+SERIAL_NUM4 1 0x7AXX - Serial Number 4 
+0x7B - R 
+0x7E 0xFE R/W 0x00 
+
+WIN_CTRL 0,1 0x7EXX - Register Window Control 
+0x7F - -  0x00 
+
+* 1) This depends on the version of the installed firmware.  
+* 2) This is determined by each individual serial number.  
+* 3) Lower byte XX: Do not care 
+  
+
+Full Data Sheet Page 35 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+6.1. BURST Register (Window 0) 
+
+Addr 
+Bit15 ．．． Bit8 R/W 
+
+(Hex) 
+
+0x01  -  - 
+
+ 
+Addr 
+
+Bit7 ．．． Bit0 R/W 
+(Hex) 
+
+0x00  BURST_CMD  W 
+
+bit [7:0] BURST_CMD 
+A burst mode read operation is initiated by writing 0x00 in BURST_CMD of this register. 
+
+Note) The data transmission format is described in 5.1.2 UART Read Timing (Burst Mode). Also refer to 5.2 Data Packet 
+Format. The output data can be selected by setting BURST_CTRL [0x0C(W1)]. 
+
+ 
+
+6.2. MODE_CTRL Register (Window 0) 
+
+Addr 
+Bit15 Bit14 Bit13 Bit12 Bit11 Bit10 Bit9 Bit8 R/W 
+
+(Hex) 
+
+R/W 
+0x03 - - - - MODE_STAT MODE_CMD 
+
+*1 
+
+ 
+
+Addr 
+Bit7 Bit6 Bit5 Bit4 Bit3 Bit2 Bit1 Bit0 R/W 
+
+(Hex) 
+
+0x02 - - - - - - - - - 
+
+*1) MODE_STAT is read-only. 
+
+bit [11:10] MODE_STAT 
+This read-only status bit shows the current operation mode. 
+00: Sampling Mode 
+01: Configuration mode 
+10: (Not Used) 
+11: (Not Used) 
+
+bit [9:8] MODE_CMD 
+Executes commands related to the operation mode. 
+00: Execute Complete. 
+01: Go to the Sampling Mode.  
+
+After the mode transition is completed, the bits automatically goes back to “00”. 
+10: Go to the Configuration Mode. 
+
+After the mode transition is completed, the bits automatically goes back to “00”. 
+11: (Not Used) 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+Full Data Sheet Page 36 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+6.3. DIAG_STAT1 Register (Window 0) 
+
+Addr 
+Bit15 Bit14 Bit13 Bit12 Bit11 Bit10 Bit9 Bit8 R/W 
+
+(Hex) 
+
+ACC_VEC ACC_X ACC_Y ACC_Z TEMP VDD 
+0x05 - - R 
+
+_ERR _ERR  _ERR  _ERR  _ERR _ERR 
+
+ 
+
+Addr 
+Bit7 Bit6 Bit5 Bit4 Bit3 Bit2 Bit1 Bit0 R/W 
+
+(Hex) 
+
+HARD UART FLASH ACC_ERR FLASH_
+0x04 - R 
+
+_ERR _OVF _ERR _ALL BU_ERR 
+
+Note) When the host reads the diagnosis result, all the results (including the EA flag in the FLAG register) will be cleared 
+to 0. 
+
+bit [15] ACC_VEC_ERR (ACC VECtor magnitude ERRor) 
+Shows the execution result of vector magnitude value of acceleration three axes in ACC_TEST of MSC_CTRL [0x02 
+(W1)], bit [10]. 
+1: Error occurred 
+0: No error 
+If this error occurs, sensor is faulty. 
+
+bit [14] ACC_X_ERR 
+Shows the result of X axis sensor operation check in ACC_TEST of MSC_CTRL [0x02 (W1)], bit [10]. 
+1: Error occurred 
+0: No error 
+If this error occurs, X axis sensor is faulty. 
+
+bit [13] ACC_Y_ERR 
+Shows the result of Y axis sensor operation check in ACC_TEST of MSC_CTRL [0x02 (W1)], bit [10]. 
+1: Error occurred 
+0: No error 
+If this error occurs, Y axis sensor is faulty. 
+
+bit [12] ACC_Z_ERR 
+Shows the result of Z axis sensor operation check in ACC_TEST of MSC_CTRL [0x02 (W1)], bit [10]. 
+1: Error occurred 
+0: No error 
+If this error occurs, Z axis sensor is faulty. 
+
+bit [9] TEMP_ERR 
+Shows the execution result of TEMP_TEST (Temp Sensor Check) of MSC_CTRL [0x02 (W1)], bit [9]. 
+1: Error occurred 
+0: No error 
+If this error occurs, temperature sensor is faulty. 
+
+bit [8] VDD_ERR 
+Shows the execution result of VDD_TEST (Power Supply Voltage Check) of MSC_CTRL [0x02 (W1)], bit [8]. 
+1: Error occurred 
+0: No error 
+If this error occurs, Check whether the power supply voltage level is within the specified range. 
+
+bit [7:5] HARD_ERR 
+Shows the result of the hardware check at startup. Any abnormality in the setting of OUTPUT_SEL of SIG_CTRL 
+[0x00(W1)], bit [7:4] is also reflected in this bit. 
+Other than 000: Error occurred 
+000: No error 
+When this error occurs, it indicates the device is faulty. 
+
+bit [3] UART_OVF (UART OVer Flow) 
+Shows an error occurred if the data transmission rate is faster than the UART baud rate. 
+1: Error occurred 
+0: No error 
+When this error occurs, review the settings for the baud rate (register: UART_CTRL [0x08(W1)], bit [9:8]) , UART Burst 
+Mode/Auto sampling (register: BURST_CTRL [0x0C(W1)]) in combination. 
+
+bit [2] FLASH_ERR 
+Shows the result of FLASH_TEST of MSC_CTRL [0x02(W1)], bit [11]. 
+1: Error occurred 
+0: No error 
+This error indicates a failure occurred when reading data out from the non-volatile memory. 
+
+bit [1] ACC_ERR_ALL (ACCTest ERRor All) 
+Shows the logical sum of bit [15:12] of this register. 
+1: Error occurred 
+
+Full Data Sheet Page 37 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+0: No error 
+bit [0] FLASH_BU_ERR (FLASH BackUp ERRor) 
+
+Shows the result of FLASH_BACKUP of GLOB_CMD [0x0A(W1)], bit [3]. 
+1: Error occurred 
+0: No error  
+
+ 
+
+6.4. FLAG (ND/EA) Register (Window 0) 
+
+Addr 
+Bit15 Bit14 Bit13 Bit12 Bit11 Bit10 Bit9 Bit8 R/W 
+
+(Hex) 
+
+ND ND ND 
+ND 
+
+0x07 - - - (XVELC) (YVELC) (ZVELC) - R 
+(Temp) 
+
+(XDISP) (YDISP) (ZDISP) 
+ 
+
+Addr 
+Bit7 Bit6 Bit5 Bit4 Bit3 Bit2 Bit1 Bit0 R/W 
+
+(Hex) 
+
+X_EXI Y_EXI Z_EXI XALARM YALARM ZALARM 
+0x06 - EA R 
+
+_ERR _ERR _ERR _ERR _ERR _ERR 
+
+Note) EXI_ERR flags and ALARM_ERR flags are cleared to "0" by reading this register. Note that in Burst mode and 
+UART Auto sampling, these flags are cleared to "0" after every sample output regardless of the FLAG_OUT setting 
+in regster BURST_CTRL, bit [15]. 
+
+Note) In case a structural resonance warning is issued, when normal mode is selected, the upper limit of the measurement 
+range is output as the sensor value instead of the measured value until EXI_ERR in Register: FLAG [0x06(W0)], bit 
+[7:5] is read out.  
+
+Note) EA flag is cleared to "0" by reading the DIAG_STAT1 register. 
+
+bit [15] ND (New Data) flag (Temperature) 
+When new measurement data is set in temperature register (TEMP1 [0x10(W0)], TEMP2 [0x2E(W0)]), this bit is set to 
+"1". This bit is reset to “0” reading by the temperature register. 
+
+bit [11:9] ND (New Data) flag (Velocity/Displacement) 
+When new measurement data is set in velocity register (XVELC_HIGH [0x30(W0)], YVELC_HIGH [0x34(W0)], 
+ZVELC_HIGH [0x38(W0)]) or displacement register (XDISP_HIGH [0x30(W0)], YDISP_HIGH [0x34(W0)], 
+ZDISP_HIGH [0x38(W0)]), this bit is set to "1". This bit is reset to “0” by reading the velocity/displacement register. 
+
+bit [7] X_EXI_ERR 
+This bit indicates when the measured value of X-axis becomes abnormal due to structural resonance in the sensor.  
+1: Measurement value is abnormal due to structural resonance 
+0: Measured value is within normal range 
+
+bit [6] Y_EXI_ERR 
+This bit indicates when the measured value of Y-axis becomes abnormal due to structural resonance in the sensor.  
+1: Measurement value is abnormal due to structural resonance 
+0: Measured value is within normal range 
+
+bit [5] Z_EXI_ERR 
+This bit indicates when the measured value of Z-axis becomes abnormal due to structural resonance in the sensor.  
+1: Measurement value is abnormal due to structural resonance 
+0: Measured value is within normal range 
+
+bit[4] XALARM_ERR 
+This bit indicates when the sensor value exceeds the value set in register: X_ALARM [0x47-0x46(W1)] in the X axis 
+during measurement. 
+1: detection 
+0: no detection 
+
+bit[3] YALARM_ERR 
+This bit indicates when the sensor value exceeds the value set in register: Y_ALARM [0x49-0x48(W1)] in the Y axis 
+during measurement. 
+1: detection 
+0: no detection 
+
+bit[2] ZALARM_ERR 
+This bit indicates when the sensor value exceeds the value set in register: Z_ALARM [0x4B-0x4A(W1)] in the Z axis 
+during measurement. 
+1: detection 
+0: no detection 
+
+bit[0] EA (All Error) flag 
+When at least one failure is found in the diagnostic result (DIAG_STAT1 [0x04(W0)]), this bit is set to “1” (failure 
+occurred). This bit is reset to “0” by reading the DIAG_STAT1 register. 
+
+Full Data Sheet Page 38 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+1: Failure occurred 
+0: No Failure 
+
+ 
+
+6.5. COUNT Register (Window 0) 
+
+Addr 
+Bit15 ．．． Bit0 R/W 
+
+(Hex) 
+
+0x0A  COUNT  R 
+
+bit [15:0] COUNT 
+This register returns the sampling count value of the internal Analog Front End. 
+ 
+
+Note) The time unit of the sampling counter value represents: 
+velocity: 1/6000 Sps ≒ 167 µs/count 
+displacement: 1/600 Sps ≒ 1.67 ms/count 
+
+For RAW data output, the values are 2, 4, 6, ..., 65534, 0, 2, .... 
+For Velocity 1 Sps RMS/P-P data output, the values are 6002, 12002, 18002, .... 
+
+ 
+
+6.6. DIAG_STAT2 Register (Window 0) 
+
+Addr 
+Bit15 Bit14 Bit13 Bit12 Bit11 Bit10 Bit9 Bit8 R/W 
+
+(Hex) 
+
+Z_EXI Y_EXI X_EXI 
+0x0D - - R 
+
+_LEVEL _LEVEL _LEVEL 
+
+ 
+
+Addr 
+Bit7 Bit6 Bit5 Bit4 Bit3 Bit2 Bit1 Bit0 R/W 
+
+(Hex) 
+
+0x0C - - - - - - - - - 
+
+Note) When the host reads the diagnosis result, all the results will be cleared to 0.  
+
+bit [13:12] Z_EXI_LEVEL (Z EXcessive Input LEVEL) 
+Shows the diagnosis result of Z axis for EXI_TEST (Structural Resonance Level Test) of register: MSC_CTRL 
+[0x02(W1)], bit [15]. The diagnosis details for each level are shown in Table 6.2. 
+00: Diagnosis result: OK (structural resonance level: allowable range)  
+01: Diagnosis result: NG (structural resonance level: large) 
+10: Reserved 
+11: Reserved  
+
+bit [11:10] Y_EXI_ LEVEL (Y EXcessive Input LEVEL) 
+Shows the diagnosis result of Y axis for EXI_TEST (Structural Resonance Level Test) of register: MSC_CTRL 
+[0x02(W1)], bit [15]. The contents of the Diagnosis result are the same as those of Z_EXI_LEVEL. 
+
+bit [9:8] X_EXI_ LEVEL (X EXcessive Input LEVEL) 
+Shows the diagnosis result of X axis for EXI_TEST (Structural Resonance Level Test) of register: MSC_CTRL 
+[0x02(W1)], bit [15]. The contents of the Diagnosis result are the same as those of Z_EXI_LEVEL. 
+
+ 
+
+Table 6.2 Diagnosis Details for Each Structural Resonance Level 
+
+Diagnosis Structural 
+Descriptions 
+
+result resonance level 
+
+OK allowable range Ready for use with intended performance. 
+Intended performance may not be achieved. The mounting method and/or installation 
+
+NG large 
+location are recommended to be reconsidered. 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+Full Data Sheet Page 39 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+6.7. TEMP1 Register (Window 0) 
+
+Addr 
+Bit15 ．．． Bit0 R/W 
+
+(Hex) 
+
+0x10  16BIT_TEMP  R 
+
+bit [15:0] Temperature sensor output data (16bit) 
+The internal temperature sensor value can be read from this register. 
+The output data format is 16-bit two's complement format. 
+
+Please refer to the below formula for conversion to temperature in centigrade. Please refer to Table 1.3 Sensor 
+Specification for the scale factor value. 
+There is no guarantee that the value provides the absolute value of the internal temperature. 
+
+T16bit (°C) = SF16bit × a + 34.987 
+SF: Scale Factor 
+a: Temperature sensor output data (decimal) 
+
+ 
+
+6.8. ACC_SELFTEST_DATA1 Register (Window 0) 
+
+Addr 
+Bit15 Bit14 Bit13 Bit12 Bit11 Bit10 Bit9 Bit8 R/W 
+
+(Hex) 
+
+0x2B X_ACC_DATA R 
+
+ 
+
+Addr 
+Bit7 Bit6 Bit5 Bit4 Bit3 Bit2 Bit1 Bit0 R/W 
+
+(Hex) 
+
+0x2A ACC_VEC R 
+
+bit [15:8] X_ACC_DATA 
+The X-axis acceleration value of ACC_TEST of register: MSC_CTRL [0x02(W1)], bit [10] can be read from this register. 
+
+The output data format 
+Unit: (m/s2) 
+8-bit two's complement format 
+
+bit 7  : sign 
+bit 6 ~ 2  : integer 
+bit 1 ~ 0 : decimal 
+0.25 (m/s2)/LSB 
+
+ 
+bit [7:0] ACC_VEC (ACC VECtor magnitude) 
+
+The 3-axis acceleration vector magnitude value of ACC_TEST of register: MSC_CTRL [0x02(W1)], bit [10] can be read 
+from this register. The output data format is the same as that of X_ACC_DATA. 
+
+Note) If the measured value exceeds the readout range, the upper or lower limit of the readout range is stored. +31.75 
+m/s2 or higher, “0x7F” is stored. -31.75 m/s2 or lower, “0x81” is stored. 
+
+ 
+
+6.9. ACC_SELFTEST_DATA2 Register (Window 0) 
+
+Addr 
+Bit15 Bit14 Bit13 Bit12 Bit11 Bit10 Bit9 Bit8 R/W 
+
+(Hex) 
+
+0x2D Z_ACC_DATA R 
+
+ 
+
+Addr 
+Bit7 Bit6 Bit5 Bit4 Bit3 Bit2 Bit1 Bit0 R/W 
+
+(Hex) 
+
+0x2C Y_ACC_DATA R 
+
+bit [15:8] Z_ACC_DATA 
+The Z-axis acceleration value of ACC_TEST of register: MSC_CTRL [0x02(W1)], bit [10] can be read from this register. 
+The output data format is the same as that of X_ACC_DATA. 
+
+Full Data Sheet Page 40 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+bit [7:0] Y_ACC_DATA 
+The Y-axis acceleration value of ACC_TEST of register: MSC_CTRL [0x02(W1)], bit [10] can be read from this register. 
+The output data format is the same as that of X_ACC_DATA. 
+
+ 
+
+6.10. TEMP2 Register (Window 0) 
+
+Addr 
+Bit15 Bit14 Bit13 Bit12 Bit11 Bit10 Bit9 Bit8 R/W 
+
+(Hex) 
+
+0x2F 8BIT_TEMP R 
+
+ 
+
+Addr 
+Bit7 Bit6 Bit5 Bit4 Bit3 Bit2 Bit1 Bit0 R/W 
+
+(Hex) 
+
+X_EXI Y_EXI Z_EXI XALARM YALARM ZALARM 
+0x2E 2BIT_COUNT R 
+
+_ERR _ERR _ERR _ERR _ERR _ERR 
+
+Note) EXI_ERR flags and ALARM_ERR flags are cleared to "0" by reading this register. Note that in Burst mode and 
+UART Auto sampling, these flags are cleared to "0" after every sample output regardless of the TEMP_OUT setting 
+in regster BURST_CTRL, bit [14]. These flags have the same function as those in the FLAG (ND/EA) register.  
+However, the flag states are not linked and needs to be cleared separately. 
+
+Note) In case a structural resonance warning is issued, when normal mode is selected, the upper limit of the measurement 
+range is output as the sensor value instead of the measured value until EXI_ERR in Register: FLAG [0x06(W0)], bit 
+[7:5] is read out. 
+
+bit [15:8] 8BIT_TEMP Temperature sensor output data (8 bits) 
+The internal temperature sensor value can be read from this register. 
+The output data format is 8-bit two's complement format. 
+
+Please refer to the below formula for conversion to temperature in centigrade. Please refer to Table 1.3 Sensor 
+Specification for the scale factor value. 
+There is no guarantee that the value provides the absolute value of the internal temperature. 
+
+T8bit (°C) = SF8bit × a + 34.987 
+SF: Scale Factor 
+a: Temperature sensor output data (decimal) 
+
+bit [7] X_EXI_ERR 
+This bit indicates when the measured value of X-axis becomes abnormal due to structural resonance in the sensor.  
+1: Measurement value is abnormal due to structural resonance 
+0: Measured value is within normal range 
+
+bit [6] Y_EXI_ERR 
+This bit indicates when the measured value of Y-axis becomes abnormal due to structural resonance in the sensor.  
+1: Measurement value is abnormal due to structural resonance 
+0: Measured value is within normal range 
+
+bit [5] Z_EXI_ERR  
+This bit indicates when the measured value of Z-axis becomes abnormal due to structural resonance in the sensor.  
+1: Measurement value is abnormal due to structural resonance 
+0: Measured value is within normal range 
+
+bit [4] XALARM_ERR 
+This bit indicates when the sensor value exceeds the value set in register: X_ALARM [0x47-0x46(W1)] in the X axis 
+during measurement. 
+1: detection 
+0: no detection 
+
+bit [3] YALARM_ERR 
+This bit indicates when the sensor value exceeds the value set in register: Y_ALARM [0x49-0x48(W1)] in the Y axis 
+during measurement. 
+1: detection 
+0: no detection 
+
+bit [2] ZALARM_ERR 
+This bit indicates when the sensor value exceeds the value set in register: Z_ALARM [0x4B-0x4A(W1)] in the Z axis 
+during measurement. 
+1: detection 
+0: no detection 
+
+bit [1:0] 2BIT_COUNT 
+A 2-bit count value that counts up at each sampling count. 
+
+Full Data Sheet Page 41 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+6.11. VELC Register (Window 0) 
+
+Addr 
+Bit15 ・・・ Bit8 Bit7 ・・・ Bit0 R/W 
+
+(Hex) 
+
+0x30 - XVELC_HIGH_L R 
+
+0x32 XVELC_LOW_H XVELC_LOW_L R 
+
+0x34 - YVELC_HIGH_L R 
+
+0x36 YVELC_LOW_H YVELC_LOW_L R 
+
+0x38 - ZVELC_HIGH_L R 
+
+0x3A ZVELC_LOW_H ZVELC_LOW_L R 
+
+bit [15:0] Velocity output data 
+These registers contain the 3-axis velocity data (RAW, RMS, P-P) for X, Y, and Z. 
+
+The output data format 
+Unit (m/s) 
+24-bit two's complement format 
+
+bit 23  : sign 
+bit 22  : integer 
+bit 21 ~ 0 : decimal 
+
+Note) Velocity, and displacement readout addresses are the same. 
+
+Note) When the velocity value exceeds the preset threshold value, reading velocity value responds with the threshold 
+value. For example, if the preset threshold values are set to +100 mm/s and -100 mm/s, the corresponding response 
+is “0x066666” for +100 mm/s or more, and “0xF9999A” for -100 mm/s or less. 
+
+Note) The velocity output rate is fixed at 3000 Sps. RMS/P-P output rate can be set by DOUT_RATE_RMSPP in Register: 
+SMPL_CTRL [0x04(W1)], bit [15:8]. 
+
+ 
+
+6.12. DISP Register (Window 0) 
+
+Addr 
+Bit15 ・・・ Bit8 Bit7 ・・・ Bit0 R/W 
+
+(Hex) 
+
+0x30 - XDISP_HIGH_L R 
+
+0x32 XDISP_LOW_H XDISP_LOW_L R 
+
+0x34 - YDISP_HIGH_L R 
+
+0x36 YDISP_LOW_H YDISP_LOW_L R 
+
+0x38 - ZDISP_HIGH_L R 
+
+0x3A ZDISP_LOW_H ZDISP_LOW_L R 
+
+bit [15:0] Displacement output data 
+These registers contain the 3-axis displacement data (RAW, RMS, P-P) for X, Y, and Z. 
+
+The output data format 
+Unit (m) 
+24-bit two's complement format 
+
+bit 23  : sign 
+bit 22  : integer 
+bit 21 ~ 0 : decimal 
+
+Note) Velocity, and displacement readout addresses are the same. 
+
+Note) When the displacement value exceeds the preset threshold value, reading displacement value responds with the 
+threshold value. For example, if the preset threshold values are set to +200 mm and -200 mm, the corresponding 
+response is “0x0CCCCC” for +200 mm or more, and “0xF33334” for -200 mm or less. 
+
+Note) The displacement output rate is fixed at 300 Sps. RMS/P-P output rate can be set by DOUT_RATE_RMSPP in 
+Register: SMPL_CTRL [0x04(W1)], bit [15:8]. 
+
+ 
+
+Full Data Sheet Page 42 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+6.13. SIG_CTRL Register (Window 1) 
+
+Addr 
+Bit15 Bit14 Bit13 Bit12 Bit11 Bit10 Bit9 Bit8 R/W 
+
+(Hex) 
+
+ND_EN ND_EN ND_EN ND_EN 
+0x01 - - - (XVELC) (YVELC) (ZVELC) - R/W 
+
+(Temp) (XDISP) (YDISP) (ZDISP) 
+ 
+
+Addr 
+Bit7 Bit6 Bit5 Bit4 Bit3 Bit2 Bit1 Bit0 R/W 
+
+(Hex) 
+
+TEMP OUTPUT 
+0x00 OUTPUT_SEL - - R/W 
+
+_SEL _STAT  
+
+bit [15] ND_EN (Temp) 
+Enables or disables the temperature sensor ND flags in FLAG [0x06(W0)], bit [15]. 
+1: Enable 
+0: Disable 
+
+bit [11] ND_EN (X-axis sensor) 
+Enables or disables the X-axis sensor ND flags in FLAG [0x06(W0)], bit [11]. 
+1: Enable 
+0: Disable 
+
+bit [10] ND_EN (Y-axis sensor) 
+Enables or disables the Y-axis sensor ND flags in FLAG [0x06(W0)], bit [10]. 
+1: Enable 
+0: Disable 
+
+bit [9] ND_EN (Z-axis sensor) 
+Enables or disables the Z-axis sensor ND flags in FLAG [0x06(W0)], bit [9]. 
+1: Enable 
+0: Disable 
+
+bit [7:4] OUTPUT_SEL 
+Sets the output physical quantity of the XYZ axis sensor. 
+0000: Velocity RAW 
+0001: Velocity RMS 
+0010: Velocity P-P 
+0011: Reserved 
+0100: Displacement RAW 
+0101: Displacement RMS 
+0110: Displacement P-P 
+0111 - 1111: Reserved  
+
+bit [1] TEMP_SEL 
+Specify the temperature format to be output in Burst Mode and UART Auto sampling. 
+0: Temperature format 2 (8-bit temperature + EXI_ERR flags + ALARM_ERR flags + 2-bit counter) 
+1: Temperature format 1 (16-bit temperature) 
+
+bit [0]  OUTPUT_STAT 
+Indicates the setting status of the output physical quantity OUTPUT_SEL. This bit is read-only. 
+1: Setting in progress 
+0: Setting complete 
+
+Note) If the OUTPUT_SEL setting fails, the setting will not be changed and an error will be displayed in HARD_ERR of 
+register: DAIG_STAT1 [0x04(W0)], bit[7:5]  
+
+Note) When the output physical quantity OUTPUT_SEL is set, do not write to the register until the setting is completed. 
+For the setting time of the output physical quantity, refer to Output Mode Setting Time in Table 1.4 Interface 
+Specifications. 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+Full Data Sheet Page 43 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+6.14. MSC_CTRL Register (Window 1) 
+
+Addr 
+Bit15 Bit14 Bit13 Bit12 Bit11 Bit10 Bit9 Bit8 R/W 
+
+(Hex) 
+
+EXI FLASH ACC TEMP VDD 
+0x03 - - - R/W 
+
+_TEST _TEST _TEST _TEST _TEST 
+
+ 
+
+Addr 
+Bit7 Bit6 Bit5 Bit4 Bit3 Bit2 Bit1 Bit0 R/W 
+
+(Hex) 
+
+0x02 - 0 -  - - - - - R/W 
+
+Note) Although ACC_TEST, TEMP_TEST, and VDD_TEST can be executed at the same time, other tests cannot be 
+executed at the same time. When executing them in succession, confirm the execution of the previous command 
+is finished by waiting until the bit changes from “1” to “0” and then execute the next command. 
+
+bit [15] EXI_TEST 
+The structural resonance level test for all three axes is executed simultaneously by writing "1" to this bit. This bit displays 
+"1" during execution, and returns to "0" when completed. After writing "1" to this bit, confirm that this bit returns to "0", 
+and then check EXI_ERR in the register: DIAG_STAT2 [0x0C(W0)], bits [13:8] to confirm the diagnosis result. 
+
+Note) This structural resonance level test cannot be run with other tests at the same time. 
+
+bit [11] FLASH_TEST 
+Write “1” to execute the data consistency test for the non-volatile memory. The read value of the bit is “1” during the 
+test and “0” after the test is completed. After writing “1” to this bit, wait until this bit goes back to “0” and then read the 
+FLASH_ERR of DIAG_STAT1 [0x04(W0)], bit [2] to check the result. 
+
+Note) This flash memory test cannot be run with other tests at the same time. 
+
+bit [10] ACC_TEST 
+Write “1” to execute the self test to check if the X, Y, and Z axis sensor is working properly. The read value of the bit is 
+“1” during the test and “0” after the test is completed. After writing “1” to this bit, wait until this bit goes back to “0” and 
+then read the ACC_ERR_ALL of DIAG_STAT1 [0x04(W0)], bit [1] to check the results. 
+
+bit[9] TEMP_TEST 
+Write “1” to execute the self test to check if temperature sensor is working properly. The read value of the bit is “1” 
+during the test and “0” after the test is completed. After writing “1” to this bit, wait until this bit goes back to “0” and then 
+read the TEMP_ERR of DIAG_STAT1 [0x04(W0)], bit [9] to check the results. 
+
+bit [8] VDD_TEST 
+Write “1” to execute the self test to check if power supply voltage level is working properly. The read value of the bit is 
+“1” during the test and “0” after the test is completed. After writing “1” to this bit, wait until this bit goes back to “0” and 
+then read the VDD_ERR of DIAG_STAT1 [0x04(W0)], bit [8] to check the results. 
+
+bit [6] Reserved to 0 
+This bit must be fixed to 0. 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+Full Data Sheet Page 44 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+6.15. SMPL_CTRL Register (Window 1) 
+
+Addr 
+Bit15 Bit14 Bit13 Bit12 Bit11 Bit10 Bit9 Bit8 R/W 
+
+(Hex) 
+
+0x05 DOUT_RATE_RMSPP R/W 
+
+ 
+
+Addr 
+Bit7 Bit6 Bit5 Bit4 Bit3 Bit2 Bit1 Bit0 R/W 
+
+(Hex) 
+
+0x04 - - - - UPDATE_RATE_RMSPP R/W 
+
+Note) For a detailed description of output and update rate, refer to 4.13 Velocity and Displacement Output. 
+
+bit [15:8] DOUT_RATE_RMSPP 
+Sets the output rate for RMS and P-P data. The setting format is as follows. 
+
+Table 6.3 and 6.4 show setting examples. 
+
+Setting range n = 1 ~ 255 
+Output rate (s) Velocity: 0.1 × n 
+
+Displacement: 1 × n 
+
+bit [7:0] UPDATE_RATE_RMSPP 
+Sets the update rate for RMS and P-P data. The setting format is as follows. 
+
+Table 6.3 and 6.4 show setting examples. 
+
+Setting range n = 0 ~ 15 
+Update rate (s) Velocity: 1/3000 × 16 × 2n  
+
+Displacement: 1/300 × 16 × 2n 
+
+Note) The update rate and output rate of the RAW data are fixed (velocity: 3000 Sps, displacement: 300 Sps). 
+ 
+
+Table 6.3 Mapping of Output Rate and Update Rate to Setting Values (Velocity) 
+
+DOUT_RATE_RMSPP UPDATE_RATE_RMSPP 
+Output rate Update rate 
+
+(s) Setting values (s) Setting values 
+
+0.1 1 0.0853 4 
+0.2 - 0.3 2 - 3 0.1706 5 
+0.4 - 0.6 4 - 6 0.3413 6 
+0.7 - 1.3 7 - 13 0.6826 7 
+1.4 - 2.7 14 - 27 1.3653 8 
+2.8 - 5.4 28 - 54 2.7306 9 
+
+5.5 - 10.9 55 - 109 5.4613 10 
+11.0 - 21.8 110 - 218 10.922 11 
+21.9 - 25.5 219 - 255 21.845 12 
+
+ 
+
+Table 6.4 Mapping of Output Rate and Update Rate to Setting Values (Displacement) 
+
+DOUT_RATE_RMSPP UPDATE_RATE_RMSPP 
+Output rate Update rate 
+
+(s) Setting values (s) Setting values 
+
+1 1 0.853 4 
+2 - 3 2 - 3 1.706 5 
+4 - 6 4 - 6 3.413 6 
+
+7 - 13 7 - 13 6.826 7 
+14 - 27 14 - 27 13.653 8 
+28 - 54 28 - 54 27.306 9 
+
+55 - 109 55 - 109 54.613 10 
+110 - 218 110 - 218 109.22 11 
+219 - 255 219 - 255 218.45 12 
+
+ 
+
+Full Data Sheet Page 45 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+6.16. UART_CTRL Register (Window 1) 
+
+Addr 
+Bit15 Bit14 Bit13 Bit12 Bit11 Bit10 Bit9 Bit8 R/W 
+
+(Hex) 
+
+0x09 - BAUD_RATE R/W 
+
+ 
+
+Addr 
+Bit7 ．．． Bit2 Bit1 Bit0 R/W 
+
+(Hex) 
+
+AUTO UART 
+0x08  -  R/W 
+
+_START _AUTO 
+
+bit [9:8] BAUD_RATE 
+These bits specifies the Baud Rate of UART interface. 
+00: 921.6 kbps 
+01: 460.8 kbps 
+10: 230.4 kbps 
+11: 115.2 kbps  
+
+Note) The baud rate change using these BAUD_RATE bits become effective immediately after write access completes. 
+
+bit [1] AUTO_START (Only valid for UART Auto sampling) 
+Enables or disables the Auto Start function. 
+1: Automatic Start is enabled 
+0: Automatic Start is disabled 
+When Auto Start is enabled, the device enters sampling mode and sends sampling data automatically after completing 
+internal initialization after powered on. 
+Write a "1" to this AUTO_START bit and UART_AUTO bit of this register to enable this function. Then execute 
+FLASH_BACKUP of GLOB_CMD [0x0A(W1)], bit [3] to preserve the current register settings. 
+
+bit [0] UART_AUTO 
+Enables or disables the UART Auto sampling function. 
+1: UART Auto sampling is selected 
+0: UART Manual sampling is selected 
+If UART Auto sampling is active, register values such as flag, temperature, and velocity are continuously transmitted 
+automatically. In UART Manual sampling, register data is transmitted as a response to a register read command. 
+
+Note) For more info on UART Auto sampling refer to 5.1.4 UART Auto Sampling Operation and 5.2 Data Packet 
+Format. The burst output data is configured by register setting in BURST_CTRL [0x0C(W1)]. 
+
+ 
+
+6.17. GLOB_CMD Register (Window 1) 
+
+Addr 
+Bit15 Bit14 Bit13 Bit12 Bit11 Bit10 Bit9 Bit8 R/W 
+
+(Hex) 
+
+NOT 
+0x0B - - - - - - - R 
+
+_READY 
+
+ 
+
+Addr 
+Bit7 Bit6 Bit5 Bit4 Bit3 Bit2 Bit1 Bit0 R/W 
+
+(Hex) 
+
+SOFT FLASH_ FLASH 
+0x0A - - - - - R/W 
+
+_RST BACKUP _RST  
+
+bit [10] NOT_READY 
+Indicates whether this product currently ready. Immediately after power on, this bit is “1” and becomes “0” when the 
+product is ready. After the power on, wait until the Power-On Start-Up Time has elapsed and then wait until this bit 
+becomes “0” before starting sensor measurement. This bit is read-only. 
+1: Not ready 
+0: Ready 
+
+bit [7] SOFT_RST 
+Write “1” to execute software reset, and wait until the Reset Recovery Time has elapsed. After the software reset is 
+completed, the bit automatically goes back to “0”. 
+
+bit [3] FLASH_BACKUP 
+Write “1” to save the current values of the control registers with the ○ mark in the “Flash Backup” column of 
+Table 6.1 to the non-volatile memory. After the execution is completed, the bit automatically goes back to “0”. After 
+
+Full Data Sheet Page 46 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+confirming this bit goes back to “0” and then check the result in FLASH_BU_ERR of DIAG_STAT1 [0x04(W0)], bit [0]. 
+bit [2] FLASH_RST 
+
+Write “1” to resets the setting value saved in the nonvolatile memory to the factory default state. After completion of 
+execution, it will automatically return to “0”. After confirming this bit goes back to “0” and then check the result in 
+FLASH_BU_ERR of DIAG_STAT1 [0x04(W0)], bit [0]. The factory default state will be reflected to the registers after 
+completing internal initialization after powered on or a reset. 
+
+ 
+
+6.18. BURST_CTRL Register (Window 1) 
+
+Addr 
+Bit15 Bit14 Bit13 Bit12 Bit11 Bit10 Bit9 Bit8 R/W 
+
+(Hex) 
+
+FLAG TEMP SENSOR SENSOR SENSOR 
+0x0D - - - R/W 
+
+_OUT _OUT _X_OUT _Y_OUT _Z_OUT 
+
+ 
+
+Addr 
+Bit7 Bit6 Bit5 Bit4 Bit3 Bit2 Bit1 Bit0 R/W 
+
+(Hex) 
+
+COUNT CHKSM 
+0x0C - - - - - - R/W 
+
+_OUT _OUT 
+
+These bits enable/disable the content in the output data for burst mode and UART Auto sampling. 
+
+bit [15] FLAG_OUT 
+Controls the output of FLAG status. 
+1: Enables output. 
+0: Disables output. 
+
+bit [14] TEMP_OUT 
+Controls the output of temperature sensor. 
+The output mode is selected by TEMP_SEL of register: SIG_CTRL [0x00 (W1)], bit [1]. 
+1: Enables output. 
+0: Disables output. 
+
+bit [10] SENSOR_X_OUT 
+Controls the output of X axis sensor value (velocity/displacement).  
+The output mode is selected by OUTPUT_SEL of register: SIG_CTRL [0x00 (W1)], bit [7:4]. 
+1: Enables output. 
+0: Disables output. 
+
+bit [9] SENSOR_Y_OUT 
+Controls the output of Y axis sensor value (velocity/displacement).  
+The output mode is selected by OUTPUT_SEL of register: SIG_CTRL [0x00 (W1)], bit [7:4]. 
+1: Enables output. 
+0: Disables output. 
+
+bit[8] SENSOR_Z_OUT 
+Controls the output of Z axis sensor value (velocity/displacement).  
+The output mode is selected by OUTPUT_SEL of register: SIG_CTRL [0x00 (W1)], bit [7:4]. 
+1: Enables output. 
+0: Disables output. 
+
+bit[1] COUNT_OUT 
+Controls the output of counter value. 
+1: Enables output. 
+0: Disables output. 
+
+bit[0] CHKSM_OUT 
+Controls the output of checksum. 
+1: Enables output. 
+0: Disables output. 
+
+Note) Please set "1: Enables output" to at least one bit of bit [10:8]. All outputs of sensor values cannot be disabled at 
+the same time. 
+
+ 
+
+ 
+ 
+ 
+ 
+
+Full Data Sheet Page 47 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+6.19. ALIGNMENT_COEF_CMD Register (Window 1) 
+
+Addr 
+Bit15 Bit14 Bit13 Bit12 Bit11 Bit10 Bit9 Bit8 R/W 
+
+(Hex) 
+
+0x39 - - - - - - - - - 
+
+ 
+
+Addr 
+Bit7 Bit6 Bit5 Bit4 Bit3 Bit2 Bit1 Bit0 R/W 
+
+(Hex) 
+
+0x38 - - - - - - ALIGN_CMD R/W 
+
+bit [1:0] ALIGN_CMD 
+This is the control command for readout of the alignment compensation coefficients. For the readout procedure, refer 
+to 4.14 Alignment Compensation. 
+
+For READ  For WRITE 
+00: execution complete  do nothing   
+01: reading in progress  read      
+10: not used   not used 
+11: not used   not used 
+
+ 
+6.20. ALIGNMENT_COEF_DATA Register (Window 1) 
+
+Addr 
+Bit15 ．．． Bit0 R/W 
+
+(Hex) 
+
+0x3A  ALIGN_DATA  R 
+
+bit [15:0] ALIGN_DATA 
+This is the alignment compensation coefficient data register for reading from the correction coefficient storage memory. 
+The data size of each coefficient is 32 bits, and the readout size is 16 bits. For the data format and the coefficient 
+storage memory map, refer to 4.14 Alignment Compensation. 
+
+ 
+6.21. ALIGNMENT_COEF_ADDR Register (Window 1) 
+
+Addr 
+Bit15 Bit14 Bit13 Bit12 Bit11 Bit10 Bit9 Bit8 R/W 
+
+(Hex) 
+
+0x3D - - - - - - - - - 
+
+ 
+
+Addr 
+Bit7 Bit6 Bit5 Bit4 Bit3 Bit2 Bit1 Bit0 R/W 
+
+(Hex) 
+
+0x3C ALIGN_ADDR R/W 
+
+bit [7:0] ALIGN_ADDR  
+This is the address where the alignment compensation coefficient to be readout is stored. 
+
+Note) The address is automatically incremented after the control command for readout of the alignment compensation 
+coefficients is executed. 
+
+Note) The setting range is from 0x0000 to 0x0011. It cannot be set outside the range. 
+
+ 
+ 
+ 
+ 
+ 
+
+Full Data Sheet Page 48 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+6.22. X_ALARM Register (Window 1) 
+
+Addr 
+Bit15 ・・・ Bit0 R/W 
+
+(Hex) 
+
+0x46 XALARM R/W 
+
+bit [15:0] XALARM 
+Set the upper limit value for evaluating XALARM_ERR in Register: FLAG [0x06(W0)], bit [4] and Register: TEMP2 
+[0x2E(W0)], bit [4]. The format and setting data range are as follows. 
+
+(1) For velocity RAW、velocity RMS、velocity P-P 
+Unit (m/s) 
+16-bit unsigned 
+
+bit 15 ~ 14  : integer 
+bit 13 ~ 0  : decimal 
+setting range  : 0 ~ +100 mm/s 
+
+ 
+(2) For displacement RAW、displacement RMS、displacement P-P 
+
+Unit (m) 
+16-bit unsigned 
+
+bit 15 ~ 14  : integer 
+bit 13 ~ 0  : decimal 
+setting range  : 0 ~ +200 mm 
+
+Note) If the upper limit is set beyond the setting range, the upper limit of the setting range will be used for evaluation. 
+
+Note) The upper limit value that is valid for the threshold detection can only be a positive number. 
+
+ 
+6.23. Y_ALARM Register (Window 1) 
+
+Addr 
+Bit15 ・・・ Bit0 R/W 
+
+(Hex) 
+
+0x48 YALARM R/W 
+
+bit [15:0] YALARM 
+Set the upper limit value for evaluating YALARM_ERR in Register: FLAG [0x06(W0)], bit [3] and Register: TEMP2 
+[0x2E(W0)], bit [3]. The data format and setting range are the same as those of X_ALARM. 
+
+ 
+6.24. Z_ALARM Register (Window 1) 
+
+Addr 
+Bit15  Bit0 R/W 
+
+(Hex) 
+
+0x4A ZALARM R/W 
+
+bit [15:0] ZALARM_UP 
+Set the upper limit value for evaluating ZALARM_ERR in Register: FLAG [0x06(W0)], bit [2] and Register: TEMP2 
+[0x2E(W0)], bit [2]. The data format and setting range are the same as those of X_ALARM. 
+
+ 
+6.25. PROD_ID Register (Window 1) 
+
+Addr 
+Bit15 ．．． Bit0 R/W 
+
+(Hex) 
+
+0x6A  PROD_ID1  R 
+
+0x6C  PROD_ID2  R 
+
+0x6E  PROD_ID3  R 
+
+0x70  PROD_ID4  R 
+
+bit [15:0]  Product ID 
+These registers return the product model number represented in ASCII code. 
+
+Product ID return value is A342VD10 
+PROD_ID1: 0x3341 
+PROD_ID2: 0x3234 
+PROD_ID3: 0x4456 
+PROD_ID4: 0x3031 
+
+Full Data Sheet Page 49 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+ 
+6.26. VERSION Register (Window 1) 
+
+Addr 
+Bit15 ．．． Bit0 R/W 
+
+(Hex) 
+
+0x72  VERSION  R 
+
+bit [15:0]  Version 
+This register returns the Firmware Version. 
+
+ 
+6.27. SERIAL_NUM Register (Window 1) 
+
+Addr 
+Bit15 ．．． Bit0 R/W 
+
+(Hex) 
+
+0x74  SERIAL_NUM1  R 
+
+0x76  SERIAL_NUM2  R 
+
+0x78  SERIAL_NUM3  R 
+
+0x7A  SERIAL_NUM4  R 
+
+bit [15:0]  Serial Number 
+These registers return the serial number represented in ASCII code. 
+
+For example, if the Serial Number is 01234567 then the return value is: 
+SERIAL_NUM1: 0x3130 
+SERIAL_NUM2: 0x3332 
+SERIAL_NUM3: 0x3534 
+SERIAL_NUM4: 0x3736 
+
+ 
+6.28. WIN_CTRL Register (Window 0,1) 
+
+Addr 
+Bit15 ．．． Bit8 R/W 
+
+(Hex) 
+
+0x7F  -  - 
+
+ 
+
+Addr 
+Bit7 ．．． Bit0 R/W 
+
+(Hex) 
+
+0x7E  WINDOW_ID  R/W 
+
+bit [7:0] WINDOW_ID 
+Selects the desired register window by writing the window number to this register. 
+0x00: Window 0 
+0x01: Window 1 
+0x02 ~ 0xFF: Unused 
+
+ 
+
+ 
+
+Full Data Sheet Page 50 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+ Sample Program Sequence 
+
+The following describes the recommended procedures for operating this device. 
+
+7.1. UART Sample Programs 
+
+7.1.1. Power-On Sequence (UART) 
+
+(a) Power on. 
+(b) Wait for the time specified by "Power-On Start-Up Time".  
+(c) Check NOT_READY in register: GLOB_CMD [0x0A(W1)], bit [10]. 
+  Tx = {0xFE, 0x01, 0x0d}.  /* Write to WIN_CTRL (L) to set WINDOW_ID = 1 */ 
+  Tx = {0x0A, 0x00, 0x0d}.  /* Read out GLOB_CMD */ 
+  Rx = {0x0A, MSByte, LSByte, 0x0d}. /* Retrieve the response value */ 
+  // if NOT_READY is 0, initialization is complete; if 1, initialization is in progress. 
+(d) Check HARD_ERR in register: DIAG_STAT1 [0x04(W0)], bit [7:5]. 
+  Tx = {0xFE,0x00,0x0d}.  /* Write to WIN_CTRL (L) to set WINDOW_ID = 0 */ 
+  Tx = {0x04,0x00,0x0d}.  /* Read out DIAG_STAT1 */ 
+  Rx = {0x04,MSByte,LSByte,0x0d}. /* Retrieve the response value */ 
+  // If HARD_ERR is 000, the hardware check completes successfully; if not, an error occurred. 
+ 
+
+7.1.2. Register Read and Write (UART) 
+
+Register Read Example 
+
+(a) Read 16-bit data from the register (Address = 0x02 / Window = 0). 
+  Tx = {0xFE, 0x00, 0x0d}.  /* Write to WIN_CTRL (L) to set WINDOW_ID = 0 */ 
+  Tx = {0x02, 0x00, 0x0d}.  /* Read out MODE_CTRL */ 
+  Rx = {0x02, 0x04, 0x00, 0x0d}. /* Retrieve the response value */ 
+
+// The 2nd byte of Rx data “0x04” indicates a configuration mode. 
+// The 3rd byte of Rx data “0x00” indicates Reserved. 
+// Read data is by 16 bits with MSB first format. 
+
+------------------------------------------------------------------------------- 
+
+Register Write Example 
+
+(a) Write 8-bit data to the register (Address = 0x03 / Window = 0). 
+Tx = {0xFE, 0x00, 0x0d}.  /* Write to WIN_CTRL (L) to set WINDOW_ID = 0 */ 
+
+  Tx = {0x83, 0x01, 0x0d}.  /* Write to MODE_CTRL (H) to go to Sampling mode */ 
+ // No corresponding response for data writing. 
+ // Write data is by 8 bits. 
+ 
+
+7.1.3. Configure Output Physical Quantity (UART) 
+
+(a) Write the output physical quantity and temperature format  
+  Tx = {0xFE, 0x01, 0x0d}.  /* Write to WIN_CTRL (L) to set WINDOW_ID = 1 */ 
+  Tx = {0x80, 0x00, 0x0d}.      /* Write to SIG_CTRL (L) to set output physical quantity = velocity RAW,  
+      temperature format 2 */ 
+(b) Wait until the setting is completed. 
+
+// Wait for the time specified in “Output Mode Setting Time”, 
+// Or verify OUTPUT_STAT of register: SIG_CTRL [0x00(W1)], bit [0] returns to 0 as shown below. 
+
+  Tx = {0x00, 0x00, 0x0d}.  /* Read out SIG_CTRL */ 
+  Rx = {0x00, MSByte, LSByte, 0x0d}. /* Retrieve the response value */ 
+  // If OUTPUT_STAT is 0, the setting is complete; if 1, the setting is in progress and (b) needs to be repeated. 
+  // Note) Do not write to the register while the setting is being executed. 
+(c) Confirm the setting result. 
+
+// Check HARD_ERR in register: DIAG_STAT1 [0x04(W0)], bit [7:5]. 
+Tx = {0xFE, 0x00, 0x0d}.  /* Write to WIN_CTRL (L) to set WINDOW_ID = 0 */ 
+
+  Tx = {0x04, 0x00, 0x0d}.  /* Read out DIAG_STAT1 */ 
+  Rx = {0x04, MSByte, LSByte, 0x0d}. /* Retrieve the response value */ 
+
+// If HARD_ERR is 0, the settingis completes successfully; if 1, an error occurred.  
+ 
+
+7.1.4. Sampling (UART) 
+
+Auto sampling (example)  
+
+(a) Configure the sampling parameters (the following is an example of setting the factory defaults). 
+  Tx = {0xFE, 0x01, 0x0d}.  /* Write to WIN_CTRL (L) to set WINDOW_ID = 1 */ 
+
+Full Data Sheet Page 51 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+  Tx = {0x80, 0x00, 0x0d}.    /* Write to SIG_CTRL (L) to set output physical quantity = velocity RAW,  
+      temperature format 2 */ 
+  // See Section 7.1.3 for details on the procedure for setting the output physical quantities. 
+ Tx = {0x88, 0x01, 0x0d}.  /* Write to UART_CTRL (L) to set UART Mode = Auto sampling*/ 
+Tx = {0x8C, 0x00, 0x0d}.  /* Write to BURST_CTRL (L) to set Burst counter = off、checksum = off */ 
+
+  Tx = {0x8D, 0x47, 0x0d}.  /* Write to BURST_CTRL (H) to set Burst flag = off、temp = on、sensor = on */ 
+Tx = {0xC6, 0x66, 0x0d}.  /* Write to X_ALARM (L) to set X detection threshold = 100 mm/s */ 
+Tx = {0xC7, 0x06, 0x0d}.  /* Write to X_ALARM (H) */ 
+Tx = {0xC8, 0x66, 0x0d}.  /* Write to Y_ALARM (L) to set Y detection threshold = 100 mm/s */ 
+Tx = {0xC9, 0x06, 0x0d}.  /* Write to Y_ALARM (H) */ 
+Tx = {0xCA, 0x66, 0x0d}.  /* Write to Z_ALARM (L) to set Z detection threshold = 100 mm/s */ 
+Tx = {0xCB, 0x06, 0x0d}.  /* Write to Z_ALARM (H) */ 
+Tx = {0xFE, 0x00, 0x0d}.  /* Write to WIN_CTRL (L) to set WINDOW_ID = 0 */ 
+
+(b) Start sampling. 
+Tx = {0x83, 0x01, 0x0d}.  /* Write to MODE_CTRL (H) to go to Sampling mode */ 
+// Note) The transition duration from Configuration mode to Sampling mode, refer to “Sampling Start Time” in Table 1.4 
+
+Interface Specifications. 
+// Note) The transient response time (output hold time) of FIR filters, refer to Table 4.1 Transient response time of FIR filters  
+
+at the start of measurement. 
+(c) Receive sampling data. 
+  Rx = {0x80,  
+
+TEMP2_H, TEMP2_L,     
+      XVCCL_HIGH_L, XVCCL_LOW_H, XVCCL_LOW_L, 
+      YVCCL_HIGH_L, YVCCL_LOW_H, YVCCL_LOW_L, 
+      ZVCCL_HIGH_L, ZVCCL_LOW_H, ZVCCL_LOW_L, 
+      0x0d} 
+  // Repeat (c). 
+  // “XVCCL_HIGH_L” refers to the LSB byte of XVELC_HIGH data 
+
+// “XVCCL_LOW_H” refers to the MSB byte of XVELC_LOW data 
+// “XVCCL_LOW_L” refers to the LSB byte of XVELC_LOW data 
+
+(d) Stop sampling. 
+Tx = {0x83, 0x02, 0x0d}.   /* Write to MODE_CTRL (H) to go to Configuration mode */ 
+// Note) For the transition duration from Sampling mode to Configuration mode, refer to “Sampling Stop Time” in Table 1.4 
+
+Interface Specifications. 
+------------------------------------------------------------------------------- 
+
+Burst mode sampling (example) 
+
+(a) Configure the sampling parameters. 
+  // Displacement RAW, temperature format 1, sampling counter value, checksum (output of all available data) 
+  Tx = {0xFE, 0x01, 0x0d}.  /* Write to WIN_CTRL (L) to set WINDOW_ID = 1 */ 
+  Tx = {0x80, 0x42, 0x0d}.    /* Write to SIG_CTRL (L) to set output physical quantity = displacement,  
+      temperature format 1 */ 
+
+// See Section 7.1.3 for details on the procedure for setting the output physical quantities. 
+ Tx = {0x88, 0x00, 0x0d}.  /* Write to UART_CTRL (L) to set UART Mode = manual sampling*/ 
+Tx = {0x8C, 0x03, 0x0d}.  /* Write to BURST_CTRL (L) to set Burst counter = on, checksum = on */ 
+
+  Tx = {0x8D, 0xC7, 0x0d}.  /* Write to BURST_CTRL (H) to set Burst flag = on, temp = on, sensor = on */ 
+Tx = {0xC6, 0x52, 0x0d}.  /* Write to X_ALARM (L) to set X detection threshold = 5 mm */ 
+Tx = {0xC7, 0x00, 0x0d}.  /* Write to X_ALARM (H) */ 
+Tx = {0xC8, 0x52, 0x0d}.  /* Write to Y_ALARM (L) to set Y detection threshold = 5 mm */ 
+Tx = {0xC9, 0x00, 0x0d}.  /* Write to Y_ALARM (H) */ 
+Tx = {0xCA, 0x52, 0x0d}.  /* Write to Z_ALARM (L) to set Z detection threshold = 5 mm */ 
+Tx = {0xCB, 0x00, 0x0d}.  /* Write to Z_ALARM (H) */ 
+Tx = {0xFE, 0x00, 0x0d}.  /* Write to WIN_CTRL (L) to set WINDOW_ID = 0 */ 
+
+(b) Start sampling. 
+Tx = {0x83, 0x01, 0x0d}.  /* Write to MODE_CTRL (H) to go to Sampling mode */ 
+// Note) For the transition duration from Configuration mode to Sampling mode, refer to “Sampling Start Time” in Table 1.4 
+
+Interface Specifications. 
+// Note) For the transient response time (output hold time) of FIR filters, refer to Table 4.1 Transient response time of FIR 
+
+filters at the start of measurement. 
+(c) A burst command is sent when Data Ready signal is asserted. 
+
+Tx = {0x80, 0x00, 0x0d}.  /* Write to BURST (L) */ 
+(d) Retrieve sampling data. 
+  Rx = {0x80,  
+      FLAG_H, FLGA_L, 
+
+TEMP1_H, TEMP1_L,     
+      XVCCL_HIGH_L, XVCCL_LOW_H, XVCCL_LOW_L, 
+      YVCCL_HIGH_L, YVCCL_LOW_H, YVCCL_LOW_L, 
+      ZVCCL_HIGH_L, ZVCCL_LOW_H, ZVCCL_LOW_L, 
+
+Full Data Sheet Page 52 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+      COUNT_H, COUNT_L, 
+      CHECKSUM_H, CHECKSUM_L, 
+      0x0d} 
+  // Repeat (c) and (d). 
+(e) Stop sampling. 
+
+Tx = {0x83, 0x02, 0x0d}.   /* Write to MODE_CTRL (H) to go to Configuration mode */ 
+// Note) For the transition duration from Sampling mode to Configuration mode, refer to “Sampling Stop Time” in Table 1.4 
+
+Interface Specifications. 
+ 
+
+7.1.5. Self Test (UART) 
+Structural Resonance Level Test 
+
+(a) Perform a structural resonance level test. 
+  Tx = {0xFE, 0x01, 0x0d}.  /* Write to WIN_CTRL (L) to set WINDOW_ID = 1 */ 
+  Tx = {0x83, 0x80, 0x0d}.  /* Write to MSC_CTRL (H) to set EXI_TEST = 1 */ 
+(b) Wait until the test is completed. 
+  // Wait for the time specified in “Self Test Time (Structural Resonance Level Test)” 
+
+// Or verify EXI_TEST of register: MSC_CTRL [0x02(W1)], bit [15] returns to 0 as shown below. 
+  Tx = {0x02, 0x00, 0x0d}.  /* Read out MSC_CTRL */ 
+  Rx = {0x02, MSByte, LSByte, 0x0d}. /* Retrieve the response value */ 
+  // if EXI_TEST is 0, the test is complete; if 1, repeat (b) since the test in progress. 
+(c) Confirm the test results. 
+
+// Check X_EXI_LEVEL, Y_EXI_LEVEL, Z_EXI_LEVEL in register: DIAG_STAT2 [0x0C(W0)], bit [13-8]. 
+Tx = {0xFE, 0x00, 0x0d}.  /* Write to WIN_CTRL (L) to set WINDOW_ID = 0 */ 
+
+  Tx = {0x0C, 0x00, 0x0d}.  /* Read out DIAG_STAT2 */ 
+  Rx = {0x0C, MSByte, LSByte, 0x0d}. /* Retrieve the response value */ 
+  // if X_EXI_LEVEL, Y_EXI_LEVEL, Z_EXI_LEVEL are “00”, the diagnosis result is OK; if any value is “01”, the diagnosis 
+
+result for the corresponding axis is NG.  
+// Note) This structural resonance level test cannot be run with other tests at the same time. 
+
+ 
+Data Consistency Test in Nonvolatile Memory (Flash Test) 
+
+(a) Perform a Flash test. 
+  Tx = {0xFE, 0x01, 0x0d}.  /* Write to WIN_CTRL (L) to set WINDOW_ID = 1 */ 
+  Tx = {0x83, 0x08, 0x0d}.  /* Write to MSC_CTRL (H) to set FLASH_TEST = 1 */ 
+(b) Wait until the test is completed. 
+  // Wait for the time specified in “Self Test Time (Flash Test)”. 
+
+// Or verify FLASH_TEST of register: MSC_CTRL [0x02(W1)], bit [11] returns to 0 as shown below. 
+  Tx = {0x02, 0x00, 0x0d}.  /* Read out MSC_CTRL */ 
+  Rx = {0x02, MSByte, LSByte, 0x0d}. /* Retrieve the response value */ 
+  // if FLASH_TEST is 0, the test is complete; if 1, repeat (b) since the tests in progress. 
+(c) Confirm the test results 
+
+// Check FLASH_ERR in register: DIAG_STAT1 [0x04(W0)], bit [2] 
+Tx = {0xFE, 0x00, 0x0d}.  /* Write to WIN_CTRL (L) to set WINDOW_ID = 0 */ 
+Tx = {0x04, 0x00, 0x0d}.  /* Read out DIAG_STAT1 */ 
+Rx = {0x04, MSByte, LSByte, 0x0d}. /* Retrieve the response value */ 
+// if FLASH_ERR is 0, the diagnosis result is OK; if 1, the diagnosis result is NG.  
+// Note) This Flash test cannot be run with other tests at the same time. 
+
+ 
+Acceleration value test, Temperature value test, Power supply voltage level test 
+
+(a) Acceleration value test, Temperature value test, Power supply voltage level test are performed simultaneously.  
+  Tx = {0xFE, 0x01, 0x0d}.  /* Write to WIN_CTRL (L) to set WINDOW_ID = 1 */ 
+  Tx = {0x83, 0x07, 0x0d}.  /* Write to MSC_CTRL (H) to set ACC_TEST/TEMP_TEST/VDD_TEST = 1 */ 
+(b) Wait until the tests are completed. 
+  // Wait for the time specified in “Self Test Time (ACC Test , TEMP Test , VDD Test)”. 
+
+// Or verify ACC_TEST/TEMP_TEST/VDD_TEST of regster: MSC_CTRL [0x02(W1)], bit [10:8] return to 0 as shown below.  
+  Tx = {0x02, 0x00, 0x0d}.  /* Read out MSC_CTRL */ 
+  Rx = {0x02, MSByte, LSByte, 0x0d}. /* Retrieve the response value */ 
+  // if any of ACC_TEST/TEMP_TEST/VDD_TEST is 0, the tests are complete; if any of them is 1, repeat (b) since the 
+
+corresponding test is in progress.  
+(c) Confirm the test results 
+
+// Check TEMP_ERR/VDD_ERR/ACC_ERR_ALL in register: DIAG_STAT1 [0x04(W0)], bit [9,8,1]. 
+Tx = {0xFE, 0x00, 0x0d}.  /* Write to WIN_CTRL (L) to set WINDOW_ID = 0 */ 
+
+  Tx = {0x04, 0x00, 0x0d}.  /* Read out DIAG_STAT1 */ 
+  Rx = {0x04, MSByte, LSByte, 0x0d}. /* Retrieve the response value */ 
+  // if any of TEMP_ERR/VDD_ERR/ACC_ERR_ALL is 0, the diagnosis results are OK; if any of them is 1, the diagnosis 
+
+result for the corresponding test is NG. 
+
+Full Data Sheet Page 53 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+// The acceleration bias value obtained by the acceleration test can be retrieved from ACC_SELFTEST_DATA1 and 
+ACC_SELFTEST_DATA2 registers. 
+
+ 
+
+7.1.6. Software Reset (UART) 
+(a) Execute a software reset. 
+  Tx = {0xFE, 0x01, 0x0d}.  /* Write to WIN_CTRL (L) to set WINDOW_ID = 1 */ 
+ Tx = {0x8A, 0x80, 0x0d}.  /* Write to GLOB_CMD (L) to set SOFT_RST = 1 */ 
+
+(b) Wait until the software reset is finished. 
+// Wait for the time specified in “Reset Recovery Time”. 
+
+ 
+
+7.1.7. Non-Volatile Memory Backup (UART) 
+(a) Backup the current register setting values to non-volatile memory. 
+  Tx = {0xFE, 0x01, 0x0d}.  /* Write to WIN_CTRL (L) to set WINDOW_ID = 1 */ 
+  Tx = {0x8A, 0x08, 0x0d}.  /* Write to GLOB_CMD (L) to set FLASH_BACKUP = 1 */ 
+(b) Wait until the backup is completed. 
+
+// Wait for the time specified in “Flash Backup Time”. 
+// Or verify FLASH_BACKUP of register: GLOB_CMD[0x0A(W1)], bit [3] returns to 0 as shown below.  
+
+  Tx = {0x0A, 0x00, 0x0d}.  /* Read out GLOB_CMD */ 
+  Rx = {0x0A, MSByte, LSByte, 0x0d}. /* Retrieve the response value */ 
+  // if FLASH_BACKUP is 0, the backup is complete; if 1, repeat (b) since the backup is in progress. 
+(c) Confirm the backup result. 
+
+// Check FLASH_BU_ERR in register: DIAG_STAT1 [0x04(W0)], bit [0]. 
+Tx = {0xFE, 0x00, 0x0d}.  /* Write to WIN_CTRL (L) to set WINDOW_ID = 0 */ 
+
+  Tx = {0x04, 0x00, 0x0d}.  /* Read out DIAG_STAT1 */ 
+  Rx = {0x04, MSByte, LSByte, 0x0d}. /* Retrieve the response value */ 
+
+// if FLASH_BU_ERR is 0, the backup completes successfully; if 1, an error occurred. 
+ 
+
+7.1.8. Non-Volatile Memory Reset (UART) 
+(a) Restores the register setting values in non-volatile memory to the factory defaults. 
+  Tx = {0xFE, 0x01, 0x0d}.  /* Write to WIN_CTRL (L) to set WINDOW_ID = 1 */ 
+  Tx = {0x8A, 0x04, 0x0d}.  /* Write to GLOB_CMD (L) to set FLASH_RST = 1 */ 
+(b) Wait until the memory reset is completed. 
+
+// Wait for the time specified in “Flash Reset Time”. 
+// Or verify FLASH_RST of register: GLOB_CMD [0x0A(W1)], bit [2] returns to 0 as shown below.  
+
+  Tx = {0x0A, 0x00, 0x0d}.  /* Read out GLOB_CMD */ 
+  Rx = {0x0A, MSByte, LSByte, 0x0d}. /* Retrieve the response value */ 
+  // if FLASH_RST is 0, the reset is complete; if 1, repeat (b) since the reset is in progress. 
+(c) Confirm the reset result. 
+
+// Check FLASH_BU_ERR in register: DIAG_STAT1 [0x04(W0)], bit [0].  
+Tx = {0xFE, 0x00, 0x0d}.  /* Write to WIN_CTRL (L) to set WINDOW_ID = 0 */ 
+
+  Tx = {0x04, 0x00, 0x0d}.  /* Read out DIAG_STAT1 */ 
+  Rx = {0x04, MSByte, LSByte, 0x0d}. /* Retrieve the response value */ 
+
+// if FLASH_BU_ERR is 0, the reset is finished successfully; if 1, an error occurred. 
+(d) Reboot or reset the device. 
+ 
+
+7.1.9. Auto Start (UART) 
+(a) Enable an Auto start function. 
+
+Tx = {0xFE, 0x01, 0x0d}.  /* Write to WIN_CTRL (L) to set WINDOW_ID = 1 */ 
+Tx = {0x88, 0x03, 0x0d}.         /* Write to UART_CTRL (L) to satisfy AUTO_START・UART_AUTO = 1 */ 
+
+(b) Execute a non-volatile memory backup, see Chapter 7.1.7. 
+(c) Reboot or reset the device. 
+(d) Wait for the time specified in “Power-On Start-Up Time / Reset Recovery Time”. 
+(e) Transmission of sampling data will start automatically. 
+ 
+
+7.1.10. UART Communication Baud Rate Setting (UART) 
+(a) Change the UART communication baud rate from 460.8 kbps (factory default setting) to 921.6 kbps. 
+
+Tx = {0xFE, 0x01, 0x0d}.  /* Write to WIN_CTRL (L) to set WINDOW_ID = 1 */ 
+Tx = {0x89, 0x00, 0x0d}.        /* Write to UART_CTRL (H) to set BAUD_RATE = “00” */ 
+// Note) The configured baud rate is effective immediately after writing. 
+
+(b) Change the communication baud rate of the host to 921.6 kbps, and restart UART communication. 
+(c) To keep the communication baud rate of the device after reboot, perform a non-volatile memory backup, see chapter 7.1.7. 
+ 
+
+Full Data Sheet Page 54 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+ Handling Notes 
+
+8.1. Cautions for Use 
+
+• When you attach the product to a housing, equipment, jig, or tool, make sure you attach it properly so that no mechanical 
+stress is added to create a distortion such as a warp or twist. In addition, tighten the screws firmly but not too firmly because 
+the mount of the product may break. Use screw locking techniques as necessary. 
+
+• When you set up the product, make sure the equipment, jigs, tools, and workers maintain a good ground in order not to 
+generate high voltage leakage. If you add overcurrent or static electricity to the product, the product may be damaged 
+permanently. 
+
+• When you install the product, make sure metallic or other conductors do not enter the product. Otherwise, malfunction or 
+damage of the product may result. 
+
+• If excessive shock is added to the product when, for example, the product falls, the quality of the product may be degraded. 
+Make sure the product does not fall when you handle it. 
+
+• Before you start using the product, test it in the actual equipment under the actual operating environment. 
+• Since the product has capacitors inside, inrush current will occur during power-on. Evaluate in the actual environment in 
+
+order to check the effect of the supply voltage drop by inrush current in the system. 
+• If water enters the product, malfunction or damage of the product may result. If the product can be exposed to water, the 
+
+system must have a waterproof structure. We do not guarantee the operation of the product when the product is exposed 
+to condensation, dust, oil, corrosive gas (salt, acid, alkaline, or the like), or direct sunlight. 
+
+• This product is not designed to be radiation resistant. 
+• Never use this product if the operating condition is over the absolute maximum rating. If you do, the characteristics of the 
+
+product may never recover. 
+• If the product is exposed to excessive exogenous noise or the like, degradation of the precision, malfunction, or damage 
+
+of the product may result. The system needs to be designed so that the noise itself is suppressed or the system is immune 
+to the noise. 
+
+• Mechanical vibration or shock, continuous mechanical stress, rapid temperature change, or the like may cause cracks or 
+disconnections at the various connecting parts. 
+
+• Take sufficient safety measure for the equipment this product is built into. 
+• This product is not intended for general use by the consumer but instead for engineering design. For the customer, please 
+
+consider it safely with the proper use. 
+• This product is not designed to be used in the equipment that demands extremely high reliability and where its failure may 
+
+threaten human life or property (for example, aerospace equipment, submarine repeater, nuclear power control equipment, 
+life support equipment, medical equipment, transportation control equipment, etc.). Therefore, Seiko Epson Corporation 
+will not be liable for any damages caused by the use of the product for those applications. 
+
+• Do not alter or disassemble the product. 
+ 
+
+8.2. Cautions for Storage 
+
+• Do not add shock or vibration to the packing box. Do not spill water over the packing box. Do not store or use the product 
+in the environment where dew condensation occurs due to rapid temperature change. 
+
+• To suppress the characteristic change by prolonged storage, it is recommended to maintain the environment at normal 
+temperature and normal humidity. Normal temperature: +5 ~ +35 °C Normal humidity: 45 %RH ~ 85 %DH (JIS Z 8703). 
+
+• Do not store the product in a location subject to High Temperature, high humidity, under direct sunlight, corrosive gas or 
+dust. 
+
+• Do not put mechanical stress on the product while it is stored. 
+ 
+
+8.3. Other Cautions 
+
+• The product contains quartz crystal oscillator created by microfabrication. Take precaution to prevent falling or excessive 
+impact. Do not use the product after an accidental fall or it experiences excessive impact. The possibility of a failure and 
+risk of malfunction from failure increases. 
+
+• Small performance deterioration due to long-term use and aging effects, etc. cannot be detected through the self-diagnosis 
+test in this product. Discontinue use immediately even when the self-diagnosis test results in a “pass” when experiencing 
+abnormality in the sensor performance. 
+
+• If environmental vibration is expected in the resonance frequency band of this product, take sufficient countermeasures 
+before use. 
+
+• If a radio (transmission antenna) is set up near this product, degradation of the precision may result by radio frequency 
+
+Full Data Sheet Page 55 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+interference. Place the radio (transmission antenna) as far away as possible or add shielding to mitigate the effects of radio 
+frequency interference. 
+
+• Please turn off the power of the related equipment when cabling. 
+• This product has an IP67 protection structure. Cannot be used underwater for constant use. Note that if the connector is 
+
+not fitted properly or if a connector with insufficient protection is used, the connection may not satisfy the IP67 protection 
+level.  
+
+• This unit is waterproof and dustproof in conformance with IP67, and operation is not guaranteed in environments exceeding 
+this standard (submersion in water, condensation, dust), and under environments where the unit is exposed to oil, or 
+incorrosive gases (salt, acid, alkali, etc.).  
+
+• When mating the connector, insert the connector into the mating part sufficiently, and then tighten the screw of the connector 
+part sufficiently. If not tightened sufficiently, the IP67 protection level may not be satisfied. 
+
+• Do not use the product in a condition where external force is constantly applied to the connector joint.  
+• Confirm the name and polarity of the pins and connect them properly when wiring to the connector pins.  
+• The power supply to this product must satisfy the voltage rating within 2 seconds after it is turned on. 
+• Do not use thinner or similar liquids on this product. When cleaning this product, alcohol may be used. 
+• Maximum recommended cable length is 250 meters (460.8 kbps) as a guideline. However, even if the cable length is within 
+
+the guidelines, the communication may be unstable or unusable depending on system environment. The cabling should be 
+evaluated in the target system environment to confirm proper operation. Communication cables conforming to the EIA (RS-
+422) standard is recommended (Ref: TIA-EIA-422-B ANNEX A).  
+
+• In general, when a vibration sensor is mounted on a target machine, resonance is generated due to contact. In particular, 
+if there is a rattle in the mounting, the resonance caused by the contact will deteriorate the measurement accuracy. To 
+prevent this, it is recommended to screw the product firmly to the machine to be measured. 
+ 
+
+8.4. Limited Warranty 
+
+• The product warranty period is one year from the date of shipment. 
+If a defect due to a quality failure of the product is found during the warranty period, we will promptly provide a replacement. 
+
+ 
+ 
+
+  
+
+Full Data Sheet Page 56 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+ Standards and Approvals 
+
+The following standards are applied only to the unit that are labeled. (EMC is tested using the EPSON power supplies. ) 
+ 
+
+Europe:  CE marking 
+USA:  FCC part15B 
+
+ 
+
+9.1. Notice 
+
+This is a Class A product. In a domestic environment this product may cause radio interference in which case the user may 
+be required to take adequate measures. 
+The connection of a non-shielded interface cable to this product will invalidate the EMC standards of the device.  
+Any changes or modifications not expressly approved by Seiko Epson Corporation could void your authority to operate the 
+equipment. 
+ 
+
+9.2. CE Marking 
+
+This product conforms to the following Directives and Norms, 
+ 
+
+Directive 2014/30/EU: 
+EN61326-1 Class A 
+ 
+Directive 2011/65/EU: 
+EN IEC 63000:2018 
+
+ 
+
+9.3. RoHS & WEEE 
+
+The crossed out wheeled bin label that can be found on your product indicates that this product should not be disposed of via 
+the normal household waste stream. To prevent possible harm to the environment or human health please separate this 
+product from other waste streams to ensure that it can be recycled in an environmentally sound manner. For more details on 
+available collection facilities please contact your local government office or the retailer where you purchased this product. 
+ 
+AEEE Yönetmeliğine Uygundur. 
+ 
+Обладнання відповідає вимогам Технічного регламенту обмеження використання деяких небезпечних речовин в 
+електричному та електронному обладнанні  
+
+ 
+
+9.4. FCC Compliance Statement for American users 
+
+This device complies with Part 15 of the FCC Rules. Operation is subject to the following two conditions: 
+(1)  This device may not cause harmful interference, and 
+(2)  This device must accept any interference received, including interference that may cause undesired operation.  
+
+This equipment has been tested and found to comply with the limits for a Class A digital device, pursuant to part 15 of the 
+FCC Rules. These limits are designed to provide reasonable protection against harmful interference when the equipment is 
+operated in a commercial environment. This equipment generates, uses and can radiate radio frequency energy and, if not 
+installed and used in accordance with the instructions, may cause harmful interference to radio communications. Operation of 
+this equipment in a residential area is likely to cause harmful interference in which case the user will be required to correct the 
+interference at his own expense. 
+
+ 
+
+9.5. Industry ICES Compliance Statement for Canadian users 
+
+CAN ICES-3(A)/NMB-3(A) 
+ 
+
+9.6. For GB[UKCA] and NI[UK(NI)] users 
+
+The product is CE marking compliant. 
+UKCA marking will be applied from January 2023. 
+In case that you have any questions or requests regarding conformity of the products, please contact your distributor where 
+you purchased the product or our Representative in the UK as below.  
+
+ 
+
+Epson (U.K.) Limited 
+Address : Westside, London Road, Hemel Hempstead, Hertfordshire, HP3 9TD, United Kingdom 
+Telephone : +44-1442-261144 
+
+Full Data Sheet Page 57 M-A542_DataSheet_E_Rev20220401 
+
+ 
+
+
+
+ 
+
+M-A542VR1  
+
+ Contact  
+ 
+
+AMERICA ASIA 
+EPSON AMERICA, INC. EPSON (CHINA) CO., LTD. 
+
+Headquarter: 4F,Tower 1 of China Central Place,81 Jianguo Street, Chaoyang District, 
+Beijing 100025 CHINA  
+
+3131 Katella Ave. 
+Phone: +86-400-810-9972 X ext.2  
+
+Los Alamitos, CA 90720, USA Mail EPSON_MSM@ecc.epson.com.cm 
+Phone: +1-800-463-7766  
+ EPSON SINGAPORE PTE. LTD. 
+San Jose Office: 438B Alexandra Road, Block B Alexandra TechnoPark, #04-01/04, Singapore 
+
+119968 
+2860 Zanker Road, Suite 204,  
+
+Phone: +65-6586-5500    FAX: +65-6271-3182 
+San Jose, CA 95134, U.S.A  
+Phone: +1-800-463-7766 EPSON TAIWAN TECHNOLOGY & TRADING LTD. 
+ 15F, No.100, Song Ren Road, Taipei 110, TAIWAN 
+
+ Phone: +886-2-8786-6688    Fax: +886-2-8786-6660 
+ 
+
+ 
+EPSON KOREA Co., Ltd.  
+
+EUROPE 10F Posco Tower Yeoksam, Teheranro 134 Gangnam-gu,  
+EPSON EUROPE ELECTRONICS GmbH Seoul, 06235 KOREA 
+Riesstrasse 15, 80992 Munich, Phone: +82-2-558-4270    Fax: +82-2-3420-6699 
+GERMANY  
+Phone: +49-89-14005-0 FAX: +49-89-14005-110  
+
+ 
+ 
+JAPAN 
+SEIKO EPSON CORPORATION. 
+MD SALES & MARKETING DEPT. 
+JR Shinjuku Miraina Tower, 4-1-6 Shinjuku, Shinjuku-ku, Tokyo, 160-8801, 
+Japan 
+Phone: +81-3-6682-4322  FAX: +81-3-6682-5016 
+
+ 
+
+ 
+ 
+ 
+ 
+ 
+Product Information on www server 
+https://global.epson.com/products_and_drivers/sensing_system/ 
+ 
+
+Full Data Sheet Page 58 M-A542_DataSheet_E_Rev20220401

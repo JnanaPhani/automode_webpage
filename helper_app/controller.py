@@ -15,8 +15,10 @@ from helper_app.legacy.vibration.sensor_config import SensorConfigurator as Vibr
 from helper_app.legacy.vibration.sensor_comm import SensorCommunication as VibrationComm
 from helper_app.legacy.imu.sensor_config import SensorConfigurator as ImuConfigurator
 from helper_app.legacy.imu.sensor_comm import SensorCommunication as ImuComm
+from helper_app.legacy.accelerometer.accelerometer_sensor_config import AccelerometerConfigurator
+from helper_app.legacy.accelerometer.sensor_comm import SensorCommunication as AccelerometerComm
 
-SensorType = Literal["vibration", "imu"]
+SensorType = Literal["vibration", "imu", "accelerometer"]
 LOG = logging.getLogger(__name__)
 
 
@@ -69,8 +71,15 @@ class SensorController:
         await asyncio.sleep(0.5)
 
         def _detect_with_fresh_connection():
-            comm_cls = VibrationComm if sensor == "vibration" else ImuComm
-            configurator_cls = VibrationConfigurator if sensor == "vibration" else ImuConfigurator
+            if sensor == "vibration":
+                comm_cls = VibrationComm
+                configurator_cls = VibrationConfigurator
+            elif sensor == "imu":
+                comm_cls = ImuComm
+                configurator_cls = ImuConfigurator
+            else:  # accelerometer
+                comm_cls = AccelerometerComm
+                configurator_cls = AccelerometerConfigurator
             comm = comm_cls(port=port, baud=baud)
             # Retry opening the port in case Windows hasn't released it yet
             max_retries = 3
@@ -122,13 +131,17 @@ class SensorController:
     async def configure(self, sensor: SensorType, **kwargs) -> CommandResult:
         def _run(comm, configurator_cls):
             configurator = configurator_cls(comm)
-            # Extract sampling_rate and tap_value for IMU
+            # Extract parameters based on sensor type
             if sensor == "imu":
                 sampling_rate = kwargs.get("sampling_rate", 125.0)
                 tap_value = kwargs.get("tap_value")
                 success = configurator.configure(sampling_rate=sampling_rate, tap_value=tap_value)
-            else:
-                success = configurator.configure()
+            elif sensor == "accelerometer":
+                sps_rate = kwargs.get("sps_rate", 200)  # Default 200 Sps
+                success = configurator.configure(sps_rate=sps_rate)
+            else:  # vibration
+                output_type = kwargs.get("output_type", "displacement")  # Default to displacement
+                success = configurator.configure(output_type=output_type)
             warning = self._collect_warning(configurator)
             if not success:
                 return CommandResult(False, "Configuration failed. Check logs for details.", warning=warning)
@@ -138,7 +151,10 @@ class SensorController:
             LOG.info("Configure command requested for sensor=%s", sensor)
             if sensor == "vibration":
                 return await self._session.run(lambda comm: _run(comm, VibrationConfigurator))
-            return await self._session.run(lambda comm: _run(comm, ImuConfigurator))
+            elif sensor == "imu":
+                return await self._session.run(lambda comm: _run(comm, ImuConfigurator))
+            else:  # accelerometer
+                return await self._session.run(lambda comm: _run(comm, AccelerometerConfigurator))
         except Exception as exc:  # pragma: no cover
             LOG.exception("Configure failed: %s", exc)
             return CommandResult(False, str(exc))
@@ -156,7 +172,10 @@ class SensorController:
         try:
             if sensor == "vibration":
                 return await self._session.run(lambda comm: _run(comm, VibrationConfigurator))
-            return await self._session.run(lambda comm: _run(comm, ImuConfigurator))
+            elif sensor == "imu":
+                return await self._session.run(lambda comm: _run(comm, ImuConfigurator))
+            else:  # accelerometer
+                return await self._session.run(lambda comm: _run(comm, AccelerometerConfigurator))
         except Exception as exc:
             LOG.debug("Failed to check auto mode: %s", exc)
             return False
@@ -174,7 +193,10 @@ class SensorController:
             LOG.info("Exit auto command requested for sensor=%s persist=%s", sensor, persist)
             if sensor == "vibration":
                 return await self._session.run(lambda comm: _run(comm, VibrationConfigurator))
-            return await self._session.run(lambda comm: _run(comm, ImuConfigurator))
+            elif sensor == "imu":
+                return await self._session.run(lambda comm: _run(comm, ImuConfigurator))
+            else:  # accelerometer
+                return await self._session.run(lambda comm: _run(comm, AccelerometerConfigurator))
         except Exception as exc:
             LOG.exception("Exit auto failed: %s", exc)
             return CommandResult(False, str(exc))
@@ -192,7 +214,10 @@ class SensorController:
             LOG.info("Full reset command requested for sensor=%s", sensor)
             if sensor == "vibration":
                 return await self._session.run(lambda comm: _run(comm, VibrationConfigurator))
-            return await self._session.run(lambda comm: _run(comm, ImuConfigurator))
+            elif sensor == "imu":
+                return await self._session.run(lambda comm: _run(comm, ImuConfigurator))
+            else:  # accelerometer
+                return await self._session.run(lambda comm: _run(comm, AccelerometerConfigurator))
         except Exception as exc:
             LOG.exception("Full reset failed: %s", exc)
             return CommandResult(False, str(exc))

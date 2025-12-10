@@ -195,8 +195,8 @@ class HelperRuntime(QtCore.QObject):
                 self.operationFailed.emit("detect", str(exc))
         threading.Thread(target=_runner, daemon=True).start()
 
-    def configure(self, sensor: SensorType, sampling_rate: Optional[float] = None, tap_value: Optional[int] = None) -> None:
-        self._run_command("configure", sensor, sampling_rate=sampling_rate, tap_value=tap_value)
+    def configure(self, sensor: SensorType, sampling_rate: Optional[float] = None, tap_value: Optional[int] = None, sps_rate: Optional[int] = None) -> None:
+        self._run_command("configure", sensor, sampling_rate=sampling_rate, tap_value=tap_value, sps_rate=sps_rate)
 
     def exit_auto(self, sensor: SensorType) -> None:
         self._run_command("exit_auto", sensor)

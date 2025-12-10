@@ -1,0 +1,161 @@
+================================================================================
+DRAFT EMAIL TO EPSON TECHNICAL TEAM
+================================================================================
+
+Subject: Request for Verification of M-A542VR1 Data Parsing Implementation
+
+Dear Epson Technical Support Team,
+
+I hope this email finds you well. I am writing to request your assistance in 
+verifying the correctness of our data parsing implementation for the M-A542VR1 
+vibration sensor.
+
+================================================================================
+BACKGROUND
+================================================================================
+
+We have developed a Python-based data collection and parsing system for the 
+M-A542VR1 sensor operating in UART Auto Sampling mode. Our implementation is 
+based on the datasheet specifications (M-A542_DataSheet_E_Rev20220401) and 
+we would like to ensure that our parsing logic correctly interprets the sensor 
+data according to your specifications.
+
+================================================================================
+WHAT WE HAVE IMPLEMENTED
+================================================================================
+
+1. Data Collection:
+   - Real-time collection of raw packet data from the sensor
+   - Support for both 13-byte (460.8 kbps) and 19-byte (921.6 kbps) packet formats
+   - Raw data saved as comma-separated hex values
+
+2. Data Parsing:
+   - Parsing of displacement and velocity data (24-bit format)
+   - Temperature conversion (both 8-bit Format 2 and 16-bit Format 1)
+   - Extraction of flags, counters, and checksums
+   - Unit conversions (meters to millimeters, m/s to mm/s)
+
+3. Implementation Details:
+   - All parsing functions based on datasheet Sections 6.11, 6.12, 6.7, and 6.10
+   - Scale factors from Table 1.3
+   - Packet structure from Section 5.2
+
+================================================================================
+FILES ATTACHED
+================================================================================
+
+1. PARSING_IMPLEMENTATION_EXPLANATION.txt
+   - Detailed technical documentation explaining our parsing implementation
+   - References to specific datasheet sections
+   - Formulas and conversion logic
+   - Validation examples
+
+2. Sample Data Files:
+   - Raw data CSV file: vibration_raw_Port_X_YYYY-MM-DD_HH-MM-SS.mmm.csv
+   - Parsed data CSV file: vibration_parsed_Port_X_YYYY-MM-DD_HH-MM-SS.mmm.csv
+   
+   These files contain actual sensor data collected from our M-A542VR1 unit.
+
+3. Source Code (if needed):
+   - collect_raw_vibration_data.py (data collection and parsing script)
+
+================================================================================
+VERIFICATION REQUEST
+================================================================================
+
+We would be grateful if your technical team could review and verify:
+
+1. The correctness of our 24-bit decimal conversion function (to_dec24)
+   - Bit extraction and interpretation
+   - Sign bit handling
+   - Integer and decimal part calculation
+
+2. Temperature conversion formulas
+   - 8-bit format: T = to_int8(TEMP2_H) × (-0.9707008) + 34.987
+   - 16-bit format: T = to_int16(TEMP1_H, TEMP1_L) × (-0.0037918) + 34.987
+
+3. Packet structure interpretation
+   - Byte order and field extraction
+   - Flag and counter bit positions in TEMP2_L byte
+
+4. Overall parsing logic
+   - Any discrepancies or corrections needed
+   - Any edge cases we should handle
+
+================================================================================
+SPECIFIC QUESTIONS
+================================================================================
+
+1. In the 24-bit displacement/velocity format:
+   - We interpret bit 23 (first byte, bit 7) as the sign bit
+   - Bit 22 (first byte, bit 6) as the integer part
+   - Bits 21-0 as the decimal part (22 bits)
+   
+   Is this interpretation correct?
+
+2. For the TEMP2_L byte in 13-byte packets:
+   - Bits [7:2] contain flags (EXI_ERR, ALARM_ERR)
+   - Bits [1:0] contain the 2-bit counter
+   
+   Is this bit assignment correct?
+
+3. Are the scale factors in Table 1.3 applicable for all operating conditions,
+   or do they vary with temperature/other factors?
+
+4. Are there any known issues or special considerations when parsing data at
+   the boundaries of the measurement range (±200 mm for displacement, 
+   ±100 mm/s for velocity)?
+
+================================================================================
+ADDITIONAL INFORMATION
+================================================================================
+
+- Sensor Model: M-A542VR1
+- Datasheet Version: M-A542_DataSheet_E_Rev20220401
+- Operating Mode: UART Auto Sampling with Auto Start
+- Output Type: Displacement RAW (OUTPUT_SEL = 0100)
+- Baud Rate: 460.8 kbps (13-byte packets) or 921.6 kbps (19-byte packets)
+- Temperature Format: Format 2 (8-bit) for 13-byte, Format 1 (16-bit) for 19-byte
+
+================================================================================
+EXPECTED RESPONSE
+================================================================================
+
+We would appreciate:
+- Confirmation of correctness or identification of any errors
+- Clarification on any ambiguous points in the datasheet
+- Any recommendations for improvement
+- Confirmation that our parsed values match expected sensor behavior
+
+================================================================================
+CONTACT INFORMATION
+================================================================================
+
+Please feel free to contact us if you need any additional information or 
+clarification:
+
+Name: Jnana Phani A
+Organization: Zenith Tek
+Website: https://zenithtek.in
+Email: [Your Email Address]
+Phone: [Your Phone Number]
+
+We understand that you are busy, and we greatly appreciate your time and 
+expertise in reviewing our implementation. Your verification will help ensure 
+the accuracy of our data analysis and system integration.
+
+Thank you for your support.
+
+Best regards,
+
+[Your Name]
+[Your Title]
+Zenith Tek
+
+================================================================================
+END OF EMAIL DRAFT
+================================================================================
+
+NOTE: Please customize the contact information and any other details as needed
+before sending this email to Epson technical support.
+

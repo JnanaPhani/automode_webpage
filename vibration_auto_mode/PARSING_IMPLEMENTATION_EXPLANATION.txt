@@ -1,0 +1,551 @@
+================================================================================
+M-A542VR1 Vibration Sensor Data Parsing Implementation
+Technical Documentation for Epson Technical Team Review
+================================================================================
+
+Document Version: 1.0
+Date: December 2024
+Author: Jnana Phani A (Zenith Tek)
+Organization: Zenith Tek (https://zenithtek.in)
+
+================================================================================
+PURPOSE
+================================================================================
+
+This document explains the implementation of data parsing logic for the 
+M-A542VR1 vibration sensor based on the datasheet specifications (Rev. 20220401).
+We request the Epson technical team to review and verify the correctness of 
+our parsing implementation.
+
+We have implemented parsing for both displacement and velocity data in 
+UART Auto Sampling mode, supporting both 13-byte (460.8 kbps) and 19-byte 
+(921.6 kbps) packet formats.
+
+================================================================================
+DATASHEET REFERENCES
+================================================================================
+
+Primary References:
+- Datasheet: M-A542_DataSheet_E_Rev20220401
+- Section 6.11: VELC Register (Window 0) - Velocity data format
+- Section 6.12: DISP Register (Window 0) - Displacement data format
+- Section 6.10: TEMP2 Register (Window 0) - Temperature format 2
+- Section 6.7: TEMP1 Register (Window 0) - Temperature format 1
+- Section 5.2: Data Packet Format - Packet structure
+- Table 1.3: Sensor Specifications - Scale factors and ranges
+- Table 5.8: Example of Data Packet Format 1 (19-byte)
+- Table 5.9: Example of Data Packet Format 2 (13-byte)
+
+================================================================================
+PACKET STRUCTURE
+================================================================================
+
+1. 13-BYTE PACKET (460.8 kbps, Default Configuration)
+   --------------------------------------------
+   BURST_CTRL = 0x4700 (TEMP, Displacement/Velocity-XYZ)
+   SIG_CTRL TEMP_SEL = 0 (Temperature format 2)
+   
+   Byte Index  Field Name          Description
+   ----------  ------------------  ----------------------------------------
+   0           0x80                ADDRESS (always 0x80)
+   1           0x??                TEMP2_H (Temperature high byte, 8-bit)
+   2           0x??                TEMP2_L (Temperature low + flags + counter)
+   3           0x??                XDISP/VELC_HIGH_L (X-axis byte 1 of 3)
+   4           0x??                XDISP/VELC_LOW_H (X-axis byte 2 of 3)
+   5           0x??                XDISP/VELC_LOW_L (X-axis byte 3 of 3)
+   6           0x??                YDISP/VELC_HIGH_L (Y-axis byte 1 of 3)
+   7           0x??                YDISP/VELC_LOW_H (Y-axis byte 2 of 3)
+   8           0x??                YDISP/VELC_LOW_L (Y-axis byte 3 of 3)
+   9           0x??                ZDISP/VELC_HIGH_L (Z-axis byte 1 of 3)
+   10          0x??                ZDISP/VELC_LOW_H (Z-axis byte 2 of 3)
+   11          0x??                ZDISP/VELC_LOW_L (Z-axis byte 3 of 3)
+   12          0x0D                CR (Carriage return delimiter)
+
+   Total: 13 bytes
+
+
+2. 19-BYTE PACKET (921.6 kbps, Extended Configuration)
+   --------------------------------------------
+   BURST_CTRL = 0xC703 (FLAG, TEMP, Displacement/Velocity-XYZ, COUNT, CHECKSUM)
+   SIG_CTRL TEMP_SEL = 1 (Temperature format 1)
+   
+   Byte Index  Field Name          Description
+   ----------  ------------------  ----------------------------------------
+   0           0x80                ADDRESS (always 0x80)
+   1           0x??                ND (New Data flags)
+   2           0x??                EA (Error/Status flags)
+   3           0x??                TEMP1_H (Temperature high byte, 16-bit)
+   4           0x??                TEMP1_L (Temperature low byte, 16-bit)
+   5           0x??                XDISP/VELC_HIGH_L (X-axis byte 1 of 3)
+   6           0x??                XDISP/VELC_LOW_H (X-axis byte 2 of 3)
+   7           0x??                XDISP/VELC_LOW_L (X-axis byte 3 of 3)
+   8           0x??                YDISP/VELC_HIGH_L (Y-axis byte 1 of 3)
+   9           0x??                YDISP/VELC_LOW_H (Y-axis byte 2 of 3)
+   10          0x??                YDISP/VELC_LOW_L (Y-axis byte 3 of 3)
+   11          0x??                ZDISP/VELC_HIGH_L (Z-axis byte 1 of 3)
+   12          0x??                ZDISP/VELC_LOW_H (Z-axis byte 2 of 3)
+   13          0x??                ZDISP/VELC_LOW_L (Z-axis byte 3 of 3)
+   14          0x??                COUNT_H (16-bit counter high byte)
+   15          0x??                COUNT_L (16-bit counter low byte)
+   16          0x??                CHECKSUM_H (16-bit checksum high byte)
+   17          0x??                CHECKSUM_L (16-bit checksum low byte)
+   18          0x0D                CR (Carriage return delimiter)
+
+   Total: 19 bytes
+
+================================================================================
+DATA FORMAT SPECIFICATIONS (From Datasheet)
+================================================================================
+
+1. DISPLACEMENT DATA (Section 6.12)
+   ---------------------------------
+   - Data Type: 24-bit two's complement
+   - Unit: Meters (m)
+   - Scale Factor: 2^-22 m/LSB = 2.38 × 10^-4 mm/LSB
+   - Output Range: -200 to +200 mm
+   - Sampling Rate: 300 Sps (fixed for RAW displacement)
+   
+   Bit Layout:
+   - Bit 23: Sign bit
+   - Bit 22: Integer part
+   - Bits 21-0: Decimal part (22 bits)
+
+
+2. VELOCITY DATA (Section 6.11)
+   -----------------------------
+   - Data Type: 24-bit two's complement
+   - Unit: Meters per second (m/s)
+   - Scale Factor: 2^-22 (m/s)/LSB = 2.38 × 10^-4 (mm/s)/LSB
+   - Output Range: -100 to +100 mm/s
+   - Sampling Rate: 3000 Sps (fixed for RAW velocity)
+   
+   Bit Layout:
+   - Bit 23: Sign bit
+   - Bit 22: Integer part
+   - Bits 21-0: Decimal part (22 bits)
+
+
+3. TEMPERATURE DATA
+   -----------------
+   Format 2 (8-bit, used in 13-byte packets):
+   - Data Type: 8-bit two's complement
+   - Scale Factor: -0.9707008 °C/LSB
+   - Offset: 34.987 °C
+   - Reference: Table 1.3, Section 6.10 (TEMP2 Register)
+   - Formula: T(°C) = SF × a + 34.987
+     where a = temperature sensor output data (decimal)
+   
+   Format 1 (16-bit, used in 19-byte packets):
+   - Data Type: 16-bit two's complement
+   - Scale Factor: -0.0037918 °C/LSB
+   - Offset: 34.987 °C
+   - Reference: Table 1.3, Section 6.7 (TEMP1 Register)
+   - Formula: T(°C) = SF × a + 34.987
+     where a = temperature sensor output data (decimal)
+
+
+4. TEMP2_L BYTE (13-byte packets only)
+   ------------------------------------
+   Byte 2 contains multiple fields:
+   - Bits [7:2]: Flags (EXI_ERR, ALARM_ERR)
+   - Bits [1:0]: 2-bit counter (2BIT_COUNT)
+   - Reference: Section 6.10 (TEMP2 Register)
+
+================================================================================
+PARSING IMPLEMENTATION
+================================================================================
+
+1. 24-BIT DECIMAL CONVERSION (to_dec24 function)
+   ----------------------------------------------
+   
+   This function converts 3 bytes to a 24-bit signed decimal value.
+   Used for both displacement and velocity data.
+   
+   Implementation (based on Section 6.11 and 6.12):
+   
+   def to_dec24(b1: int, b2: int, b3: int) -> float:
+       """
+       Convert 3 bytes to 24-bit signed decimal.
+       
+       Bit format:
+       - bit 23: sign (in b1, bit 7)
+       - bit 22: integer part (in b1, bit 6)
+       - bits 21-0: decimal part (22 bits)
+       """
+       # Extract top 2 bits from first byte (bits 7 and 6)
+       msb2 = (b1 & 0x00C0) >> 6
+       # msb2 will be: 00, 01, 10, or 11
+       # 00 = positive, integer=0
+       # 01 = positive, integer=1
+       # 10 = negative, integer=0
+       # 11 = negative, integer=1
+       
+       # Combine decimal part (lower 6 bits of b1 + all of b2 and b3)
+       # This gives us 6 + 8 + 8 = 22 bits for decimal part
+       dec = ((b1 & 0x3F) << 16) + (b2 << 8) + b3
+       
+       # Calculate final value:
+       # Sign: (msb2 & 0b10) extracts bit 1 (sign bit)
+       #       If bit 1 is set (10 or 11), value is negative
+       # Integer: (msb2 & 0b01) extracts bit 0 (integer part)
+       # Decimal: dec / 2^22 converts 22-bit fraction to decimal
+       return (msb2 & 0b10) * -1 + (msb2 & 0b01) + dec / 2**22
+   
+   Example:
+   --------
+   For displacement value: bytes [0x01, 0x7F, 0xEF]
+   - b1 = 0x01 = 00000001 (binary)
+   - msb2 = (0x01 & 0xC0) >> 6 = 0 >> 6 = 0 (00 in binary)
+   - dec = ((0x01 & 0x3F) << 16) + (0x7F << 8) + 0xEF
+         = (0x01 << 16) + 0x7F00 + 0xEF
+         = 0x010000 + 0x7F00 + 0xEF
+         = 0x017FEF = 98287 (decimal)
+   - Result = (0 & 0b10) * -1 + (0 & 0b01) + 98287 / 2^22
+           = 0 + 0 + 98287 / 4194304
+           = 0.0234375 m
+           = 23.4375 mm
+
+
+2. 8-BIT SIGNED INTEGER CONVERSION (to_int8 function)
+   ---------------------------------------------------
+   
+   Used for 8-bit temperature data (Format 2).
+   
+   Implementation:
+   
+   def to_int8(b1: int) -> int:
+       """Convert 1 byte to 8-bit signed integer (two's complement)."""
+       # If bit 7 is set, number is negative
+       # For negative: -128 + (value & 0x7F)
+       # For positive: value & 0x7F
+       return (0x80 & b1) * -1 + (0x7F & b1)
+   
+   Example:
+   --------
+   Byte = 0x09 = 00001001 (binary)
+   - Sign bit (bit 7) = 0 (positive)
+   - Value = (0x80 & 0x09) * -1 + (0x7F & 0x09)
+          = 0 * -1 + 9
+          = 9
+   
+   Byte = 0xF7 = 11110111 (binary)
+   - Sign bit (bit 7) = 1 (negative)
+   - Value = (0x80 & 0xF7) * -1 + (0x7F & 0xF7)
+          = 128 * -1 + 119
+          = -128 + 119
+          = -9
+
+
+3. 16-BIT SIGNED INTEGER CONVERSION (to_int16 function)
+   ----------------------------------------------------
+   
+   Used for 16-bit temperature data (Format 1) and other 16-bit signed values.
+   
+   Implementation:
+   
+   def to_int16(b1: int, b2: int) -> int:
+       """Convert 2 bytes to 16-bit signed integer (two's complement)."""
+       num = b1 * 2**8 + b2
+       # If bit 15 is set, number is negative
+       return (0x8000 & num) * -1 + (0x7FFF & num)
+   
+   Example:
+   --------
+   Bytes = [0x0A, 0x4A]
+   - num = 0x0A * 256 + 0x4A = 2634
+   - Sign bit (bit 15) = 0 (positive)
+   - Value = (0x8000 & 2634) * -1 + (0x7FFF & 2634)
+          = 0 * -1 + 2634
+          = 2634
+
+
+4. 16-BIT UNSIGNED INTEGER CONVERSION (to_uint16 function)
+   --------------------------------------------------------
+   
+   Used for counter and checksum values.
+   
+   Implementation:
+   
+   def to_uint16(b1: int, b2: int) -> int:
+       """Convert 2 bytes to 16-bit unsigned integer."""
+       return b1 * 2**8 + b2
+   
+   Example:
+   --------
+   Bytes = [0x17, 0x30]
+   - Value = 0x17 * 256 + 0x30 = 5936
+
+
+5. TEMPERATURE CONVERSION
+   -----------------------
+   
+   Format 2 (8-bit, 13-byte packets):
+   - Reference: Table 1.3, Section 6.10
+   - Scale Factor: -0.9707008 °C/LSB
+   - Offset: 34.987 °C
+   - Formula: T(°C) = to_int8(TEMP2_H) × (-0.9707008) + 34.987
+   
+   Format 1 (16-bit, 19-byte packets):
+   - Reference: Table 1.3, Section 6.7
+   - Scale Factor: -0.0037918 °C/LSB
+   - Offset: 34.987 °C
+   - Formula: T(°C) = to_int16(TEMP1_H, TEMP1_L) × (-0.0037918) + 34.987
+   
+   Example (Format 2):
+   -------------------
+   TEMP2_H = 0x09
+   - Raw value = to_int8(0x09) = 9
+   - Temperature = 9 × (-0.9707008) + 34.987
+                = -8.7363072 + 34.987
+                = 26.2507 °C
+
+
+6. 13-BYTE PACKET PARSING
+   -----------------------
+   
+   Steps:
+   1. Verify packet: length=13, byte[0]=0x80, byte[12]=0x0D
+   2. Extract temperature:
+      - TEMP2_H = packet[1]
+      - Temperature = to_int8(packet[1]) × (-0.9707008) + 34.987
+   3. Extract flags and counter from TEMP2_L:
+      - Flags = packet[2] & 0b11111100 (bits 7-2)
+      - Counter = packet[2] & 0b11 (bits 1-0)
+   4. Extract X-axis displacement/velocity:
+      - X = to_dec24(packet[3], packet[4], packet[5])
+   5. Extract Y-axis displacement/velocity:
+      - Y = to_dec24(packet[6], packet[7], packet[8])
+   6. Extract Z-axis displacement/velocity:
+      - Z = to_dec24(packet[9], packet[10], packet[11])
+   7. Convert to millimeters (for displacement) or mm/s (for velocity):
+      - X_mm = X × 1000.0
+      - Y_mm = Y × 1000.0
+      - Z_mm = Z × 1000.0
+   
+   Output Fields:
+   - temperature (°C)
+   - x_m, y_m, z_m (meters or m/s)
+   - x_mm, y_mm, z_mm (millimeters or mm/s)
+   - count (2-bit counter, 0-3)
+   - flag (6-bit flags field)
+
+
+7. 19-BYTE PACKET PARSING
+   -----------------------
+   
+   Steps:
+   1. Verify packet: length=19, byte[0]=0x80, byte[18]=0x0D
+   2. Extract flags:
+      - ND flag = packet[1] (New Data flags)
+      - EA flag = packet[2] (Error/Status flags)
+   3. Extract temperature:
+      - TEMP1_H = packet[3], TEMP1_L = packet[4]
+      - Temperature = to_int16(packet[3], packet[4]) × (-0.0037918) + 34.987
+   4. Extract X-axis displacement/velocity:
+      - X = to_dec24(packet[5], packet[6], packet[7])
+   5. Extract Y-axis displacement/velocity:
+      - Y = to_dec24(packet[8], packet[9], packet[10])
+   6. Extract Z-axis displacement/velocity:
+      - Z = to_dec24(packet[11], packet[12], packet[13])
+   7. Extract counter:
+      - Count = to_uint16(packet[14], packet[15])
+   8. Extract checksum:
+      - Checksum = to_uint16(packet[16], packet[17])
+   9. Convert to millimeters (for displacement) or mm/s (for velocity):
+      - X_mm = X × 1000.0
+      - Y_mm = Y × 1000.0
+      - Z_mm = Z × 1000.0
+   
+   Output Fields:
+   - temperature (°C)
+   - x_m, y_m, z_m (meters or m/s)
+   - x_mm, y_mm, z_mm (millimeters or mm/s)
+   - count (16-bit counter)
+   - nd_flag (New Data flags)
+   - ea_flag (Error/Status flags)
+   - checksum (16-bit checksum)
+
+================================================================================
+VALIDATION EXAMPLES
+================================================================================
+
+Example 1: 13-byte Displacement Packet
+---------------------------------------
+Raw packet (hex): 80 09 01 01 7F EF FD 96 7F 00 C1 87 0D
+
+Parsing:
+- Address: 0x80 ✓
+- TEMP2_H: 0x09
+  - Raw: to_int8(0x09) = 9
+  - Temperature: 9 × (-0.9707008) + 34.987 = 26.25 °C
+- TEMP2_L: 0x01
+  - Flags: 0x01 & 0b11111100 = 0x00
+  - Counter: 0x01 & 0b11 = 1
+- X Displacement: to_dec24(0x01, 0x7F, 0xEF)
+  - msb2 = (0x01 & 0xC0) >> 6 = 0
+  - dec = ((0x01 & 0x3F) << 16) + (0x7F << 8) + 0xEF = 0x017FEF = 98287
+  - X = 0 + 0 + 98287/2^22 = 0.0234375 m = 23.4375 mm
+- Y Displacement: to_dec24(0xFD, 0x96, 0x7F)
+  - msb2 = (0xFD & 0xC0) >> 6 = 3 (11 in binary, negative, integer=1)
+  - dec = ((0xFD & 0x3F) << 16) + (0x96 << 8) + 0x7F = ...
+  - Y = -1 + 1 + dec/2^22 = ... (negative value)
+- Z Displacement: to_dec24(0x00, 0xC1, 0x87)
+  - Similar calculation...
+
+
+Example 2: Temperature Calculation Verification
+------------------------------------------------
+Reference point from datasheet (Table 1.3):
+- Output = 2634 (0x0A4A) at +25 °C
+
+For 16-bit format:
+- Temperature = 2634 × (-0.0037918) + 34.987
+              = -9.984 + 34.987
+              = 25.003 °C ✓ (matches reference)
+
+For 8-bit format (if we had 0x0A):
+- Temperature = 10 × (-0.9707008) + 34.987
+              = -9.707 + 34.987
+              = 25.28 °C (close to reference, note: 8-bit is less precise)
+
+================================================================================
+IMPLEMENTATION NOTES
+================================================================================
+
+1. Byte Order
+   -----------
+   - All multi-byte values are in big-endian format (MSB first)
+   - 24-bit values: byte1 (MSB), byte2, byte3 (LSB)
+   - 16-bit values: byte1 (MSB), byte2 (LSB)
+
+2. Two's Complement Handling
+   --------------------------
+   - For 8-bit: Sign bit is bit 7
+   - For 16-bit: Sign bit is bit 15
+   - For 24-bit: Sign bit is bit 23 (in first byte, bit 7)
+   - Our implementation correctly handles negative values
+
+3. Scale Factors
+   --------------
+   - All scale factors are taken directly from Table 1.3
+   - Displacement: 2^-22 m/LSB = 2.38 × 10^-4 mm/LSB
+   - Velocity: 2^-22 (m/s)/LSB = 2.38 × 10^-4 (mm/s)/LSB
+   - Temperature Format 2: -0.9707008 °C/LSB
+   - Temperature Format 1: -0.0037918 °C/LSB
+
+4. Unit Conversions
+   -----------------
+   - Displacement: meters to millimeters: multiply by 1000
+   - Velocity: m/s to mm/s: multiply by 1000
+   - All conversions preserve precision
+
+5. Error Handling
+   ---------------
+   - Packet validation: checks length, address byte (0x80), delimiter (0x0D)
+   - Invalid packets are skipped with error counting
+   - Parsing errors are logged for debugging
+
+================================================================================
+TEST DATA FILES PROVIDED
+================================================================================
+
+We are providing the following files for verification:
+
+1. Raw Data Files:
+   - Format: CSV with comma-separated hex values
+   - One packet per line
+   - Example: vibration_raw_Port_3_2025-12-03_12-20-23.304.csv
+
+2. Parsed Data Files:
+   - Format: CSV with parsed values
+   - Columns: temperature, x_m, y_m, z_m, x_mm, y_mm, z_mm, count, flag
+   - Example: vibration_parsed_Port_3_2025-12-03_12-20-23.304.csv
+
+3. Sample Raw Data Format:
+   80,09,01,017fef,fd967f,00c187,0d
+   80,09,02,0180a1,fd954b,00c1e7,0d
+   ...
+   
+   Where:
+   - 80 = address
+   - 09 = TEMP2_H
+   - 01 = TEMP2_L (counter=1)
+   - 017fef = X displacement (24-bit, 6 hex digits)
+   - fd967f = Y displacement (24-bit, 6 hex digits)
+   - 00c187 = Z displacement (24-bit, 6 hex digits)
+   - 0d = delimiter
+
+================================================================================
+VERIFICATION REQUEST
+================================================================================
+
+We kindly request the Epson technical team to verify:
+
+1. ✓ Correctness of the 24-bit decimal conversion (to_dec24 function)
+   - Bit extraction logic
+   - Sign and integer part handling
+   - Decimal part calculation
+
+2. ✓ Temperature conversion formulas
+   - 8-bit format (Format 2) scale factor and offset
+   - 16-bit format (Format 1) scale factor and offset
+
+3. ✓ Packet structure interpretation
+   - Byte order and field extraction
+   - Flag and counter bit extraction from TEMP2_L
+
+4. ✓ Unit conversions
+   - Meters to millimeters conversion (×1000)
+   - Scale factor application
+
+5. ✓ Overall parsing logic
+   - Any discrepancies or corrections needed
+
+================================================================================
+QUESTIONS FOR CLARIFICATION
+================================================================================
+
+1. In the 24-bit format, we interpret:
+   - Bit 23 (b1 bit 7) as sign bit
+   - Bit 22 (b1 bit 6) as integer part
+   - Bits 21-0 as decimal part
+   
+   Is this interpretation correct?
+
+2. For the temperature conversion:
+   - We use the scale factors from Table 1.3
+   - Are these the correct values for all operating conditions?
+
+3. For the TEMP2_L byte in 13-byte packets:
+   - Bits [7:2] contain flags
+   - Bits [1:0] contain 2-bit counter
+   - Is this bit assignment correct?
+
+4. Are there any special cases or edge conditions we should handle?
+
+================================================================================
+CONTACT INFORMATION
+================================================================================
+
+For questions or clarifications regarding this implementation:
+
+Author: Jnana Phani A
+Organization: Zenith Tek
+Website: https://zenithtek.in
+Email: phani@zenithtek.in
+
+We appreciate your time in reviewing this implementation and look forward to
+your feedback.
+
+================================================================================
+END OF DOCUMENT
+================================================================================
+
+
+
+
+
+
+
+
+

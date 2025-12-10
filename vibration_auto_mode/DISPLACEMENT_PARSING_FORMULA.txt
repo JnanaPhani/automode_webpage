@@ -1,0 +1,124 @@
+EXAMPLE_HEX: 800901017feffd967f00c1870d
+
+Parsing Formulae for Displacement Data (M-A542VR1)
+
+First 2 hex characters (80) and Last 2 hex characters (0D) are delimiters
+
+PACKET STRUCTURE (13 bytes = 26 hex characters):
+When represented as continuous hex string (26 hex characters):
+- Position 1-2:   80 (Address delimiter)
+- Position 3-4:   Temperature high byte (TEMP2_H)
+- Position 5-6:   Temperature low byte + flags + counter (TEMP2_L)
+- Position 7-12:  X Displacement (24-bit, 6 hex characters)
+- Position 13-18: Y Displacement (24-bit, 6 hex characters)
+- Position 19-24: Z Displacement (24-bit, 6 hex characters)
+- Position 25-26: 0D (Carriage return delimiter)
+
+Note: Raw data is saved as comma-separated hex values in CSV format:
+Example: 80,09,01,017fef,fd967f,00c187,0d
+This represents the same 13-byte packet (26 hex characters total)
+
+SEC (Time in seconds)
+ SEC_1 = 0
+ SEC_2 = ((1/300)+SEC_1)
+ SEC_3 = ((1/300)+SEC_2)
+ ,,,,,,,,
+ SEC_N = ((1/300)+(SEC_N-1))
+
+Note: Displacement sampling rate is 300 Sps (from datasheet Table 1.4)
+
+TEMPERATURE_CALCULATION:
+ Temperature_HEX: Extract characters at position 3-4 from EXAMPLE_HEX
+ Temperature_DEC: Convert Temperature_HEX from hex to decimal (signed 8-bit)
+ Temperature: = (Temperature_DEC * -0.9707008 + 34.987)
+
+Example:
+ Temperature_HEX = "09"
+ Temperature_DEC = 9
+ Temperature = (9 * -0.9707008 + 34.987) = 26.25 °C
+
+CNT (2-bit Counter) and Data Lost Check
+ Data_Lost_Check_HEX: Extract characters at position 5-6 from EXAMPLE_HEX
+ Data_Lost_Check_DEC: Convert Data_Lost_Check_HEX from hex to decimal
+ CNT: = BITAND(Data_Lost_Check_DEC, 3)
+ 
+ Data_Lost_Check: First row in Data_Lost_Check will be empty. 
+ Let's say first row of Data_Lost_Check as Data_Lost_Check_1 from next row:
+ Data_Lost_Check_2: = IF(CNT_of_current_row=0, CNT_of_current_row+4, CNT_of_current_row) - (CNT_of_previous_row)
+
+Example:
+ Data_Lost_Check_HEX = "01"
+ Data_Lost_Check_DEC = 1
+ CNT = BITAND(1, 3) = 1
+
+X-AXIS_Displacement
+ X_Axis_HEX: Extract characters at position 7-12 from EXAMPLE_HEX (6 hex characters)
+ X_Axis_DEC: Convert X_Axis_HEX from hex to decimal (unsigned 24-bit)
+ X_Axis_Value_mm: = IF(X_Axis_DEC >= 2^23, (X_Axis_DEC - 2^24), X_Axis_DEC) * 2^-22 * 1000
+
+Example:
+ X_Axis_HEX = "017fef"
+ X_Axis_DEC = 98287
+ X_Axis_Value_mm = IF(98287 >= 8388608, (98287 - 16777216), 98287) * 2^-22 * 1000
+                 = 98287 * 2^-22 * 1000
+                 = 98287 / 4194304 * 1000
+                 = 23.4375 mm
+
+Y-AXIS_Displacement
+ Y_Axis_HEX: Extract characters at position 13-18 from EXAMPLE_HEX (6 hex characters)
+ Y_Axis_DEC: Convert Y_Axis_HEX from hex to decimal (unsigned 24-bit)
+ Y_Axis_Value_mm: = IF(Y_Axis_DEC >= 2^23, (Y_Axis_DEC - 2^24), Y_Axis_DEC) * 2^-22 * 1000
+
+Example:
+ Y_Axis_HEX = "fd967f"
+ Y_Axis_DEC = 16623231
+ Y_Axis_Value_mm = IF(16623231 >= 8388608, (16623231 - 16777216), 16623231) * 2^-22 * 1000
+                 = (16623231 - 16777216) * 2^-22 * 1000
+                 = -153985 * 2^-22 * 1000
+                 = -36.72 mm
+
+Z-AXIS_Displacement
+ Z_Axis_HEX: Extract characters at position 19-24 from EXAMPLE_HEX (6 hex characters)
+ Z_Axis_DEC: Convert Z_Axis_HEX from hex to decimal (unsigned 24-bit)
+ Z_Axis_Value_mm: = IF(Z_Axis_DEC >= 2^23, (Z_Axis_DEC - 2^24), Z_Axis_DEC) * 2^-22 * 1000
+
+Example:
+ Z_Axis_HEX = "00c187"
+ Z_Axis_DEC = 49543
+ Z_Axis_Value_mm = IF(49543 >= 8388608, (49543 - 16777216), 49543) * 2^-22 * 1000
+                 = 49543 * 2^-22 * 1000
+                 = 11.81 mm
+
+================================================================================
+NOTES:
+================================================================================
+
+1. Packet Size: 13 bytes = 26 hex characters (when represented as continuous hex string)
+
+2. Displacement Range: -200 mm to +200 mm (from datasheet Table 1.3)
+
+3. Scale Factor: 2^-22 m/LSB = 2.38 × 10^-4 mm/LSB (from datasheet Table 1.3)
+
+4. Two's Complement Handling:
+   - If decimal value >= 2^23 (8388608), it represents a negative number
+   - Negative value = (decimal_value - 2^24)
+   - This handles the sign bit (bit 23) correctly
+
+5. Unit Conversion:
+   - Formula returns value in meters (m)
+   - Multiply by 1000 to convert to millimeters (mm)
+
+6. Sampling Rate:
+   - Displacement RAW: 300 Sps (from datasheet Table 1.4)
+   - Time increment per sample: 1/300 = 0.003333 seconds
+
+================================================================================
+REFERENCE:
+================================================================================
+
+- Datasheet: M-A542_DataSheet_E_Rev20220401
+- Section 6.12: DISP Register (Window 0) - Displacement data format
+- Section 6.10: TEMP2 Register (Window 0) - Temperature format 2
+- Table 1.3: Sensor Specifications - Scale factors and ranges
+- Table 1.4: Interface Specifications - Sampling rates
+

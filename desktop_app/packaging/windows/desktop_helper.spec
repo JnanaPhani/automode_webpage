@@ -35,6 +35,8 @@ hidden_imports = [
     "helper_app.legacy.imu.sensor_comm",
     "helper_app.legacy.vibration.sensor_config",
     "helper_app.legacy.vibration.sensor_comm",
+    "helper_app.legacy.accelerometer.accelerometer_sensor_config",
+    "helper_app.legacy.accelerometer.sensor_comm",
     "serial.tools.list_ports",
     "asyncio",
 ]
